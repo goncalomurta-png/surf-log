@@ -28,6 +28,35 @@ SPOTS = {
     'mosteiros':     {'lat': 37.892, 'lon': -25.823, 'nome': 'Mosteiros · Costa Noroeste',        'costa': 'noroeste'},
 }
 
+# ─── Thresholds de corrente (offshore · calibrar com sessões) ────────────────────
+# Rodrigo: Paddle 3.25, Posic 2.65 → limite estimado ~0.55 m/s
+# Tomás:   Paddle 2.79, Posic 1.95 → limite estimado ~0.35 m/s
+
+# Thresholds calibrados (offshore Open-Meteo):
+# Sul (Milicias/SaoRoque/AguaAlto): Rodrigo/Tomas surfaram OK ate 0.83 m/s
+#   -> verde <0.85, amarelo <1.10, vermelho >=1.10
+# Norte (exposto): sem dados ainda — conservador ate haver sessoes
+CORRENTE_THRESH = {
+    # (lim_rodrigo, lim_tomas) — valor acima = aviso/bloqueio
+    'milicias':     (0.85, 0.85),   # calibrado: ambos OK ate 0.83 m/s
+    'saoroque':     (0.85, 0.85),   # idem (costa sul similar)
+    'aguadealto':   (0.85, 0.85),   # idem
+    'santabarbara': (0.50, 0.35),   # norte exposto — conservador
+    'monteverde':   (0.50, 0.35),
+    'ribeiraseca':  (0.50, 0.35),
+    'mosteiros':    (0.45, 0.30),   # ponta rochosa — mais conservador
+}
+
+def avaliar_corrente(vel, spot_id):
+    if vel is None: return '?', '?', 'desconhecida'
+    lr, lt = CORRENTE_THRESH.get(spot_id, (0.50, 0.30))
+    def grau(v, lim):
+        if v < lim: return '✅'
+        if v < lim * 1.35: return '⚠️'
+        return '❌'
+    cls = 'baixa' if vel < 0.20 else 'moderada' if vel < 0.40 else 'forte' if vel < 0.70 else 'muito forte'
+    return grau(vel, lr), grau(vel, lt), cls
+
 # ─── Modelo de marés para Ponta Delgada ─────────────────────────────────
 # Timing: harmónico M2 (período 12.42h)
 # Amplitude: modelo spring-neap calibrado a partir das sessões (precisão ±20%)
@@ -82,7 +111,8 @@ def fetch_ondas(lat, lon, data):
     url = (f'https://marine-api.open-meteo.com/v1/marine'
            f'?latitude={lat}&longitude={lon}'
            f'&hourly=wave_height,wave_period,wave_direction,'
-           f'swell_wave_height,swell_wave_period,swell_wave_direction'
+           f'swell_wave_height,swell_wave_period,swell_wave_direction,'
+           f'ocean_current_velocity,ocean_current_direction'
            f'&start_date={data}&end_date={data}'
            f'&timezone=Atlantic%2FAzores')
     return fetch_url(url)
@@ -155,6 +185,10 @@ def obter_condicoes(data_str, hora_ini_str, hora_fim_str, spot_id):
     v_spd    = media_intervalo(vento['hourly']['wind_speed_10m'], i0, i1)
     v_dir_g  = dir_dominante(vento['hourly']['wind_direction_10m'], i0, i1)
 
+    curr_vel  = media_intervalo(ondas['hourly'].get('ocean_current_velocity', [None]*24), i0, i1)
+    curr_dir  = dir_dominante(ondas['hourly'].get('ocean_current_direction', [None]*24), i0, i1)
+    curr_r, curr_t, curr_cls = avaliar_corrente(curr_vel, spot_id)
+
     maximos, minimos = encontrar_extremos_mare(data_str, h_ini, h_fim)
     base = datetime.strptime(f'{data_str}T{hora_ini_str}', '%Y-%m-%dT%H:%M')
     mb = min(minimos, key=lambda x: abs((x[0]-base).total_seconds()), default=None)
@@ -173,32 +207,48 @@ def obter_condicoes(data_str, hora_ini_str, hora_fim_str, spot_id):
         'mare_baixa_hora': mb[0].strftime('%H:%M') if mb else '?',
         'mare_alta_hora':  ma[0].strftime('%H:%M') if ma else '?',
         'amplitude': amp_est,
+        'corrente_ms':  curr_vel,
+        'corrente_kt':  round(curr_vel * 1.944, 1) if curr_vel is not None else None,
+        'corrente_dir': graus_para_cardinal(curr_dir),
+        'corrente_cls': curr_cls,
+        'corrente_r':   curr_r,
+        'corrente_t':   curr_t,
     }
+
+def ms_para_nos(vel):
+    """Converte m/s para nós (1 m/s = 1.944 kt)."""
+    if vel is None:
+        return '?'
+    return round(vel * 1.944, 1)
 
 def imprimir_resumo(c):
     amp_str = f"{c['amplitude']}m" if c['amplitude'] is not None else '?'
     wp = c['wave_power']
-    cls = ('Fracas' if not wp or wp < 4 else 'Aceitáveis' if wp < 7 else
+    cls = ('Fracas' if not wp or wp < 4 else 'Aceitaveis' if wp < 7 else
            'Boas' if wp < 10 else 'Ideais' if wp < 18 else
            'Exigentes' if wp < 35 else 'Muito exig.')
+    curr_ms  = c.get('corrente_ms', None)
+    curr_nos = ms_para_nos(curr_ms)
+    curr_ms_str = f"{curr_ms} m/s" if curr_ms is not None else '?'
     print(f"""
-╔══════════════════════════════════════════════╗
-║  {c['spot']:<44}║
-║  {c['data']}  {c['hora_ini']}–{c['hora_fim']:<34}║
-╠══════════════════════════════════════════════╣
-║  Wave Power : {c['wave_power']} kW/m  [{cls}]
-║  Hs={c['hs']}m  T={c['period']}s
-║  Swell      : {c['swell_dir']} ({c['swell_dir_graus']}°)  Hs={c['swell_hs']}m
-║  Vento      : {c['vento_kmh']} km/h  {c['vento_dir']} ({c['vento_dir_graus']}°)
-║  Maré baixa : {c['mare_baixa_hora']} (timing est.)
-║  Maré alta  : {c['mare_alta_hora']} (timing est.)
-║  Amplitude  : {amp_str} (est.)
-╚══════════════════════════════════════════════╝""")
+Condicoes: {c['spot']}
+{c['data']}  {c['hora_ini']}-{c['hora_fim']}
+--------------------------------------------
+Wave Power : {c['wave_power']} kW/m  [{cls}]
+Hs={c['hs']}m  T={c['period']}s
+Swell      : {c['swell_dir']} ({c['swell_dir_graus']} graus)  Hs={c['swell_hs']}m
+Vento      : {c['vento_kmh']} km/h  {c['vento_dir']} ({c['vento_dir_graus']} graus)
+Mare baixa : {c['mare_baixa_hora']} (est.)
+Mare alta  : {c['mare_alta_hora']} (est.)
+Amplitude  : {amp_str} (est.)
+Corrente   : {curr_ms_str} ({curr_nos} kt)  {c.get('corrente_dir','?')}  [{c.get('corrente_cls','?')}]
+  Rodrigo  : {c.get('corrente_r','?')}   Tomas: {c.get('corrente_t','?')}
+--------------------------------------------""")
 
 if __name__ == '__main__':
     if len(sys.argv) < 5:
         print('Uso: python3 fetch_conditions.py YYYY-MM-DD HH:MM HH:MM spot_id')
-        print('Spots disponíveis:', list(SPOTS.keys()))
+        print('Spots disponiveis:', list(SPOTS.keys()))
         sys.exit(1)
     data_str, hora_ini, hora_fim, spot_id = sys.argv[1:5]
     c = obter_condicoes(data_str, hora_ini, hora_fim, spot_id)
