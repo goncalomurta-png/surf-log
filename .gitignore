@@ -1,3 +1,6 @@
 *.log
 *.rtf
-sessions/conditions/*.png
+data/
+sessions/
+CLAUDE.md
+WORKFLOW.md
