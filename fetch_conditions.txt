@@ -227,9 +227,7 @@ def imprimir_resumo(c):
     cls = ('Fracas' if not wp or wp < 4 else 'Aceitaveis' if wp < 7 else
            'Boas' if wp < 10 else 'Ideais' if wp < 18 else
            'Exigentes' if wp < 35 else 'Muito exig.')
-    curr_ms  = c.get('corrente_ms', None)
-    curr_nos = ms_para_nos(curr_ms)
-    curr_ms_str = f"{curr_ms} m/s" if curr_ms is not None else '?'
+    curr_nos = ms_para_nos(c.get('corrente_ms', None))
     print(f"""
 Condicoes: {c['spot']}
 {c['data']}  {c['hora_ini']}-{c['hora_fim']}
@@ -241,7 +239,7 @@ Vento      : {c['vento_kmh']} km/h  {c['vento_dir']} ({c['vento_dir_graus']} gra
 Mare baixa : {c['mare_baixa_hora']} (est.)
 Mare alta  : {c['mare_alta_hora']} (est.)
 Amplitude  : {amp_str} (est.)
-Corrente   : {curr_ms_str} ({curr_nos} kt)  {c.get('corrente_dir','?')}  [{c.get('corrente_cls','?')}]
+Corrente   : {curr_nos} kt  {c.get('corrente_dir','?')}  [{c.get('corrente_cls','?')}]
   Rodrigo  : {c.get('corrente_r','?')}   Tomas: {c.get('corrente_t','?')}
 --------------------------------------------""")
 
