@@ -215,6 +215,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
 .star:hover { color: #f0c060; }
 .star.filled { color: #f0a500; }
 .skill-note { font-size: 0.62rem; color: var(--grey); margin-top: 4px; line-height: 1.4; }
+.corrente-paddle { font-size: 0.60rem; color: var(--grey); margin-top: 3px; opacity: 0.85; }
 
 /* ─── Objetivos por horizonte temporal (próx. sessão / mês / época) ─── */
 .obj-card { background: var(--white); border-radius: 14px; overflow: hidden; box-shadow: 0 2px 12px rgba(11,30,45,0.08); margin-bottom: 10px; }
@@ -541,6 +542,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
             <div class="c-item"><div class="c-lbl">Wave Power</div><div class="c-val">~3 kW/m ef.</div></div>
             <div class="c-item"><div class="c-lbl">Vento</div><div class="c-val">22 km/h · 17°C</div></div>
             <div class="c-item"><div class="c-lbl">Condições</div><div class="c-val">Fracas · só shorebreak</div></div>
+            <div class="c-item"><div class="c-lbl">Corrente</div><div class="c-val">0.9 kt · SSW ✅</div></div>
           </div>
           <div class="sea-src">📡 Windy ECMWF WAM · Ponta Delgada · 10 Abr 2026 15:52 | Marés: Surfguru (Ponta Delgada)</div>
         </div>
@@ -563,7 +565,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
             <div class="skill-item">
               <div class="skill-name">🚣 Paddle</div>
               <div class="stars" data-sid="rodrigo-s4" data-skill="paddle"><span class="star filled" onclick="setStar(this,1,'rodrigo-s4',2)">★</span><span class="star filled" onclick="setStar(this,2,'rodrigo-s4',2)">★</span><span class="star " onclick="setStar(this,3,'rodrigo-s4',2)">★</span><span class="star " onclick="setStar(this,4,'rodrigo-s4',2)">★</span><span class="star " onclick="setStar(this,5,'rodrigo-s4',2)">★</span></div>
-              <div class="skill-note">Sem distância real de paddling — shorebreak imediato</div>
+              <div class="skill-note">Sem distância real de paddling — shorebreak imediato</div><div class="corrente-paddle">⚡ 0.9 kt SSW ✅</div>
             </div>
             <div class="skill-item">
               <div class="skill-name">↩️ Manobras</div>
@@ -620,6 +622,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
             <div class="c-item"><div class="c-lbl">Wave Power</div><div class="c-val">17 kW/m</div></div>
             <div class="c-item"><div class="c-lbl">Vento</div><div class="c-val">31 km/h · raj.48</div></div>
             <div class="c-item"><div class="c-lbl">Água · Ar</div><div class="c-val">15°C · 15°C</div></div>
+            <div class="c-item"><div class="c-lbl">Corrente</div><div class="c-val">1.4 kt · S ✅</div></div>
           </div>
           <div class="sea-src">📡 Windy ECMWF WAM · Ponta Delgada · 8 Abr 2026 09:00 | Marés: Windfinder</div>
         </div>
@@ -642,7 +645,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
             <div class="skill-item">
               <div class="skill-name">🚣 Paddle</div>
               <div class="stars" data-sid="rodrigo-s3" data-skill="paddle"><span class="star filled" onclick="setStar(this,1,'rodrigo-s3',2)">★</span><span class="star filled" onclick="setStar(this,2,'rodrigo-s3',2)">★</span><span class="star filled" onclick="setStar(this,3,'rodrigo-s3',2)">★</span><span class="star " onclick="setStar(this,4,'rodrigo-s3',2)">★</span><span class="star " onclick="setStar(this,5,'rodrigo-s3',2)">★</span></div>
-              <div class="skill-note">Conseguiu apanhar ondas em condições mais fracas</div>
+              <div class="skill-note">Conseguiu apanhar ondas em condições mais fracas</div><div class="corrente-paddle">⚡ 1.4 kt S ✅</div>
             </div>
             <div class="skill-item">
               <div class="skill-name">↩️ Manobras</div>
@@ -684,7 +687,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
             <div class="sw-card"><div class="sw-lbl">Swell 1</div><div class="sw-val">2,2m · 12,1s</div><div class="sw-dir">↑ W/NW</div></div>
             <div class="sw-card s2"><div class="sw-lbl">Swell 2</div><div class="sw-val">1,0m · 8s</div><div class="sw-dir">↑ W</div></div>
           </div>
-          <div class="cond-grid"><div class="c-item"><div class="c-lbl">Altura ondas (Hs)</div><div class="c-val">2,6 m</div></div><div class="c-item"><div class="c-lbl">Wave Power</div><div class="c-val">45 kW/m</div></div><div class="c-item"><div class="c-lbl">Vento</div><div class="c-val">29 km/h · raj.46</div></div><div class="c-item"><div class="c-lbl">Água · Ar</div><div class="c-val">15°C · 13°C</div></div></div>
+          <div class="cond-grid"><div class="c-item"><div class="c-lbl">Altura ondas (Hs)</div><div class="c-val">2,6 m</div></div><div class="c-item"><div class="c-lbl">Wave Power</div><div class="c-val">45 kW/m</div></div><div class="c-item"><div class="c-lbl">Vento</div><div class="c-val">29 km/h · raj.46</div></div><div class="c-item"><div class="c-lbl">Água · Ar</div><div class="c-val">15°C · 13°C</div></div><div class="c-item"><div class="c-lbl">Corrente</div><div class="c-val">1.6 kt · S ✅</div></div></div>
           <div class="sea-src">📡 Windy ECMWF WAM · Ponta Delgada · 7 Abr 2026 09:00 | Marés: Windfinder</div>
         </div>
         <div class="session-skills">
@@ -703,7 +706,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
               </div><div class="skill-item">
                 <div class="skill-name">🚣 Paddle</div>
                 <div class="stars" data-sid="rodrigo-s0" data-skill="paddle"><span class="star filled" onclick="setStar(this,1,'rodrigo-s0',2)">★</span><span class="star filled" onclick="setStar(this,2,'rodrigo-s0',2)">★</span><span class="star filled" onclick="setStar(this,3,'rodrigo-s0',2)">★</span><span class="star filled" onclick="setStar(this,4,'rodrigo-s0',2)">★</span><span class="star " onclick="setStar(this,5,'rodrigo-s0',2)">★</span></div>
-                <div class="skill-note">Remou até à onda sem sentar</div>
+                <div class="skill-note">Remou até à onda sem sentar</div><div class="corrente-paddle">⚡ 1.6 kt S ✅</div>
               </div><div class="skill-item">
                 <div class="skill-name">↩️ Manobras</div>
                 <div class="stars" data-sid="rodrigo-s0" data-skill="manobras"><span class="star filled" onclick="setStar(this,1,'rodrigo-s0',3)">★</span><span class="star filled" onclick="setStar(this,2,'rodrigo-s0',3)">★</span><span class="star " onclick="setStar(this,3,'rodrigo-s0',3)">★</span><span class="star " onclick="setStar(this,4,'rodrigo-s0',3)">★</span><span class="star " onclick="setStar(this,5,'rodrigo-s0',3)">★</span></div>
@@ -741,7 +744,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
             <div class="sw-card"><div class="sw-lbl">Swell 1</div><div class="sw-val">0,8m · 12s</div><div class="sw-dir">↑ W</div></div>
             <div class="sw-card s2"><div class="sw-lbl">Swell 2</div><div class="sw-val">0,6m · 10s</div><div class="sw-dir">↑ S</div></div>
           </div>
-          <div class="cond-grid"><div class="c-item"><div class="c-lbl">Altura ondas (Hs)</div><div class="c-val">1,0 m</div></div><div class="c-item"><div class="c-lbl">Wave Power</div><div class="c-val">7 kW/m</div></div><div class="c-item"><div class="c-lbl">Vento</div><div class="c-val">3 km/h N · raj.10</div></div><div class="c-item"><div class="c-lbl">Água · Ar</div><div class="c-val">15°C · 13°C</div></div></div>
+          <div class="cond-grid"><div class="c-item"><div class="c-lbl">Altura ondas (Hs)</div><div class="c-val">1,0 m</div></div><div class="c-item"><div class="c-lbl">Wave Power</div><div class="c-val">7 kW/m</div></div><div class="c-item"><div class="c-lbl">Vento</div><div class="c-val">3 km/h N · raj.10</div></div><div class="c-item"><div class="c-lbl">Água · Ar</div><div class="c-val">15°C · 13°C</div></div><div class="c-item"><div class="c-lbl">Corrente</div><div class="c-val">0.4 kt · NE ✅</div></div></div>
           <div class="sea-src">📡 Windy ECMWF WAM · Ponta Delgada · 4 Abr 2026 09:00 | Marés: Windfinder</div>
         </div>
         <div class="session-skills">
@@ -760,7 +763,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
               </div><div class="skill-item">
                 <div class="skill-name">🚣 Paddle</div>
                 <div class="stars" data-sid="rodrigo-s1" data-skill="paddle"><span class="star filled" onclick="setStar(this,1,'rodrigo-s1',2)">★</span><span class="star filled" onclick="setStar(this,2,'rodrigo-s1',2)">★</span><span class="star filled" onclick="setStar(this,3,'rodrigo-s1',2)">★</span><span class="star " onclick="setStar(this,4,'rodrigo-s1',2)">★</span><span class="star " onclick="setStar(this,5,'rodrigo-s1',2)">★</span></div>
-                <div class="skill-note">Remada longa de sincronização</div>
+                <div class="skill-note">Remada longa de sincronização</div><div class="corrente-paddle">⚡ 0.4 kt NE ✅</div>
               </div><div class="skill-item">
                 <div class="skill-name">↩️ Manobras</div>
                 <div class="stars" data-sid="rodrigo-s1" data-skill="manobras"><span class="star filled" onclick="setStar(this,1,'rodrigo-s1',3)">★</span><span class="star filled" onclick="setStar(this,2,'rodrigo-s1',3)">★</span><span class="star " onclick="setStar(this,3,'rodrigo-s1',3)">★</span><span class="star " onclick="setStar(this,4,'rodrigo-s1',3)">★</span><span class="star " onclick="setStar(this,5,'rodrigo-s1',3)">★</span></div>
@@ -798,7 +801,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
             <div class="sw-card"><div class="sw-lbl">Swell 1</div><div class="sw-val">0,7m · 9,8s</div><div class="sw-dir">↑ W</div></div>
             <div class="sw-card s2"><div class="sw-lbl">Swell 2</div><div class="sw-val">0,5m · 7s</div><div class="sw-dir">↑ S</div></div>
           </div>
-          <div class="cond-grid"><div class="c-item"><div class="c-lbl">Altura ondas (Hs)</div><div class="c-val">0,9 m</div></div><div class="c-item"><div class="c-lbl">Wave Power</div><div class="c-val">4 kW/m</div></div><div class="c-item"><div class="c-lbl">Vento</div><div class="c-val">5 km/h W · raj.10</div></div><div class="c-item"><div class="c-lbl">Água · Ar</div><div class="c-val">15°C · 13°C</div></div></div>
+          <div class="cond-grid"><div class="c-item"><div class="c-lbl">Altura ondas (Hs)</div><div class="c-val">0,9 m</div></div><div class="c-item"><div class="c-lbl">Wave Power</div><div class="c-val">4 kW/m</div></div><div class="c-item"><div class="c-lbl">Vento</div><div class="c-val">5 km/h W · raj.10</div></div><div class="c-item"><div class="c-lbl">Água · Ar</div><div class="c-val">15°C · 13°C</div></div><div class="c-item"><div class="c-lbl">Corrente</div><div class="c-val">0.8 kt · NNW ✅</div></div></div>
           <div class="sea-src">📡 Windy ECMWF WAM · Ponta Delgada · 3 Abr 2026 09:00 | Marés: Windfinder</div>
         </div>
         <div class="session-skills">
@@ -817,7 +820,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
               </div><div class="skill-item">
                 <div class="skill-name">🚣 Paddle</div>
                 <div class="stars" data-sid="rodrigo-s2" data-skill="paddle"><span class="star filled" onclick="setStar(this,1,'rodrigo-s2',2)">★</span><span class="star filled" onclick="setStar(this,2,'rodrigo-s2',2)">★</span><span class="star filled" onclick="setStar(this,3,'rodrigo-s2',2)">★</span><span class="star filled" onclick="setStar(this,4,'rodrigo-s2',2)">★</span><span class="star " onclick="setStar(this,5,'rodrigo-s2',2)">★</span></div>
-                <div class="skill-note">Boa força e ritmo</div>
+                <div class="skill-note">Boa força e ritmo</div><div class="corrente-paddle">⚡ 0.8 kt NNW ✅</div>
               </div><div class="skill-item">
                 <div class="skill-name">↩️ Manobras</div>
                 <div class="stars" data-sid="rodrigo-s2" data-skill="manobras"><span class="star filled" onclick="setStar(this,1,'rodrigo-s2',3)">★</span><span class="star filled" onclick="setStar(this,2,'rodrigo-s2',3)">★</span><span class="star " onclick="setStar(this,3,'rodrigo-s2',3)">★</span><span class="star " onclick="setStar(this,4,'rodrigo-s2',3)">★</span><span class="star " onclick="setStar(this,5,'rodrigo-s2',3)">★</span></div>
@@ -1190,6 +1193,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
             <div class="c-item"><div class="c-lbl">Wave Power</div><div class="c-val">~3 kW/m ef.</div></div>
             <div class="c-item"><div class="c-lbl">Vento</div><div class="c-val">22 km/h · 17°C</div></div>
             <div class="c-item"><div class="c-lbl">Condições</div><div class="c-val">Fracas · só shorebreak</div></div>
+            <div class="c-item"><div class="c-lbl">Corrente</div><div class="c-val">0.9 kt · SSW ✅</div></div>
           </div>
           <div class="sea-src">📡 Windy ECMWF WAM · Ponta Delgada · 10 Abr 2026 15:52 | Marés: Surfguru (Ponta Delgada)</div>
         </div>
@@ -1212,7 +1216,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
             <div class="skill-item">
               <div class="skill-name">🚣 Paddle</div>
               <div class="stars" data-sid="tomas-s4" data-skill="paddle"><span class="star filled" onclick="setStar(this,1,'tomas-s4',2)">★</span><span class="star filled" onclick="setStar(this,2,'tomas-s4',2)">★</span><span class="star " onclick="setStar(this,3,'tomas-s4',2)">★</span><span class="star " onclick="setStar(this,4,'tomas-s4',2)">★</span><span class="star " onclick="setStar(this,5,'tomas-s4',2)">★</span></div>
-              <div class="skill-note">Shorebreak — paddling mínimo</div>
+              <div class="skill-note">Shorebreak — paddling mínimo</div><div class="corrente-paddle">⚡ 0.9 kt SSW ✅</div>
             </div>
             <div class="skill-item">
               <div class="skill-name">↩️ Manobras</div>
@@ -1267,6 +1271,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
             <div class="c-item"><div class="c-lbl">Wave Power</div><div class="c-val">17 kW/m</div></div>
             <div class="c-item"><div class="c-lbl">Vento</div><div class="c-val">31 km/h · raj.48</div></div>
             <div class="c-item"><div class="c-lbl">Água · Ar</div><div class="c-val">15°C · 15°C</div></div>
+            <div class="c-item"><div class="c-lbl">Corrente</div><div class="c-val">1.4 kt · S ✅</div></div>
           </div>
           <div class="sea-src">📡 Windy ECMWF WAM · Ponta Delgada · 8 Abr 2026 09:00 | Marés: Windfinder</div>
         </div>
@@ -1289,7 +1294,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
             <div class="skill-item">
               <div class="skill-name">🚣 Paddle</div>
               <div class="stars" data-sid="tomas-s3" data-skill="paddle"><span class="star filled" onclick="setStar(this,1,'tomas-s3',2)">★</span><span class="star filled" onclick="setStar(this,2,'tomas-s3',2)">★</span><span class="star filled" onclick="setStar(this,3,'tomas-s3',2)">★</span><span class="star " onclick="setStar(this,4,'tomas-s3',2)">★</span><span class="star " onclick="setStar(this,5,'tomas-s3',2)">★</span></div>
-              <div class="skill-note">Manteve remada da sessão anterior</div>
+              <div class="skill-note">Manteve remada da sessão anterior</div><div class="corrente-paddle">⚡ 1.4 kt S ✅</div>
             </div>
             <div class="skill-item">
               <div class="skill-name">↩️ Manobras</div>
@@ -1331,7 +1336,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
             <div class="sw-card"><div class="sw-lbl">Swell 1</div><div class="sw-val">2,2m · 12,1s</div><div class="sw-dir">↑ W/NW</div></div>
             <div class="sw-card s2"><div class="sw-lbl">Swell 2</div><div class="sw-val">1,0m · 8s</div><div class="sw-dir">↑ W</div></div>
           </div>
-          <div class="cond-grid"><div class="c-item"><div class="c-lbl">Altura ondas (Hs)</div><div class="c-val">2,6 m</div></div><div class="c-item"><div class="c-lbl">Wave Power</div><div class="c-val">45 kW/m</div></div><div class="c-item"><div class="c-lbl">Vento</div><div class="c-val">29 km/h · raj.46</div></div><div class="c-item"><div class="c-lbl">Água · Ar</div><div class="c-val">15°C · 13°C</div></div></div>
+          <div class="cond-grid"><div class="c-item"><div class="c-lbl">Altura ondas (Hs)</div><div class="c-val">2,6 m</div></div><div class="c-item"><div class="c-lbl">Wave Power</div><div class="c-val">45 kW/m</div></div><div class="c-item"><div class="c-lbl">Vento</div><div class="c-val">29 km/h · raj.46</div></div><div class="c-item"><div class="c-lbl">Água · Ar</div><div class="c-val">15°C · 13°C</div></div><div class="c-item"><div class="c-lbl">Corrente</div><div class="c-val">1.6 kt · S ✅</div></div></div>
           <div class="sea-src">📡 Windy ECMWF WAM · Ponta Delgada · 7 Abr 2026 09:00 | Marés: Windfinder</div>
         </div>
         <div class="session-skills">
@@ -1350,7 +1355,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
               </div><div class="skill-item">
                 <div class="skill-name">🚣 Paddle</div>
                 <div class="stars" data-sid="tomas-s0" data-skill="paddle"><span class="star filled" onclick="setStar(this,1,'tomas-s0',2)">★</span><span class="star filled" onclick="setStar(this,2,'tomas-s0',2)">★</span><span class="star filled" onclick="setStar(this,3,'tomas-s0',2)">★</span><span class="star " onclick="setStar(this,4,'tomas-s0',2)">★</span><span class="star " onclick="setStar(this,5,'tomas-s0',2)">★</span></div>
-                <div class="skill-note">Boa remada, com apoio do treinador</div>
+                <div class="skill-note">Boa remada, com apoio do treinador</div><div class="corrente-paddle">⚡ 1.6 kt S ✅</div>
               </div><div class="skill-item">
                 <div class="skill-name">↩️ Manobras</div>
                 <div class="stars" data-sid="tomas-s0" data-skill="manobras"><span class="star filled" onclick="setStar(this,1,'tomas-s0',3)">★</span><span class="star filled" onclick="setStar(this,2,'tomas-s0',3)">★</span><span class="star " onclick="setStar(this,3,'tomas-s0',3)">★</span><span class="star " onclick="setStar(this,4,'tomas-s0',3)">★</span><span class="star " onclick="setStar(this,5,'tomas-s0',3)">★</span></div>
@@ -1388,7 +1393,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
             <div class="sw-card"><div class="sw-lbl">Swell 1</div><div class="sw-val">0,8m · 12s</div><div class="sw-dir">↑ W</div></div>
             <div class="sw-card s2"><div class="sw-lbl">Swell 2</div><div class="sw-val">0,6m · 10s</div><div class="sw-dir">↑ S</div></div>
           </div>
-          <div class="cond-grid"><div class="c-item"><div class="c-lbl">Altura ondas (Hs)</div><div class="c-val">1,0 m</div></div><div class="c-item"><div class="c-lbl">Wave Power</div><div class="c-val">7 kW/m</div></div><div class="c-item"><div class="c-lbl">Vento</div><div class="c-val">3 km/h N · raj.10</div></div><div class="c-item"><div class="c-lbl">Água · Ar</div><div class="c-val">15°C · 13°C</div></div></div>
+          <div class="cond-grid"><div class="c-item"><div class="c-lbl">Altura ondas (Hs)</div><div class="c-val">1,0 m</div></div><div class="c-item"><div class="c-lbl">Wave Power</div><div class="c-val">7 kW/m</div></div><div class="c-item"><div class="c-lbl">Vento</div><div class="c-val">3 km/h N · raj.10</div></div><div class="c-item"><div class="c-lbl">Água · Ar</div><div class="c-val">15°C · 13°C</div></div><div class="c-item"><div class="c-lbl">Corrente</div><div class="c-val">0.4 kt · NE ✅</div></div></div>
           <div class="sea-src">📡 Windy ECMWF WAM · Ponta Delgada · 4 Abr 2026 09:00 | Marés: Windfinder</div>
         </div>
         <div class="session-skills">
@@ -1407,7 +1412,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
               </div><div class="skill-item">
                 <div class="skill-name">🚣 Paddle</div>
                 <div class="stars" data-sid="tomas-s1" data-skill="paddle"><span class="star filled" onclick="setStar(this,1,'tomas-s1',2)">★</span><span class="star filled" onclick="setStar(this,2,'tomas-s1',2)">★</span><span class="star " onclick="setStar(this,3,'tomas-s1',2)">★</span><span class="star " onclick="setStar(this,4,'tomas-s1',2)">★</span><span class="star " onclick="setStar(this,5,'tomas-s1',2)">★</span></div>
-                <div class="skill-note">A desenvolver autonomia</div>
+                <div class="skill-note">A desenvolver autonomia</div><div class="corrente-paddle">⚡ 0.4 kt NE ✅</div>
               </div><div class="skill-item">
                 <div class="skill-name">↩️ Manobras</div>
                 <div class="stars" data-sid="tomas-s1" data-skill="manobras"><span class="star filled" onclick="setStar(this,1,'tomas-s1',3)">★</span><span class="star " onclick="setStar(this,2,'tomas-s1',3)">★</span><span class="star " onclick="setStar(this,3,'tomas-s1',3)">★</span><span class="star " onclick="setStar(this,4,'tomas-s1',3)">★</span><span class="star " onclick="setStar(this,5,'tomas-s1',3)">★</span></div>
@@ -1445,7 +1450,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
             <div class="sw-card"><div class="sw-lbl">Swell 1</div><div class="sw-val">0,7m · 9,8s</div><div class="sw-dir">↑ W</div></div>
             <div class="sw-card s2"><div class="sw-lbl">Swell 2</div><div class="sw-val">0,5m · 7s</div><div class="sw-dir">↑ S</div></div>
           </div>
-          <div class="cond-grid"><div class="c-item"><div class="c-lbl">Altura ondas (Hs)</div><div class="c-val">0,9 m</div></div><div class="c-item"><div class="c-lbl">Wave Power</div><div class="c-val">4 kW/m</div></div><div class="c-item"><div class="c-lbl">Vento</div><div class="c-val">5 km/h W · raj.10</div></div><div class="c-item"><div class="c-lbl">Água · Ar</div><div class="c-val">15°C · 13°C</div></div></div>
+          <div class="cond-grid"><div class="c-item"><div class="c-lbl">Altura ondas (Hs)</div><div class="c-val">0,9 m</div></div><div class="c-item"><div class="c-lbl">Wave Power</div><div class="c-val">4 kW/m</div></div><div class="c-item"><div class="c-lbl">Vento</div><div class="c-val">5 km/h W · raj.10</div></div><div class="c-item"><div class="c-lbl">Água · Ar</div><div class="c-val">15°C · 13°C</div></div><div class="c-item"><div class="c-lbl">Corrente</div><div class="c-val">0.8 kt · NNW ✅</div></div></div>
           <div class="sea-src">📡 Windy ECMWF WAM · Ponta Delgada · 3 Abr 2026 09:00 | Marés: Windfinder</div>
         </div>
         <div class="session-skills">
@@ -1464,7 +1469,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
               </div><div class="skill-item">
                 <div class="skill-name">🚣 Paddle</div>
                 <div class="stars" data-sid="tomas-s2" data-skill="paddle"><span class="star filled" onclick="setStar(this,1,'tomas-s2',2)">★</span><span class="star filled" onclick="setStar(this,2,'tomas-s2',2)">★</span><span class="star " onclick="setStar(this,3,'tomas-s2',2)">★</span><span class="star " onclick="setStar(this,4,'tomas-s2',2)">★</span><span class="star " onclick="setStar(this,5,'tomas-s2',2)">★</span></div>
-                <div class="skill-note">A desenvolver autonomia</div>
+                <div class="skill-note">A desenvolver autonomia</div><div class="corrente-paddle">⚡ 0.8 kt NNW ✅</div>
               </div><div class="skill-item">
                 <div class="skill-name">↩️ Manobras</div>
                 <div class="stars" data-sid="tomas-s2" data-skill="manobras"><span class="star filled" onclick="setStar(this,1,'tomas-s2',3)">★</span><span class="star " onclick="setStar(this,2,'tomas-s2',3)">★</span><span class="star " onclick="setStar(this,3,'tomas-s2',3)">★</span><span class="star " onclick="setStar(this,4,'tomas-s2',3)">★</span><span class="star " onclick="setStar(this,5,'tomas-s2',3)">★</span></div>
