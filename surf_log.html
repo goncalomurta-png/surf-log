@@ -451,6 +451,9 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
 .matrix-cond { font-size:0.78rem; font-weight:500; color:var(--ink); padding:7px 8px 7px 0; line-height:1.3; }
 .matrix-cell { text-align:center; font-size:1.15rem; padding:6px 4px; width:72px; }
 .compass-legend { display:flex; gap:12px; justify-content:center; font-size:0.62rem; color:var(--grey); padding:6px 0 2px; }
+.spot-hazard { background:#fff3cd; border:1px solid #f0b429; border-radius:8px; padding:8px 14px; margin:0 auto 10px; max-width:760px; font-size:0.78rem; color:#7a5800; line-height:1.5; }
+.spot-hazard strong { display:block; font-family:'Barlow Condensed',sans-serif; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:2px; }
+.spot-badge { display:inline-block; background:#e74c3c; color:white; font-family:'Barlow Condensed',sans-serif; font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; border-radius:4px; padding:2px 7px; margin-bottom:8px; }
 .legend-item { display:flex; align-items:center; gap:4px; }
 .legend-dot { width:10px; height:10px; border-radius:50%; }
 </style>
@@ -1941,6 +1944,8 @@ function showSpot(id) {
   <div class="spot-select-wrap">
     <select class="spot-select" onchange="showSpot(this.value)">
       <option value="milicias">📍 Milícias · Ponta Delgada · Costa Sul</option>
+      <option value="santabarbara">📍 Santa Bárbara · Ribeira Grande · Costa Norte</option>
+      <option value="monteverde">📍 Monteverde · Nordeste · Costa Norte</option>
     </select>
   </div>
   <!-- SPOT: MILÍCIAS -->
@@ -2043,6 +2048,212 @@ function showSpot(id) {
         </table>
       </div>
     </div>
+
+  <!-- SPOT: SANTA BÁRBARA -->
+  <div id="spot-santabarbara" class="spot-section">
+    <div class="spot-hazard" style="padding:10px 14px;margin:12px auto 6px;">
+      <span class="spot-badge">⚠ Só nível avançado</span>
+      <div>⚠ Corrente forte — risco de deriva</div>
+      <div>⚠ Bancadas: condição variável — verificar no dia (independente do nível)</div>
+    </div>
+    <div class="sec-label" style="max-width:760px;margin:8px auto 0;padding:0 20px">Janela de surf · Direcções</div>
+    <div class="compass-grid">
+      <div class="compass-card">
+        <div class="compass-title">🌊 Swell</div>
+        <svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:150px;display:block;margin:0 auto">
+          <!-- N: green --><path d="M80,80 L56.3,22.7 A62,62 0 0,1 103.7,22.7 Z" fill="rgba(39,174,96,0.84)" stroke="white" stroke-width="1.2"/>
+            <!-- NE: green --><path d="M80,80 L103.7,22.7 A62,62 0 0,1 137.3,56.3 Z" fill="rgba(39,174,96,0.84)" stroke="white" stroke-width="1.2"/>
+            <!-- E: yellow --><path d="M80,80 L137.3,56.3 A62,62 0 0,1 137.3,103.7 Z" fill="rgba(243,156,18,0.84)" stroke="white" stroke-width="1.2"/>
+            <!-- SE: red --><path d="M80,80 L137.3,103.7 A62,62 0 0,1 103.7,137.3 Z" fill="rgba(231,76,60,0.84)" stroke="white" stroke-width="1.2"/>
+            <!-- S: red --><path d="M80,80 L103.7,137.3 A62,62 0 0,1 56.3,137.3 Z" fill="rgba(231,76,60,0.84)" stroke="white" stroke-width="1.2"/>
+            <!-- SW: red --><path d="M80,80 L56.3,137.3 A62,62 0 0,1 22.7,103.7 Z" fill="rgba(231,76,60,0.84)" stroke="white" stroke-width="1.2"/>
+            <!-- W: yellow --><path d="M80,80 L22.7,103.7 A62,62 0 0,1 22.7,56.3 Z" fill="rgba(243,156,18,0.84)" stroke="white" stroke-width="1.2"/>
+            <!-- NW: green --><path d="M80,80 L22.7,56.3 A62,62 0 0,1 56.3,22.7 Z" fill="rgba(39,174,96,0.84)" stroke="white" stroke-width="1.2"/>
+          <text x="80" y="12" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="10" font-weight="700" fill="#555">N</text>
+            <text x="148" y="84" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="10" font-weight="700" fill="#555">E</text>
+            <text x="80" y="156" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="10" font-weight="700" fill="#555">S</text>
+            <text x="12" y="84" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="10" font-weight="700" fill="#555">W</text>
+            <circle cx="80" cy="80" r="8" fill="white" stroke="#ccc" stroke-width="1"/>
+        </svg>
+        <div class="compass-legend">
+          <span class="legend-item"><span class="legend-dot" style="background:rgba(39,174,96,0.84)"></span>N/NE/NW</span>
+          <span class="legend-item"><span class="legend-dot" style="background:rgba(243,156,18,0.84)"></span>E/W</span>
+          <span class="legend-item"><span class="legend-dot" style="background:rgba(231,76,60,0.84)"></span>S/SE/SW</span>
+        </div>
+      </div>
+      <div class="compass-card">
+        <div class="compass-title">💨 Vento</div>
+        <svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:150px;display:block;margin:0 auto">
+          <!-- N: red (onshore) --><path d="M80,80 L56.3,22.7 A62,62 0 0,1 103.7,22.7 Z" fill="rgba(231,76,60,0.84)" stroke="white" stroke-width="1.2"/>
+            <!-- NE: red --><path d="M80,80 L103.7,22.7 A62,62 0 0,1 137.3,56.3 Z" fill="rgba(231,76,60,0.84)" stroke="white" stroke-width="1.2"/>
+            <!-- E: yellow --><path d="M80,80 L137.3,56.3 A62,62 0 0,1 137.3,103.7 Z" fill="rgba(243,156,18,0.84)" stroke="white" stroke-width="1.2"/>
+            <!-- SE: green (offshore) --><path d="M80,80 L137.3,103.7 A62,62 0 0,1 103.7,137.3 Z" fill="rgba(39,174,96,0.84)" stroke="white" stroke-width="1.2"/>
+            <!-- S: green (offshore) --><path d="M80,80 L103.7,137.3 A62,62 0 0,1 56.3,137.3 Z" fill="rgba(39,174,96,0.84)" stroke="white" stroke-width="1.2"/>
+            <!-- SW: yellow --><path d="M80,80 L56.3,137.3 A62,62 0 0,1 22.7,103.7 Z" fill="rgba(243,156,18,0.84)" stroke="white" stroke-width="1.2"/>
+            <!-- W: yellow --><path d="M80,80 L22.7,103.7 A62,62 0 0,1 22.7,56.3 Z" fill="rgba(243,156,18,0.84)" stroke="white" stroke-width="1.2"/>
+            <!-- NW: red --><path d="M80,80 L22.7,56.3 A62,62 0 0,1 56.3,22.7 Z" fill="rgba(231,76,60,0.84)" stroke="white" stroke-width="1.2"/>
+          <text x="80" y="12" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="10" font-weight="700" fill="#555">N</text>
+            <text x="148" y="84" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="10" font-weight="700" fill="#555">E</text>
+            <text x="80" y="156" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="10" font-weight="700" fill="#555">S</text>
+            <text x="12" y="84" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="10" font-weight="700" fill="#555">W</text>
+            <circle cx="80" cy="80" r="8" fill="white" stroke="#ccc" stroke-width="1"/>
+        </svg>
+        <div class="compass-legend">
+          <span class="legend-item"><span class="legend-dot" style="background:rgba(39,174,96,0.84)"></span>S/SE offshore</span>
+          <span class="legend-item"><span class="legend-dot" style="background:rgba(243,156,18,0.84)"></span>E/W/SW</span>
+          <span class="legend-item"><span class="legend-dot" style="background:rgba(231,76,60,0.84)"></span>N/NE/NW onshore</span>
+        </div>
+      </div>
+    </div>
+    <div class="surf-matrix">
+      <div class="sec-label" style="margin-top:14px">Quem pode surfar</div>
+      <div class="matrix-card"><table class="matrix-table">
+          <thead>
+            <tr>
+              <th style="text-align:left;color:var(--grey);font-family:'Barlow Condensed',sans-serif;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;padding-bottom:10px;">Wave Power</th>
+              <th class="matrix-th-r">🏄 Rodrigo</th>
+              <th class="matrix-th-t">🏄 Tomás</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="matrix-cond">&lt; 4 kW/m · Fracas</td><td class="matrix-cell">⚠️</td><td class="matrix-cell">⚠️</td></tr>
+            <tr><td class="matrix-cond">4–7 kW/m · Aceitáveis</td><td class="matrix-cell">✅</td><td class="matrix-cell">✅</td></tr>
+            <tr><td class="matrix-cond">7–18 kW/m · Ideais</td><td class="matrix-cell">✅</td><td class="matrix-cell">✅</td></tr>
+            <tr><td class="matrix-cond">18–35 kW/m · Exigentes</td><td class="matrix-cell">✅</td><td class="matrix-cell">⚠️</td></tr>
+            <tr><td class="matrix-cond">&gt; 35 kW/m · Muito exig.</td><td class="matrix-cell">⚠️</td><td class="matrix-cell">❌</td></tr>
+          </tbody>
+        </table></div>
+      <div class="matrix-card"><table class="matrix-table">
+          <thead>
+            <tr>
+              <th style="text-align:left;color:var(--grey);font-family:'Barlow Condensed',sans-serif;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;padding-bottom:10px;">Swell · Direcção</th>
+              <th class="matrix-th-r">🏄 Rodrigo</th>
+              <th class="matrix-th-t">🏄 Tomás</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="matrix-cond">N / NE / NW · Ideal</td><td class="matrix-cell">✅</td><td class="matrix-cell">✅</td></tr>
+            <tr><td class="matrix-cond">E / W · Marginal</td><td class="matrix-cell">⚠️</td><td class="matrix-cell">⚠️</td></tr>
+            <tr><td class="matrix-cond">S / SE / SW · Bloqueado</td><td class="matrix-cell">❌</td><td class="matrix-cell">❌</td></tr>
+          </tbody>
+        </table></div>
+      <div class="matrix-card"><table class="matrix-table">
+          <thead>
+            <tr>
+              <th style="text-align:left;color:var(--grey);font-family:'Barlow Condensed',sans-serif;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;padding-bottom:10px;">Corrente forte · mín. ★4</th>
+              <th class="matrix-th-r">🏄 Rodrigo</th>
+              <th class="matrix-th-t">🏄 Tomás</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="matrix-cond">Paddle <small style="color:var(--grey)">(actual: R 3.3 · T 2.8)</small></td><td class="matrix-cell">❌</td><td class="matrix-cell">❌</td></tr>
+            <tr><td class="matrix-cond">Posicionamento <small style="color:var(--grey)">(actual: R 2.7 · T 2.0)</small></td><td class="matrix-cell">❌</td><td class="matrix-cell">❌</td></tr>
+          </tbody>
+        </table></div>
+    </div>
+  </div>
+<!-- SPOT: MONTEVERDE -->
+  <div id="spot-monteverde" class="spot-section">
+    <div class="spot-hazard" style="padding:10px 14px;margin:12px auto 6px;">
+      <span class="spot-badge">⚠ Só nível avançado</span>
+      <div>⚠ Corrente forte — risco de deriva</div>
+    </div>
+    <div class="sec-label" style="max-width:760px;margin:8px auto 0;padding:0 20px">Janela de surf · Direcções</div>
+    <div class="compass-grid">
+      <div class="compass-card">
+        <div class="compass-title">🌊 Swell</div>
+        <svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:150px;display:block;margin:0 auto">
+          <!-- N: green --><path d="M80,80 L56.3,22.7 A62,62 0 0,1 103.7,22.7 Z" fill="rgba(39,174,96,0.84)" stroke="white" stroke-width="1.2"/>
+            <!-- NE: green --><path d="M80,80 L103.7,22.7 A62,62 0 0,1 137.3,56.3 Z" fill="rgba(39,174,96,0.84)" stroke="white" stroke-width="1.2"/>
+            <!-- E: yellow --><path d="M80,80 L137.3,56.3 A62,62 0 0,1 137.3,103.7 Z" fill="rgba(243,156,18,0.84)" stroke="white" stroke-width="1.2"/>
+            <!-- SE: red --><path d="M80,80 L137.3,103.7 A62,62 0 0,1 103.7,137.3 Z" fill="rgba(231,76,60,0.84)" stroke="white" stroke-width="1.2"/>
+            <!-- S: red --><path d="M80,80 L103.7,137.3 A62,62 0 0,1 56.3,137.3 Z" fill="rgba(231,76,60,0.84)" stroke="white" stroke-width="1.2"/>
+            <!-- SW: red --><path d="M80,80 L56.3,137.3 A62,62 0 0,1 22.7,103.7 Z" fill="rgba(231,76,60,0.84)" stroke="white" stroke-width="1.2"/>
+            <!-- W: yellow --><path d="M80,80 L22.7,103.7 A62,62 0 0,1 22.7,56.3 Z" fill="rgba(243,156,18,0.84)" stroke="white" stroke-width="1.2"/>
+            <!-- NW: green --><path d="M80,80 L22.7,56.3 A62,62 0 0,1 56.3,22.7 Z" fill="rgba(39,174,96,0.84)" stroke="white" stroke-width="1.2"/>
+          <text x="80" y="12" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="10" font-weight="700" fill="#555">N</text>
+            <text x="148" y="84" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="10" font-weight="700" fill="#555">E</text>
+            <text x="80" y="156" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="10" font-weight="700" fill="#555">S</text>
+            <text x="12" y="84" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="10" font-weight="700" fill="#555">W</text>
+            <circle cx="80" cy="80" r="8" fill="white" stroke="#ccc" stroke-width="1"/>
+        </svg>
+        <div class="compass-legend">
+          <span class="legend-item"><span class="legend-dot" style="background:rgba(39,174,96,0.84)"></span>N/NE/NW</span>
+          <span class="legend-item"><span class="legend-dot" style="background:rgba(243,156,18,0.84)"></span>E/W</span>
+          <span class="legend-item"><span class="legend-dot" style="background:rgba(231,76,60,0.84)"></span>S/SE/SW</span>
+        </div>
+      </div>
+      <div class="compass-card">
+        <div class="compass-title">💨 Vento</div>
+        <svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:150px;display:block;margin:0 auto">
+          <!-- N: red (onshore) --><path d="M80,80 L56.3,22.7 A62,62 0 0,1 103.7,22.7 Z" fill="rgba(231,76,60,0.84)" stroke="white" stroke-width="1.2"/>
+            <!-- NE: red --><path d="M80,80 L103.7,22.7 A62,62 0 0,1 137.3,56.3 Z" fill="rgba(231,76,60,0.84)" stroke="white" stroke-width="1.2"/>
+            <!-- E: yellow --><path d="M80,80 L137.3,56.3 A62,62 0 0,1 137.3,103.7 Z" fill="rgba(243,156,18,0.84)" stroke="white" stroke-width="1.2"/>
+            <!-- SE: green (offshore) --><path d="M80,80 L137.3,103.7 A62,62 0 0,1 103.7,137.3 Z" fill="rgba(39,174,96,0.84)" stroke="white" stroke-width="1.2"/>
+            <!-- S: green (offshore) --><path d="M80,80 L103.7,137.3 A62,62 0 0,1 56.3,137.3 Z" fill="rgba(39,174,96,0.84)" stroke="white" stroke-width="1.2"/>
+            <!-- SW: yellow --><path d="M80,80 L56.3,137.3 A62,62 0 0,1 22.7,103.7 Z" fill="rgba(243,156,18,0.84)" stroke="white" stroke-width="1.2"/>
+            <!-- W: yellow --><path d="M80,80 L22.7,103.7 A62,62 0 0,1 22.7,56.3 Z" fill="rgba(243,156,18,0.84)" stroke="white" stroke-width="1.2"/>
+            <!-- NW: red --><path d="M80,80 L22.7,56.3 A62,62 0 0,1 56.3,22.7 Z" fill="rgba(231,76,60,0.84)" stroke="white" stroke-width="1.2"/>
+          <text x="80" y="12" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="10" font-weight="700" fill="#555">N</text>
+            <text x="148" y="84" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="10" font-weight="700" fill="#555">E</text>
+            <text x="80" y="156" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="10" font-weight="700" fill="#555">S</text>
+            <text x="12" y="84" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="10" font-weight="700" fill="#555">W</text>
+            <circle cx="80" cy="80" r="8" fill="white" stroke="#ccc" stroke-width="1"/>
+        </svg>
+        <div class="compass-legend">
+          <span class="legend-item"><span class="legend-dot" style="background:rgba(39,174,96,0.84)"></span>S/SE offshore</span>
+          <span class="legend-item"><span class="legend-dot" style="background:rgba(243,156,18,0.84)"></span>E/W/SW</span>
+          <span class="legend-item"><span class="legend-dot" style="background:rgba(231,76,60,0.84)"></span>N/NE/NW onshore</span>
+        </div>
+      </div>
+    </div>
+    <div class="surf-matrix">
+      <div class="sec-label" style="margin-top:14px">Quem pode surfar</div>
+      <div class="matrix-card"><table class="matrix-table">
+          <thead>
+            <tr>
+              <th style="text-align:left;color:var(--grey);font-family:'Barlow Condensed',sans-serif;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;padding-bottom:10px;">Wave Power</th>
+              <th class="matrix-th-r">🏄 Rodrigo</th>
+              <th class="matrix-th-t">🏄 Tomás</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="matrix-cond">&lt; 4 kW/m · Fracas</td><td class="matrix-cell">⚠️</td><td class="matrix-cell">⚠️</td></tr>
+            <tr><td class="matrix-cond">4–7 kW/m · Aceitáveis</td><td class="matrix-cell">✅</td><td class="matrix-cell">✅</td></tr>
+            <tr><td class="matrix-cond">7–18 kW/m · Ideais</td><td class="matrix-cell">✅</td><td class="matrix-cell">✅</td></tr>
+            <tr><td class="matrix-cond">18–35 kW/m · Exigentes</td><td class="matrix-cell">✅</td><td class="matrix-cell">⚠️</td></tr>
+            <tr><td class="matrix-cond">&gt; 35 kW/m · Muito exig.</td><td class="matrix-cell">⚠️</td><td class="matrix-cell">❌</td></tr>
+          </tbody>
+        </table></div>
+      <div class="matrix-card"><table class="matrix-table">
+          <thead>
+            <tr>
+              <th style="text-align:left;color:var(--grey);font-family:'Barlow Condensed',sans-serif;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;padding-bottom:10px;">Swell · Direcção</th>
+              <th class="matrix-th-r">🏄 Rodrigo</th>
+              <th class="matrix-th-t">🏄 Tomás</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="matrix-cond">N / NE / NW · Ideal</td><td class="matrix-cell">✅</td><td class="matrix-cell">✅</td></tr>
+            <tr><td class="matrix-cond">E / W · Marginal</td><td class="matrix-cell">⚠️</td><td class="matrix-cell">⚠️</td></tr>
+            <tr><td class="matrix-cond">S / SE / SW · Bloqueado</td><td class="matrix-cell">❌</td><td class="matrix-cell">❌</td></tr>
+          </tbody>
+        </table></div>
+      <div class="matrix-card"><table class="matrix-table">
+          <thead>
+            <tr>
+              <th style="text-align:left;color:var(--grey);font-family:'Barlow Condensed',sans-serif;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;padding-bottom:10px;">Corrente forte · mín. ★4</th>
+              <th class="matrix-th-r">🏄 Rodrigo</th>
+              <th class="matrix-th-t">🏄 Tomás</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="matrix-cond">Paddle <small style="color:var(--grey)">(actual: R 3.3 · T 2.8)</small></td><td class="matrix-cell">❌</td><td class="matrix-cell">❌</td></tr>
+            <tr><td class="matrix-cond">Posicionamento <small style="color:var(--grey)">(actual: R 2.7 · T 2.0)</small></td><td class="matrix-cell">❌</td><td class="matrix-cell">❌</td></tr>
+          </tbody>
+        </table></div>
+    </div>
+  </div>
     <div class="footer" style="max-width:760px;margin:0 auto">
       <svg width="18" height="18" viewBox="0 0 46 46" fill="none"><circle cx="23" cy="23" r="22" fill="#2c2c2c"/><path d="M8 12 L15 32 L23 18 L31 32 L38 12" stroke="white" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       <a href="https://www.azoreswatergliders.com" target="_blank">azoreswatergliders.com</a>
