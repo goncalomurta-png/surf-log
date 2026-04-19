@@ -1,5 +1,6 @@
 *.log
 *.rtf
+*.bak
 data/
 sessions/
 CLAUDE.md

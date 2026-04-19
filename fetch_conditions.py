@@ -241,6 +241,9 @@ Mare alta  : {c['mare_alta_hora']} (est.)
 Amplitude  : {amp_str} (est.)
 Corrente   : {curr_nos} kt  {c.get('corrente_dir','?')}  [{c.get('corrente_cls','?')}]
   Rodrigo  : {c.get('corrente_r','?')}   Tomas: {c.get('corrente_t','?')}
+--------------------------------------------
+⚠ Marés: modelo harmónico M2 ±20% — erro de timing até ~5h possível.
+  Confirmar sempre em hidrografico.pt antes de planeamento definitivo.
 --------------------------------------------""")
 
 if __name__ == '__main__':

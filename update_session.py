@@ -460,6 +460,61 @@ def update_quiver(html, sd_list):
     return html[:q_start] + qpage + html[q_end:]
 
 
+# ── Validação de dados ────────────────────────────────────────────────────────
+
+def validate_session_data(sd, surfer):
+    """Valida o JSON de um surfista antes de processar. Devolve True se OK."""
+    ok = True
+    nome = sd.get('surfer', surfer)
+
+    if not sd.get('sessoes'):
+        print(f"  ✗ [{nome}] 'sessoes' vazio ou ausente")
+        return False
+
+    nova = sd['sessoes'][0]
+
+    # Campos obrigatórios na nova sessão
+    required = ['html_id', 'data', 'wp_ef', 'classe', 'rec', 'peso']
+    missing = [f for f in required if f not in nova]
+    if missing:
+        print(f"  ✗ [{nome}] Campos em falta em sessoes[0]: {missing}")
+        ok = False
+
+    # Precisa de skills ou skills_hist
+    if 'skills' not in nova and 'skills_hist' not in nova:
+        print(f"  ✗ [{nome}] sessoes[0] não tem 'skills' nem 'skills_hist'")
+        ok = False
+
+    # Validar todas as sessões
+    for i, s in enumerate(sd['sessoes']):
+        sid = s.get('html_id', f'sessao[{i}]')
+        hist = get_skills_hist(s) if ('skills' in s or 'skills_hist' in s) else None
+        if hist is None:
+            print(f"  ⚠ [{nome}] {sid}: sem skills_hist nem skills")
+        elif len(hist) != 6:
+            print(f"  ✗ [{nome}] {sid}: skills_hist tem {len(hist)} elementos (esperado 6)")
+            ok = False
+        elif not all(1 <= v <= 5 for v in hist):
+            print(f"  ✗ [{nome}] {sid}: skills fora do intervalo 1–5: {hist}")
+            ok = False
+
+    # Validar insert_before_id aponta para sessão existente
+    insert_id = sd.get('html', {}).get('insert_before_id')
+    ids_json = [s.get('html_id') for s in sd['sessoes']]
+    if insert_id and insert_id not in ids_json:
+        print(f"  ✗ [{nome}] insert_before_id '{insert_id}' não existe em sessoes[]")
+        ok = False
+
+    # Validar progressão presente
+    if 'progressao' not in sd:
+        print(f"  ✗ [{nome}] 'progressao' ausente no JSON")
+        ok = False
+
+    if ok:
+        print(f"  ✓ [{nome}] Dados validados ({len(sd['sessoes'])} sessões)")
+    return ok
+
+
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def main():
@@ -482,20 +537,35 @@ def main():
     print(f"Backup: {bak.name}")
 
     sd_list = []
+    errors = False
     for surfer in surfers:
         json_path = BASE / f"data/{surfer}.json"
         if not json_path.exists():
             print(f"Ficheiro não encontrado: {json_path}")
             sys.exit(1)
-        sd = json.loads(json_path.read_text(encoding='utf-8'))
+        try:
+            sd = json.loads(json_path.read_text(encoding='utf-8'))
+        except json.JSONDecodeError as e:
+            print(f"  ✗ JSON inválido em {json_path.name}: {e}")
+            sys.exit(1)
         sd_list.append(sd)
 
-        nova     = sd['sessoes'][0]
-        required = ['html_id', 'data', 'wp_ef', 'classe', 'rec', 'peso', 'skills']
-        missing  = [f for f in required if f not in nova]
-        if missing:
-            print(f"  ⚠ Campos em falta em {surfer} sessoes[0]: {missing}")
+        if not validate_session_data(sd, surfer):
+            errors = True
 
+    if errors:
+        print("\n✗ Erros de validação — corrigir JSON antes de continuar.")
+        sys.exit(1)
+
+    for sd in sd_list:
+        surfer = sd['surfer'].lower()
+        nova = sd['sessoes'][0]
+        insert_id = sd['html']['insert_before_id']
+        if nova['html_id'] == insert_id:
+            print(f"\n  ⚠ [{sd['surfer']}] sessoes[0].html_id == insert_before_id ('{insert_id}')")
+            print(f"     O script só deve ser executado para inserir uma NOVA sessão.")
+            print(f"     Actualiza sessions/{surfer}.md e o JSON com a nova sessão primeiro.")
+            sys.exit(1)
         html = update_surfer(html, surfer, sd)
 
     html = update_quiver(html, sd_list)
