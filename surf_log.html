@@ -461,6 +461,26 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
 .legend-dot { width:10px; height:10px; border-radius:50%; }
 
 /* ═══════════════════════════════════════
+     ZONA — COR DAS ESTRELAS E NIVEL BADGE
+════════════════════════════════════════ */
+.session-card[data-zona="espuma"]  .star.filled { color: #5dade2; }
+.session-card[data-zona="inside"]  .star.filled { color: #1e8449; }
+.session-card[data-zona="outside"] .star.filled { color: #d4a017; }
+.session-card[data-zona="largo"]   .star.filled { color: #e67e22; }
+.skill-null { font-size: 1rem; color: var(--grey); padding: 2px 0; display: flex; align-items: center; gap: 5px; }
+.skill-null span { font-size: 0.72rem; font-style: italic; }
+.nivel-badge {
+  display: inline-flex; align-items: center;
+  border-radius: 20px; padding: 2px 9px;
+  font-family: 'Barlow Condensed', sans-serif; font-size: 0.68rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.07em;
+}
+.nb-espuma  { background: rgba(93,173,226,0.15);  color: #2471a3; }
+.nb-inside  { background: rgba(30,132,73,0.13);   color: #1e8449; }
+.nb-outside { background: rgba(212,160,23,0.15);  color: #9a7400; }
+.nb-largo   { background: rgba(230,126,34,0.15);  color: #ba6010; }
+
+/* ═══════════════════════════════════════
      GUIDE PAGE
 ════════════════════════════════════════ */
 .nav-logo { cursor: pointer; transition: opacity 0.2s; }
@@ -630,7 +650,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
   </div>
     <div class="sec-label">Sessões registadas</div>
     <!-- Sessão 18 Abr 26 — Rodrigo S6 -->
-    <div class="session-card energy-media" id="rodrigo-s5" onclick="toggleSession(this)">
+    <div class="session-card energy-media" id="rodrigo-s5" data-zona="outside" onclick="toggleSession(this)">
       <div class="session-summary">
         <div class="s-date"><div class="s-day">18</div><div class="s-month">Abr 26</div></div>
         <div class="s-main">
@@ -672,7 +692,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
           <div class="ss-header">
             <span class="ss-title">Avaliação desta sessão</span>
             <span class="ss-weight">🌊 Aceitáveis · ~4.5 kW/m ef. &nbsp;·&nbsp; ×1.0 &nbsp;·&nbsp; Peso <strong>0.65</strong></span>
-          </div>
+          <span class="nivel-badge nb-outside">Técnico Outside</span></div>
           <div class="skill-grid">
             <div class="skill-item">
               <div class="skill-name">🌊 Leitura de onda</div>
@@ -691,7 +711,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
             </div>
             <div class="skill-item">
               <div class="skill-name">↩️ Manobras</div>
-              <div class="stars" data-sid="rodrigo-s5" data-skill="manobras"><span class="star filled" onclick="setStar(this,1,'rodrigo-s5',3)">★</span><span class="star filled" onclick="setStar(this,2,'rodrigo-s5',3)">★</span><span class="star " onclick="setStar(this,3,'rodrigo-s5',3)">★</span><span class="star " onclick="setStar(this,4,'rodrigo-s5',3)">★</span><span class="star " onclick="setStar(this,5,'rodrigo-s5',3)">★</span></div>
+              <div class="skill-null">🚫 <span>Não observável</span></div>
               <div class="skill-note">Sem dados específicos de manobras — foco no take-off e descida</div>
             </div>
             <div class="skill-item">
@@ -710,7 +730,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
     </div>
 
     <!-- Sessão 10 Abr 26 — Rodrigo S5 -->
-    <div class="session-card energy-fraca" id="rodrigo-s4" onclick="toggleSession(this)">
+    <div class="session-card energy-fraca" id="rodrigo-s4" data-zona="inside" onclick="toggleSession(this)">
       <div class="session-summary">
         <div class="s-date"><div class="s-day">10</div><div class="s-month">Abr 26</div></div>
         <div class="s-main">
@@ -751,11 +771,11 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
           <div class="ss-header">
             <span class="ss-title">Avaliação desta sessão</span>
             <span class="ss-weight">🌊 Fracas · ~3 kW/m ef. &nbsp;·&nbsp; ×1.0 &nbsp;·&nbsp; Peso <strong>0.35</strong></span>
-          </div>
+          <span class="nivel-badge nb-inside">Autónomo Inside</span></div>
           <div class="skill-grid">
             <div class="skill-item">
               <div class="skill-name">🌊 Leitura de onda</div>
-              <div class="stars" data-sid="rodrigo-s4" data-skill="leitura"><span class="star filled" onclick="setStar(this,1,'rodrigo-s4',0)">★</span><span class="star filled" onclick="setStar(this,2,'rodrigo-s4',0)">★</span><span class="star " onclick="setStar(this,3,'rodrigo-s4',0)">★</span><span class="star " onclick="setStar(this,4,'rodrigo-s4',0)">★</span><span class="star " onclick="setStar(this,5,'rodrigo-s4',0)">★</span></div>
+              <div class="skill-null">🚫 <span>Não observável</span></div>
               <div class="skill-note">Shorebreak imprevisível — sem lineup real para ler</div>
             </div>
             <div class="skill-item">
@@ -765,12 +785,12 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
             </div>
             <div class="skill-item">
               <div class="skill-name">🚣 Paddle</div>
-              <div class="stars" data-sid="rodrigo-s4" data-skill="paddle"><span class="star filled" onclick="setStar(this,1,'rodrigo-s4',2)">★</span><span class="star filled" onclick="setStar(this,2,'rodrigo-s4',2)">★</span><span class="star " onclick="setStar(this,3,'rodrigo-s4',2)">★</span><span class="star " onclick="setStar(this,4,'rodrigo-s4',2)">★</span><span class="star " onclick="setStar(this,5,'rodrigo-s4',2)">★</span></div>
+              <div class="skill-null">🚫 <span>Não observável</span></div>
               <div class="skill-note">Sem distância real de paddling — shorebreak imediato</div><div class="corrente-paddle">⚡ 0.9 kt SSW ✅</div>
             </div>
             <div class="skill-item">
               <div class="skill-name">↩️ Manobras</div>
-              <div class="stars" data-sid="rodrigo-s4" data-skill="manobras"><span class="star filled" onclick="setStar(this,1,'rodrigo-s4',3)">★</span><span class="star " onclick="setStar(this,2,'rodrigo-s4',3)">★</span><span class="star " onclick="setStar(this,3,'rodrigo-s4',3)">★</span><span class="star " onclick="setStar(this,4,'rodrigo-s4',3)">★</span><span class="star " onclick="setStar(this,5,'rodrigo-s4',3)">★</span></div>
+              <div class="skill-null">🚫 <span>Não observável</span></div>
               <div class="skill-note">Impossível com estas condições de shorebreak</div>
             </div>
             <div class="skill-item">
@@ -780,7 +800,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
             </div>
             <div class="skill-item">
               <div class="skill-name">🧭 Posicionamento</div>
-              <div class="stars" data-sid="rodrigo-s4" data-skill="posicionamento"><span class="star filled" onclick="setStar(this,1,'rodrigo-s4',5)">★</span><span class="star filled" onclick="setStar(this,2,'rodrigo-s4',5)">★</span><span class="star " onclick="setStar(this,3,'rodrigo-s4',5)">★</span><span class="star " onclick="setStar(this,4,'rodrigo-s4',5)">★</span><span class="star " onclick="setStar(this,5,'rodrigo-s4',5)">★</span></div>
+              <div class="skill-null">🚫 <span>Não observável</span></div>
               <div class="skill-note">Shorebreak não permite posicionamento estratégico</div>
             </div>
           </div>
@@ -789,7 +809,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
     </div>
 
     <!-- Sessão 08 Abr 26 — rodrigo -->
-    <div class="session-card energy-boa" id="rodrigo-s3" onclick="toggleSession(this)">
+    <div class="session-card energy-boa" id="rodrigo-s3" data-zona="outside" onclick="toggleSession(this)">
       <div class="session-summary">
         <div class="s-date"><div class="s-day">08</div><div class="s-month">Abr 26</div></div>
         <div class="s-main">
@@ -831,7 +851,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
           <div class="ss-header">
             <span class="ss-title">Avaliação desta sessão</span>
             <span class="ss-weight">🌊 Ideais · 17 kW/m &nbsp;·&nbsp; ×0.6 &nbsp;·&nbsp; Peso <strong>0.60</strong></span>
-          </div>
+          <span class="nivel-badge nb-outside">Técnico Outside</span></div>
           <div class="skill-grid">
             <div class="skill-item">
               <div class="skill-name">🌊 Leitura de onda</div>
@@ -868,7 +888,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
       </div>
     </div>
 <!-- Sessão 07 Abr 26 — rodrigo -->
-    <div class="session-card energy-boa" onclick="toggleSession(this)">
+    <div class="session-card energy-boa" onclick="toggleSession(this)" data-zona="outside">
       <div class="session-summary">
         <div class="s-date"><div class="s-day">07</div><div class="s-month">Abr 26</div></div>
         <div class="s-main">
@@ -895,7 +915,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
           <div class="ss-header">
             <span class="ss-title">Avaliação desta sessão</span>
             <span class="ss-weight">🌊 Muito exigentes · 45 kW/m &nbsp;·&nbsp; ×0.4 &nbsp;·&nbsp; Peso <strong>0.22</strong></span>
-          </div>
+          <span class="nivel-badge nb-outside">Técnico Outside</span></div>
           <div class="skill-grid"><div class="skill-item">
                 <div class="skill-name">🌊 Leitura de onda</div>
                 <div class="stars" data-sid="rodrigo-s0" data-skill="leitura"><span class="star filled" onclick="setStar(this,1,'rodrigo-s0',0)">★</span><span class="star filled" onclick="setStar(this,2,'rodrigo-s0',0)">★</span><span class="star filled" onclick="setStar(this,3,'rodrigo-s0',0)">★</span><span class="star filled" onclick="setStar(this,4,'rodrigo-s0',0)">★</span><span class="star " onclick="setStar(this,5,'rodrigo-s0',0)">★</span></div>
@@ -925,7 +945,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
       </div>
     </div>
 <!-- Sessão 04 Abr 26 — rodrigo -->
-    <div class="session-card energy-fraca" onclick="toggleSession(this)">
+    <div class="session-card energy-fraca" onclick="toggleSession(this)" data-zona="inside">
       <div class="session-summary">
         <div class="s-date"><div class="s-day">04</div><div class="s-month">Abr 26</div></div>
         <div class="s-main">
@@ -952,7 +972,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
           <div class="ss-header">
             <span class="ss-title">Avaliação desta sessão</span>
             <span class="ss-weight">🌊 Boas · 7 kW/m &nbsp;·&nbsp; ×0.25 &nbsp;·&nbsp; Peso <strong>0.16</strong></span>
-          </div>
+          <span class="nivel-badge nb-inside">Autónomo Inside</span></div>
           <div class="skill-grid"><div class="skill-item">
                 <div class="skill-name">🌊 Leitura de onda</div>
                 <div class="stars" data-sid="rodrigo-s1" data-skill="leitura"><span class="star filled" onclick="setStar(this,1,'rodrigo-s1',0)">★</span><span class="star filled" onclick="setStar(this,2,'rodrigo-s1',0)">★</span><span class="star filled" onclick="setStar(this,3,'rodrigo-s1',0)">★</span><span class="star " onclick="setStar(this,4,'rodrigo-s1',0)">★</span><span class="star " onclick="setStar(this,5,'rodrigo-s1',0)">★</span></div>
@@ -982,7 +1002,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
       </div>
     </div>
 <!-- Sessão 03 Abr 26 — rodrigo -->
-    <div class="session-card energy-fraca" onclick="toggleSession(this)">
+    <div class="session-card energy-fraca" onclick="toggleSession(this)" data-zona="inside">
       <div class="session-summary">
         <div class="s-date"><div class="s-day">03</div><div class="s-month">Abr 26</div></div>
         <div class="s-main">
@@ -1009,7 +1029,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
           <div class="ss-header">
             <span class="ss-title">Avaliação desta sessão</span>
             <span class="ss-weight">🌊 Aceitáveis · 4 kW/m &nbsp;·&nbsp; ×0.15 &nbsp;·&nbsp; Peso <strong>0.05</strong></span>
-          </div>
+          <span class="nivel-badge nb-inside">Autónomo Inside</span></div>
           <div class="skill-grid"><div class="skill-item">
                 <div class="skill-name">🌊 Leitura de onda</div>
                 <div class="stars" data-sid="rodrigo-s2" data-skill="leitura"><span class="star filled" onclick="setStar(this,1,'rodrigo-s2',0)">★</span><span class="star filled" onclick="setStar(this,2,'rodrigo-s2',0)">★</span><span class="star filled" onclick="setStar(this,3,'rodrigo-s2',0)">★</span><span class="star filled" onclick="setStar(this,4,'rodrigo-s2',0)">★</span><span class="star " onclick="setStar(this,5,'rodrigo-s2',0)">★</span></div>
@@ -1370,7 +1390,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
   </div>
     <div class="sec-label">Sessões registadas</div>
     <!-- Sessão 18 Abr 26 — Tomás S6 -->
-    <div class="session-card energy-media" id="tomas-s5" onclick="toggleSession(this)">
+    <div class="session-card energy-media" id="tomas-s5" data-zona="outside" onclick="toggleSession(this)">
       <div class="session-summary">
         <div class="s-date"><div class="s-day">18</div><div class="s-month">Abr 26</div></div>
         <div class="s-main">
@@ -1412,7 +1432,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
           <div class="ss-header">
             <span class="ss-title">Avaliação desta sessão</span>
             <span class="ss-weight">🌊 Aceitáveis · ~4.5 kW/m ef. &nbsp;·&nbsp; ×1.0 &nbsp;·&nbsp; Peso <strong>0.65</strong></span>
-          </div>
+          <span class="nivel-badge nb-outside">Assistido Outside</span></div>
           <div class="skill-grid">
             <div class="skill-item">
               <div class="skill-name">🌊 Leitura de onda</div>
@@ -1450,7 +1470,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
     </div>
 
     <!-- Sessão 10 Abr 26 — Tomás S5 -->
-    <div class="session-card energy-fraca" id="tomas-s4" onclick="toggleSession(this)">
+    <div class="session-card energy-fraca" id="tomas-s4" data-zona="inside" onclick="toggleSession(this)">
       <div class="session-summary">
         <div class="s-date"><div class="s-day">10</div><div class="s-month">Abr 26</div></div>
         <div class="s-main">
@@ -1491,11 +1511,11 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
           <div class="ss-header">
             <span class="ss-title">Avaliação desta sessão</span>
             <span class="ss-weight">🌊 Fracas · ~3 kW/m ef. &nbsp;·&nbsp; ×1.0 &nbsp;·&nbsp; Peso <strong>0.35</strong></span>
-          </div>
+          <span class="nivel-badge nb-inside">Assistido Inside</span></div>
           <div class="skill-grid">
             <div class="skill-item">
               <div class="skill-name">🌊 Leitura de onda</div>
-              <div class="stars" data-sid="tomas-s4" data-skill="leitura"><span class="star filled" onclick="setStar(this,1,'tomas-s4',0)">★</span><span class="star filled" onclick="setStar(this,2,'tomas-s4',0)">★</span><span class="star " onclick="setStar(this,3,'tomas-s4',0)">★</span><span class="star " onclick="setStar(this,4,'tomas-s4',0)">★</span><span class="star " onclick="setStar(this,5,'tomas-s4',0)">★</span></div>
+              <div class="skill-null">🚫 <span>Não observável</span></div>
               <div class="skill-note">Sem lineup — shorebreak não permite leitura estruturada</div>
             </div>
             <div class="skill-item">
@@ -1505,12 +1525,12 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
             </div>
             <div class="skill-item">
               <div class="skill-name">🚣 Paddle</div>
-              <div class="stars" data-sid="tomas-s4" data-skill="paddle"><span class="star filled" onclick="setStar(this,1,'tomas-s4',2)">★</span><span class="star filled" onclick="setStar(this,2,'tomas-s4',2)">★</span><span class="star " onclick="setStar(this,3,'tomas-s4',2)">★</span><span class="star " onclick="setStar(this,4,'tomas-s4',2)">★</span><span class="star " onclick="setStar(this,5,'tomas-s4',2)">★</span></div>
+              <div class="skill-null">🚫 <span>Não observável</span></div>
               <div class="skill-note">Shorebreak — paddling mínimo</div><div class="corrente-paddle">⚡ 0.9 kt SSW ✅</div>
             </div>
             <div class="skill-item">
               <div class="skill-name">↩️ Manobras</div>
-              <div class="stars" data-sid="tomas-s4" data-skill="manobras"><span class="star filled" onclick="setStar(this,1,'tomas-s4',3)">★</span><span class="star " onclick="setStar(this,2,'tomas-s4',3)">★</span><span class="star " onclick="setStar(this,3,'tomas-s4',3)">★</span><span class="star " onclick="setStar(this,4,'tomas-s4',3)">★</span><span class="star " onclick="setStar(this,5,'tomas-s4',3)">★</span></div>
+              <div class="skill-null">🚫 <span>Não observável</span></div>
               <div class="skill-note">Condições não permitiram manobras</div>
             </div>
             <div class="skill-item">
@@ -1520,7 +1540,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
             </div>
             <div class="skill-item">
               <div class="skill-name">🧭 Posicionamento</div>
-              <div class="stars" data-sid="tomas-s4" data-skill="posicionamento"><span class="star filled" onclick="setStar(this,1,'tomas-s4',5)">★</span><span class="star filled" onclick="setStar(this,2,'tomas-s4',5)">★</span><span class="star " onclick="setStar(this,3,'tomas-s4',5)">★</span><span class="star " onclick="setStar(this,4,'tomas-s4',5)">★</span><span class="star " onclick="setStar(this,5,'tomas-s4',5)">★</span></div>
+              <div class="skill-null">🚫 <span>Não observável</span></div>
               <div class="skill-note">Shorebreak não permite posicionamento estratégico</div>
             </div>
           </div>
@@ -1529,7 +1549,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
     </div>
 
     <!-- Sessão 08 Abr 26 — tomas -->
-    <div class="session-card energy-boa" id="tomas-s3" onclick="toggleSession(this)">
+    <div class="session-card energy-boa" id="tomas-s3" data-zona="outside" onclick="toggleSession(this)">
       <div class="session-summary">
         <div class="s-date"><div class="s-day">08</div><div class="s-month">Abr 26</div></div>
         <div class="s-main">
@@ -1569,7 +1589,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
           <div class="ss-header">
             <span class="ss-title">Avaliação desta sessão</span>
             <span class="ss-weight">🌊 Ideais · 17 kW/m &nbsp;·&nbsp; ×0.6 &nbsp;·&nbsp; Peso <strong>0.60</strong></span>
-          </div>
+          <span class="nivel-badge nb-outside">Assistido Outside</span></div>
           <div class="skill-grid">
             <div class="skill-item">
               <div class="skill-name">🌊 Leitura de onda</div>
@@ -1598,7 +1618,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
             </div>
             <div class="skill-item">
               <div class="skill-name">🧭 Posicionamento</div>
-              <div class="stars" data-sid="tomas-s3" data-skill="posicionamento"><span class="star filled" onclick="setStar(this,1,'tomas-s3',5)">★</span><span class="star filled" onclick="setStar(this,2,'tomas-s3',5)">★</span><span class="star " onclick="setStar(this,3,'tomas-s3',5)">★</span><span class="star " onclick="setStar(this,4,'tomas-s3',5)">★</span><span class="star " onclick="setStar(this,5,'tomas-s3',5)">★</span></div>
+              <div class="skill-null">🚫 <span>Não observável</span></div>
               <div class="skill-note">Apoiado — manteve nível anterior</div>
             </div>
           </div>
@@ -1606,7 +1626,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
       </div>
     </div>
 <!-- Sessão 07 Abr 26 — tomas -->
-    <div class="session-card energy-boa" onclick="toggleSession(this)">
+    <div class="session-card energy-boa" onclick="toggleSession(this)" data-zona="outside">
       <div class="session-summary">
         <div class="s-date"><div class="s-day">07</div><div class="s-month">Abr 26</div></div>
         <div class="s-main">
@@ -1633,7 +1653,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
           <div class="ss-header">
             <span class="ss-title">Avaliação desta sessão</span>
             <span class="ss-weight">🌊 Muito exigentes · 45 kW/m &nbsp;·&nbsp; ×0.4 &nbsp;·&nbsp; Peso <strong>0.22</strong></span>
-          </div>
+          <span class="nivel-badge nb-outside">Assistido Outside</span></div>
           <div class="skill-grid"><div class="skill-item">
                 <div class="skill-name">🌊 Leitura de onda</div>
                 <div class="stars" data-sid="tomas-s0" data-skill="leitura"><span class="star filled" onclick="setStar(this,1,'tomas-s0',0)">★</span><span class="star filled" onclick="setStar(this,2,'tomas-s0',0)">★</span><span class="star filled" onclick="setStar(this,3,'tomas-s0',0)">★</span><span class="star filled" onclick="setStar(this,4,'tomas-s0',0)">★</span><span class="star " onclick="setStar(this,5,'tomas-s0',0)">★</span></div>
@@ -1656,14 +1676,14 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
                 <div class="skill-note">7/10 — cada vez melhor, caiu 1x</div>
               </div><div class="skill-item">
                 <div class="skill-name">🧭 Posicionamento</div>
-                <div class="stars" data-sid="tomas-s0" data-skill="posicionamento"><span class="star filled" onclick="setStar(this,1,'tomas-s0',5)">★</span><span class="star filled" onclick="setStar(this,2,'tomas-s0',5)">★</span><span class="star " onclick="setStar(this,3,'tomas-s0',5)">★</span><span class="star " onclick="setStar(this,4,'tomas-s0',5)">★</span><span class="star " onclick="setStar(this,5,'tomas-s0',5)">★</span></div>
+                <div class="skill-null">🚫 <span>Não observável</span></div>
                 <div class="skill-note">Apoiado — difícil de avaliar</div>
               </div></div>
         </div>
       </div>
     </div>
 <!-- Sessão 04 Abr 26 — tomas -->
-    <div class="session-card energy-fraca" onclick="toggleSession(this)">
+    <div class="session-card energy-fraca" onclick="toggleSession(this)" data-zona="inside">
       <div class="session-summary">
         <div class="s-date"><div class="s-day">04</div><div class="s-month">Abr 26</div></div>
         <div class="s-main">
@@ -1690,7 +1710,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
           <div class="ss-header">
             <span class="ss-title">Avaliação desta sessão</span>
             <span class="ss-weight">🌊 Boas · 7 kW/m &nbsp;·&nbsp; ×0.25 &nbsp;·&nbsp; Peso <strong>0.16</strong></span>
-          </div>
+          <span class="nivel-badge nb-inside">Assistido Inside</span></div>
           <div class="skill-grid"><div class="skill-item">
                 <div class="skill-name">🌊 Leitura de onda</div>
                 <div class="stars" data-sid="tomas-s1" data-skill="leitura"><span class="star filled" onclick="setStar(this,1,'tomas-s1',0)">★</span><span class="star filled" onclick="setStar(this,2,'tomas-s1',0)">★</span><span class="star " onclick="setStar(this,3,'tomas-s1',0)">★</span><span class="star " onclick="setStar(this,4,'tomas-s1',0)">★</span><span class="star " onclick="setStar(this,5,'tomas-s1',0)">★</span></div>
@@ -1720,7 +1740,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
       </div>
     </div>
 <!-- Sessão 03 Abr 26 — tomas -->
-    <div class="session-card energy-fraca" onclick="toggleSession(this)">
+    <div class="session-card energy-fraca" onclick="toggleSession(this)" data-zona="inside">
       <div class="session-summary">
         <div class="s-date"><div class="s-day">03</div><div class="s-month">Abr 26</div></div>
         <div class="s-main">
@@ -1747,7 +1767,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
           <div class="ss-header">
             <span class="ss-title">Avaliação desta sessão</span>
             <span class="ss-weight">🌊 Aceitáveis · 4 kW/m &nbsp;·&nbsp; ×0.15 &nbsp;·&nbsp; Peso <strong>0.05</strong></span>
-          </div>
+          <span class="nivel-badge nb-inside">Assistido Inside</span></div>
           <div class="skill-grid"><div class="skill-item">
                 <div class="skill-name">🌊 Leitura de onda</div>
                 <div class="stars" data-sid="tomas-s2" data-skill="leitura"><span class="star filled" onclick="setStar(this,1,'tomas-s2',0)">★</span><span class="star filled" onclick="setStar(this,2,'tomas-s2',0)">★</span><span class="star " onclick="setStar(this,3,'tomas-s2',0)">★</span><span class="star " onclick="setStar(this,4,'tomas-s2',0)">★</span><span class="star " onclick="setStar(this,5,'tomas-s2',0)">★</span></div>
