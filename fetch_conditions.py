@@ -32,19 +32,18 @@ SPOTS = {
 # Rodrigo: Paddle 3.25, Posic 2.65 → limite estimado ~0.55 m/s
 # Tomás:   Paddle 2.79, Posic 1.95 → limite estimado ~0.35 m/s
 
-# Thresholds calibrados (offshore Open-Meteo):
-# Sul (Milicias/SaoRoque/AguaAlto): Rodrigo/Tomas surfaram OK ate 0.83 m/s
-#   -> verde <0.85, amarelo <1.10, vermelho >=1.10
-# Norte (exposto): sem dados ainda — conservador ate haver sessoes
+# Thresholds em m/s convertidos directamente dos kt documentados (1 kt = 0.5144 m/s)
+# Milícias: 1.7 kt (R e T) · Norte: 1.0 kt R / 0.7 kt T · Mosteiros: 0.9 kt R / 0.6 kt T
+# Norte (exposto): sem sessões ainda — conservador até haver dados
 CORRENTE_THRESH = {
-    # (lim_rodrigo, lim_tomas) — valor acima = aviso/bloqueio
-    'milicias':     (0.85, 0.85),   # calibrado: ambos OK ate 0.83 m/s
-    'saoroque':     (0.85, 0.85),   # idem (costa sul similar)
-    'aguadealto':   (0.85, 0.85),   # idem
-    'santabarbara': (0.50, 0.35),   # norte exposto — conservador
-    'monteverde':   (0.50, 0.35),
-    'ribeiraseca':  (0.50, 0.35),
-    'mosteiros':    (0.45, 0.30),   # ponta rochosa — mais conservador
+    # (lim_rodrigo, lim_tomas) em m/s — valor acima = aviso/bloqueio
+    'milicias':     (0.875, 0.875),  # 1.7 kt · calibrado S4 (1.7 kt confirmou excesso)
+    'saoroque':     (0.875, 0.875),  # 1.7 kt · extrapolado costa sul
+    'aguadealto':   (0.875, 0.875),  # 1.7 kt · extrapolado costa sul
+    'santabarbara': (0.515, 0.360),  # 1.0/0.7 kt · conservador, sem sessões
+    'monteverde':   (0.515, 0.360),  # 1.0/0.7 kt · conservador (2 sessões à margem)
+    'ribeiraseca':  (0.515, 0.360),  # 1.0/0.7 kt · conservador, sem sessões
+    'mosteiros':    (0.463, 0.309),  # 0.9/0.6 kt · conservador, ponta rochosa
 }
 
 def avaliar_corrente(vel, spot_id):
@@ -62,43 +61,42 @@ def avaliar_corrente(vel, spot_id):
 # Amplitude: modelo spring-neap calibrado a partir das sessões (precisão ±20%)
 # Spring peak calibrado: 03 Abr 2026 → amplitude 1.26m; neap → 0.40m
 
-_M2_PERIOD  = 12.4206   # horas
-_M2_AMP     = 0.440     # metros (só para timing — não para amplitude absoluta)
-_M2_PHASE   = 137.0     # graus (calibrado para Ponta Delgada)
-_NIVEL_PDL  = 1.00      # nível médio acima do zero hidrográfico
+def extremos_mare_open_meteo(ondas_json, data_str, h_ini, h_fim):
+    """Detecta MA/MB a partir de sea_level_height_msl (Open-Meteo).
+    Interpolação parabólica para precisão ~±15 min.
+    Devolve (maximos, minimos) como listas de (datetime, altura_m)."""
+    horas  = ondas_json['hourly']['time']
+    niveis = ondas_json['hourly'].get('sea_level_height_msl', [])
+    if not niveis or all(v is None for v in niveis):
+        return [], []
 
-# Spring-neap calibrado
-_SPRING_PEAK = datetime(2026, 4, 3)  # pico de marés vivas mais próximo dos dados
-_RANGE_VIV   = 1.26  # amplitude maré viva (m)
-_RANGE_MORT  = 0.40  # amplitude maré morta (m)
+    base  = datetime.strptime(data_str, '%Y-%m-%d')
+    t_ini = base + timedelta(hours=h_ini - 6)
+    t_fim = base + timedelta(hours=h_fim + 6)
 
-def _m2_height(dt):
-    """Variação M2 — usado apenas para encontrar timing de extremos."""
-    epoca = datetime(2000, 1, 1)
-    h = (dt - epoca).total_seconds() / 3600.0
-    return _NIVEL_PDL + _M2_AMP * math.cos(math.radians(360.0 / _M2_PERIOD * h - _M2_PHASE))
+    pts = []
+    for h_str, n in zip(horas, niveis):
+        if n is None:
+            continue
+        t = datetime.strptime(h_str[:16], '%Y-%m-%dT%H:%M')
+        if t_ini <= t <= t_fim:
+            pts.append((t, float(n)))
 
-def amplitude_prevista(data_str):
-    """Amplitude spring-neap estimada para Ponta Delgada (±20%)."""
-    dt = datetime.strptime(data_str, '%Y-%m-%d')
-    days = (dt - _SPRING_PEAK).total_seconds() / 86400.0
-    phase = (days % 14.77) / 14.77
-    mid = (_RANGE_VIV + _RANGE_MORT) / 2
-    half = (_RANGE_VIV - _RANGE_MORT) / 2
-    return round(mid + half * math.cos(2 * math.pi * phase), 2)
-
-def encontrar_extremos_mare(data_str, h_ini, h_fim):
-    """Encontra horários de maré alta e baixa em torno da sessão."""
-    base = datetime.strptime(data_str, '%Y-%m-%d')
-    pontos = [(base + timedelta(minutes=m), _m2_height(base + timedelta(minutes=m)))
-              for m in range(-480, (h_fim + 6) * 60, 10)]
     maximos, minimos = [], []
-    for i in range(1, len(pontos) - 1):
-        t, h = pontos[i]
-        if h > pontos[i-1][1] and h > pontos[i+1][1]:
-            maximos.append((t, h))
-        elif h < pontos[i-1][1] and h < pontos[i+1][1]:
-            minimos.append((t, h))
+    for j in range(1, len(pts) - 1):
+        tp, hp = pts[j-1]; tc, hc = pts[j]; tn, hn = pts[j+1]
+        denom = hp - 2*hc + hn
+        if abs(denom) >= 1e-9:
+            offset = -(hn - hp) / (2 * denom)
+            t_ext  = tc + timedelta(hours=offset)
+            h_ext  = round(hc - (hn - hp)**2 / (8 * denom), 2)
+        else:
+            t_ext, h_ext = tc, round(hc, 2)
+        if hc >= hp and hc >= hn and (hc > hp or hc > hn):
+            maximos.append((t_ext, h_ext))
+        elif hc <= hp and hc <= hn and (hc < hp or hc < hn):
+            minimos.append((t_ext, h_ext))
+
     return maximos, minimos
 
 # ─── Open-Meteo ──────────────────────────────────────────────────────────────
@@ -112,7 +110,8 @@ def fetch_ondas(lat, lon, data):
            f'?latitude={lat}&longitude={lon}'
            f'&hourly=wave_height,wave_period,wave_direction,'
            f'swell_wave_height,swell_wave_period,swell_wave_direction,'
-           f'ocean_current_velocity,ocean_current_direction'
+           f'ocean_current_velocity,ocean_current_direction,'
+           f'sea_level_height_msl'
            f'&start_date={data}&end_date={data}'
            f'&timezone=Atlantic%2FAzores')
     return fetch_url(url)
@@ -189,13 +188,12 @@ def obter_condicoes(data_str, hora_ini_str, hora_fim_str, spot_id):
     curr_dir  = dir_dominante(ondas['hourly'].get('ocean_current_direction', [None]*24), i0, i1)
     curr_r, curr_t, curr_cls = avaliar_corrente(curr_vel, spot_id)
 
-    maximos, minimos = encontrar_extremos_mare(data_str, h_ini, h_fim)
+    maximos, minimos = extremos_mare_open_meteo(ondas, data_str, h_ini, h_fim)
     base = datetime.strptime(f'{data_str}T{hora_ini_str}', '%Y-%m-%dT%H:%M')
     mb = min(minimos, key=lambda x: abs((x[0]-base).total_seconds()), default=None)
     ma = min(maximos, key=lambda x: abs((x[0]-base).total_seconds()), default=None)
     amplitude = round(ma[1] - mb[1], 2) if ma and mb else None
 
-    amp_est = amplitude_prevista(data_str)
     return {
         'spot': spot['nome'], 'spot_id': spot_id,
         'data': data_str, 'hora_ini': hora_ini_str, 'hora_fim': hora_fim_str,
@@ -206,7 +204,9 @@ def obter_condicoes(data_str, hora_ini_str, hora_fim_str, spot_id):
         'vento_dir': graus_para_cardinal(v_dir_g), 'vento_dir_graus': v_dir_g,
         'mare_baixa_hora': mb[0].strftime('%H:%M') if mb else '?',
         'mare_alta_hora':  ma[0].strftime('%H:%M') if ma else '?',
-        'amplitude': amp_est,
+        'mare_baixa_alt':  mb[1] if mb else None,
+        'mare_alta_alt':   ma[1] if ma else None,
+        'amplitude': amplitude,
         'corrente_ms':  curr_vel,
         'corrente_kt':  round(curr_vel * 1.944, 1) if curr_vel is not None else None,
         'corrente_dir': graus_para_cardinal(curr_dir),
@@ -222,7 +222,9 @@ def ms_para_nos(vel):
     return round(vel * 1.944, 1)
 
 def imprimir_resumo(c):
-    amp_str = f"{c['amplitude']}m" if c['amplitude'] is not None else '?'
+    amp_str    = f"{c['amplitude']}m" if c['amplitude'] is not None else '?'
+    mb_alt_str = f"~{c.get('mare_baixa_alt')}m" if c.get('mare_baixa_alt') is not None else '?'
+    ma_alt_str = f"~{c.get('mare_alta_alt')}m" if c.get('mare_alta_alt') is not None else '?'
     wp = c['wave_power']
     cls = ('Fracas' if not wp or wp < 4 else 'Aceitaveis' if wp < 7 else
            'Boas' if wp < 10 else 'Ideais' if wp < 18 else
@@ -236,14 +238,14 @@ Wave Power : {c['wave_power']} kW/m  [{cls}]
 Hs={c['hs']}m  T={c['period']}s
 Swell      : {c['swell_dir']} ({c['swell_dir_graus']} graus)  Hs={c['swell_hs']}m
 Vento      : {c['vento_kmh']} km/h  {c['vento_dir']} ({c['vento_dir_graus']} graus)
-Mare baixa : {c['mare_baixa_hora']} (est.)
-Mare alta  : {c['mare_alta_hora']} (est.)
-Amplitude  : {amp_str} (est.)
+Mare baixa : {c['mare_baixa_hora']}  {mb_alt_str}
+Mare alta  : {c['mare_alta_hora']}  {ma_alt_str}
+Amplitude  : {amp_str}
 Corrente   : {curr_nos} kt  {c.get('corrente_dir','?')}  [{c.get('corrente_cls','?')}]
   Rodrigo  : {c.get('corrente_r','?')}   Tomas: {c.get('corrente_t','?')}
 --------------------------------------------
-⚠ Marés: modelo harmónico M2 ±20% — erro de timing até ~5h possível.
-  Confirmar sempre em hidrografico.pt antes de planeamento definitivo.
+📡 Marés: Open-Meteo Marine sea_level_height_msl · interpolação parabólica ±15 min.
+  Para planeamento crítico confirmar em hidrografico.pt.
 --------------------------------------------""")
 
 if __name__ == '__main__':

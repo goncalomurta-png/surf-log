@@ -76,14 +76,19 @@ def perf_to_cy(perf_media):
     return round(155 - (perf_media - 1) * 35)
 
 def get_skills_hist(sessao):
-    """Extrai [l, t, p, m, e, pos] da sessão (via skills ou skills_hist)."""
+    """Extrai [l, t, p, m, e, pos] da sessão para o SVG.
+    Prefere skills_hist (série contínua); cai para skills.val apenas se skills_hist ausente.
+    Política de null: val=None fica em skills.val; skills_hist tem valores plausíveis para o chart."""
+    if 'skills_hist' in sessao:
+        return sessao['skills_hist']
     if 'skills' in sessao:
         return [sessao['skills'][s]['val'] for s in SKILL_ORDER]
-    return sessao['skills_hist']
+    return []
 
 def perf_media(sessao):
     h = get_skills_hist(sessao)
-    return sum(h) / len(h)
+    vals = [v for v in h if v is not None]
+    return sum(vals) / len(vals) if vals else 0
 
 # ── Helpers de formatação ─────────────────────────────────────────────────────
 
@@ -135,6 +140,7 @@ def gerar_card(sd, s):
     d        = datetime.fromisoformat(s['data'])
     prancha  = s.get('prancha', sd['quiver'][0]['nome'])
     spot_sub = s.get('spot_sub', s['spot'])
+    zona     = s.get('nivel', {}).get('zona', 'outside')
 
     tags = ''.join(
         f'<span class="tag {t["cls"]}">{t["txt"]}</span>'
@@ -166,20 +172,28 @@ def gerar_card(sd, s):
         cp = ''
         if sk_key == 'paddle' and s.get('corrente_paddle'):
             cp = f'<div class="corrente-paddle">{s["corrente_paddle"]}</div>'
-        stars = stars_interativas(sk['val'], sid, idx)
-        skill_items.append(
-            f'            <div class="skill-item">\n'
-            f'              <div class="skill-name">{SKILL_NAMES[idx]}</div>\n'
-            f'              <div class="stars" data-sid="{sid}" data-skill="{sk_key}">{stars}</div>\n'
-            f'              <div class="skill-note">{sk["note"]}</div>{cp}\n'
-            f'            </div>')
+        if sk['val'] is None:
+            skill_items.append(
+                f'            <div class="skill-item">\n'
+                f'              <div class="skill-name">{SKILL_NAMES[idx]}</div>\n'
+                f'              <div class="skill-null">🚫 <span>Não observável</span></div>\n'
+                f'              <div class="skill-note">{sk["note"]}</div>{cp}\n'
+                f'            </div>')
+        else:
+            stars = stars_interativas(sk['val'], sid, idx)
+            skill_items.append(
+                f'            <div class="skill-item">\n'
+                f'              <div class="skill-name">{SKILL_NAMES[idx]}</div>\n'
+                f'              <div class="stars" data-sid="{sid}" data-skill="{sk_key}">{stars}</div>\n'
+                f'              <div class="skill-note">{sk["note"]}</div>{cp}\n'
+                f'            </div>')
 
     ss_weight = (
         f'🌊 {s["classe"]} · ~{s["wp_ef"]} kW/m ef.'
         f' &nbsp;·&nbsp; ×{s["rec"]:.2f} &nbsp;·&nbsp; Peso <strong>{s["peso"]:.2f}</strong>')
 
     return (
-        f'    <div class="session-card {energy_cls(s["wp_ef"])}" id="{sid}" onclick="toggleSession(this)">\n'
+        f'    <div class="session-card {energy_cls(s["wp_ef"])}" id="{sid}" data-zona="{zona}" onclick="toggleSession(this)">\n'
         f'      <div class="session-summary">\n'
         f'        <div class="s-date"><div class="s-day">{d.day:02d}</div>'
         f'<div class="s-month">{MESES_ABR[d.month]} {str(d.year)[2:]}</div></div>\n'
@@ -494,7 +508,7 @@ def validate_session_data(sd, surfer):
         elif len(hist) != 6:
             print(f"  ✗ [{nome}] {sid}: skills_hist tem {len(hist)} elementos (esperado 6)")
             ok = False
-        elif not all(1 <= v <= 5 for v in hist):
+        elif not all(v is None or 1 <= v <= 5 for v in hist):
             print(f"  ✗ [{nome}] {sid}: skills fora do intervalo 1–5: {hist}")
             ok = False
 
@@ -504,6 +518,20 @@ def validate_session_data(sd, surfer):
     if insert_id and insert_id not in ids_json:
         print(f"  ✗ [{nome}] insert_before_id '{insert_id}' não existe em sessoes[]")
         ok = False
+
+    # Validar nivel na nova sessão (P2.1)
+    nova_nivel = nova.get('nivel')
+    if nova_nivel is None:
+        print(f"  ⚠ [{nome}] sessoes[0]: 'nivel' ausente — usar nivel_atual como fallback")
+    else:
+        valid_auto = {'assistido', 'autonomo', 'tecnico', 'performer'}
+        valid_zona = {'espuma', 'inside', 'outside', 'largo'}
+        if nova_nivel.get('autonomia') not in valid_auto:
+            print(f"  ✗ [{nome}] sessoes[0]: nivel.autonomia '{nova_nivel.get('autonomia')}' inválido")
+            ok = False
+        if nova_nivel.get('zona') not in valid_zona:
+            print(f"  ✗ [{nome}] sessoes[0]: nivel.zona '{nova_nivel.get('zona')}' inválido")
+            ok = False
 
     # Validar progressão presente
     if 'progressao' not in sd:

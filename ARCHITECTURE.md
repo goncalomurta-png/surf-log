@@ -16,7 +16,7 @@ Pai (Gonçalo) fornece os dados qualitativos; Claude processa e mantém o sistem
 
 ```
 sessions/*.md          ← Gonçalo preenche (input qualitativo)
-fetch_conditions.py    ← Claude corre (Open-Meteo + modelo maré M2)
+fetch_conditions.py    ← Claude corre (Open-Meteo + sea_level_height_msl para marés)
         │
         ▼
 data/rodrigo.json      ← Fonte de verdade (Claude actualiza)
@@ -80,13 +80,39 @@ O eixo X do scatter (Wave Power) não é linear nem logarítmico puro — a esca
 
 | | Rodrigo | Tomás |
 |--|---------|-------|
-| Leitura onda | ★★★★ (3.66) | ★★★★ (3.81) |
-| Take-off | ★★★ (3.04) | ★★★ (2.82) |
-| Paddle | ★★★★ (3.66) | ★★★ (3.31) |
-| Manobras | ★★ (2.09) | ★★ (2.31) |
-| Equilíbrio | ★★★ (3.17) | ★★★★ (4.13) |
-| Posicionamento | ★★★ (3.27) | ★★ (2.36) |
-| Peso total | 1.61 | 1.61 |
+| Leitura onda | ★★★★ (3.56) | ★★★★ (3.70) |
+| Take-off | ★★★ (3.08) | ★★★ (2.88) |
+| Paddle | ★★★★ (3.56) | ★★★ (3.23) |
+| Manobras | ★★ (2.00) | ★★ (2.23) |
+| Equilíbrio | ★★★ (3.11) | ★★★★ (3.89) |
+| Posicionamento | ★★★ (3.16) | ★★ (1.89) |
+| Peso total | 2.08 | 2.08 |
+
+---
+
+## Política de null (skills não observáveis)
+
+Skills com `val = null` são **excluídas** da média ponderada (numerador e denominador reduzidos pelo mesmo peso). `skills_hist` fornece a série contínua para o SVG — contém valores plausíveis imputados e nunca null. `skills.*.val` é a fonte qualitativa/quantitativa real.
+
+## Reconciliação 22 Abr 2026 — Escala de recência
+
+A escala de recência foi clarificada de `s-0=1, s-1=0.6, s-2=0.4, s-3+=0.25` (plateau antigo) para a curva granular:
+
+| s- | rec |
+|----|-----|
+| 0 | 1.00 |
+| 1 | 1.00 |
+| 2 | 0.60 |
+| 3 | 0.40 |
+| 4 | 0.25 |
+| 5 | 0.15 |
+| 6 | 0.10 |
+| 7 | 0.07 |
+| 8 | 0.05 |
+| 9 | 0.03 |
+| 10+ | 0.02 (floor) |
+
+`peso_total` passou de 1.61 (mistura de escalas) para **2.08**. Nenhuma estrela mudou na reconciliação.
 
 ---
 
