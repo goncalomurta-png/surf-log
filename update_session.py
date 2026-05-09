@@ -25,7 +25,7 @@ Após correr o script, Claude deve:
 import sys, json, re, shutil, pathlib
 from datetime import datetime
 
-BASE      = pathlib.Path(__file__).parent
+BASE      = pathlib.Path(__file__).resolve().parent
 HTML_PATH = BASE / "surf_log.html"
 
 # ── Constantes ────────────────────────────────────────────────────────────────
@@ -543,6 +543,40 @@ def validate_session_data(sd, surfer):
     return ok
 
 
+# ── Pre-flight ───────────────────────────────────────────────────────────────
+
+def preflight_anchors(html, surfers, sd_list):
+    """Verifica que todos os anchors críticos existem no HTML antes de qualquer escrita.
+    Devolve True se OK; imprime erros claros e devolve False se algum faltar."""
+    missing = []
+
+    # Boundaries de página necessários
+    page_ids = set(surfers) | {'quiver'}
+    if 'rodrigo' in surfers:
+        page_ids.add('tomas')
+
+    for pid in sorted(page_ids):
+        if f'id="page-{pid}"' not in html:
+            missing.append(f'id="page-{pid}"')
+
+    # insert_before_id — anchor HTML onde o novo card será inserido
+    for sd in sd_list:
+        insert_id = sd.get('html', {}).get('insert_before_id', '')
+        if insert_id and f'id="{insert_id}"' not in html:
+            missing.append(f'id="{insert_id}" (insert_before_id de {sd["surfer"]})')
+
+    n_checked = len(page_ids) + len(sd_list)
+    if missing:
+        print("\n✗ PRE-FLIGHT FALHOU — anchors em falta no HTML:")
+        for m in missing:
+            print(f"    • {m}")
+        print("  Corrigir o HTML ou o JSON antes de continuar.")
+        return False
+
+    print(f"  ✓ Pre-flight: {n_checked} anchor(s) verificado(s) — OK")
+    return True
+
+
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def main():
@@ -583,6 +617,9 @@ def main():
 
     if errors:
         print("\n✗ Erros de validação — corrigir JSON antes de continuar.")
+        sys.exit(1)
+
+    if not preflight_anchors(html, surfers, sd_list):
         sys.exit(1)
 
     for sd in sd_list:
