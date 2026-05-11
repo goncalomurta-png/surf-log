@@ -622,8 +622,7 @@ def main():
     if not preflight_anchors(html, surfers, sd_list):
         sys.exit(1)
 
-    for sd in sd_list:
-        surfer = sd['surfer'].lower()
+    for surfer, sd in zip(surfers, sd_list):
         nova = sd['sessoes'][0]
         insert_id = sd['html']['insert_before_id']
         if nova['html_id'] == insert_id:
