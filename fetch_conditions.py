@@ -11,6 +11,7 @@ Fontes:
 import urllib.request
 import json
 import math
+import os
 import sys
 from datetime import datetime, timedelta
 
@@ -27,6 +28,50 @@ SPOTS = {
     # Costa Noroeste
     'mosteiros':     {'lat': 37.892, 'lon': -25.823, 'nome': 'Mosteiros · Costa Noroeste',        'costa': 'noroeste'},
 }
+
+# ─── Pontos de referência offshore para CMEMS (fora da máscara de terra) ────────
+# Célula afastada da ilha para capturar o swell sem sombra. Resolução CMEMS: ~9 km.
+CMEMS_REF = {
+    'milicias':     {'lat': 37.50, 'lon': -25.67},  # sul · 28 km offshore
+    'saoroque':     {'lat': 37.50, 'lon': -25.62},  # sul
+    'aguadealto':   {'lat': 37.50, 'lon': -25.43},  # sul
+    'santabarbara': {'lat': 38.00, 'lon': -25.53},  # norte
+    'monteverde':   {'lat': 38.00, 'lon': -25.15},  # norte
+    'ribeiraseca':  {'lat': 38.00, 'lon': -25.47},  # norte
+    'mosteiros':    {'lat': 37.92, 'lon': -26.00},  # noroeste
+    'populo':       {'lat': 37.50, 'lon': -25.57},  # sul
+    'caloura':      {'lat': 37.50, 'lon': -25.53},  # sul
+    'feteiras':     {'lat': 37.50, 'lon': -25.73},  # sudoeste
+}
+
+def factor_swell(spot_id, dir_graus, period=None):
+    """Factor offshore→praia para um swell na direcção dir_graus.
+    dir_graus = direcção DE ONDE o swell vem (convenção meteorológica).
+    Sul (Milícias): exposta a SW/W/S · bloqueada a N/NE pela ilha.
+    """
+    if dir_graus is None:
+        return None
+    costa = SPOTS.get(spot_id, {}).get('costa', '')
+    if costa == 'sul':
+        if 135 <= dir_graus <= 225:         # S directo — exposição total
+            return 0.90 if (period and period >= 12) else 0.85
+        elif 225 < dir_graus < 320:         # SW / W / WNW — boa exposição
+            return 0.68
+        elif 90 < dir_graus < 135:          # SE — refracção parcial costa este
+            return 0.35
+        elif dir_graus <= 90 or dir_graus >= 320:  # N / NNE / NE / NNW — bloqueado pela ilha
+            return 0.25
+    elif costa == 'norte':
+        if dir_graus >= 270 or dir_graus <= 90:  # NW / N / NE — exposição directa
+            return 0.65
+        else:                               # S não chega ao norte
+            return 0.10
+    elif costa == 'noroeste':
+        if 225 <= dir_graus <= 360 or dir_graus <= 45:  # W / NW / N
+            return 0.65
+        else:
+            return 0.20
+    return None  # spot não calibrado
 
 # ─── Thresholds de corrente (offshore · calibrar com sessões) ────────────────────
 # Rodrigo: Paddle 3.25, Posic 2.65 → limite estimado ~0.55 m/s
@@ -55,6 +100,94 @@ def avaliar_corrente(vel, spot_id):
         return '❌'
     cls = 'baixa' if vel < 0.20 else 'moderada' if vel < 0.40 else 'forte' if vel < 0.70 else 'muito forte'
     return grau(vel, lr), grau(vel, lt), cls
+
+# ─── Copernicus Marine (CMEMS) — ondas completas ────────────────────────────────
+
+def fetch_cmems_waves(spot_id, data_str, h_ini, h_fim):
+    """Fetch wave partition data from CMEMS MFWAM.
+    Usa ponto offshore de referência (CMEMS_REF) fora da máscara de terra.
+    Devolve dict com sw1/sw2/ww ou None se falhar."""
+    if spot_id not in CMEMS_REF:
+        return None
+    ref = CMEMS_REF[spot_id]
+    lat_ref, lon_ref = ref['lat'], ref['lon']
+
+    offset = _azores_utc_offset(data_str)
+    h_ini_utc = h_ini - offset
+    h_fim_utc = min(h_fim - offset, 23)
+    start = f'{data_str}T{h_ini_utc:02d}:00:00'
+    end   = f'{data_str}T{h_fim_utc:02d}:00:00'
+
+    try:
+        import copernicusmarine
+        import numpy as np
+        ds = copernicusmarine.open_dataset(
+            dataset_id='cmems_mod_glo_wav_anfc_0.083deg_PT3H-i',
+            variables=['VHM0','VHM0_SW1','VTM01_SW1','VMDR_SW1',
+                       'VHM0_SW2','VTM01_SW2','VMDR_SW2',
+                       'VHM0_WW','VTM01_WW','VMDR_WW'],
+            minimum_latitude=lat_ref-0.05, maximum_latitude=lat_ref+0.05,
+            minimum_longitude=lon_ref-0.05, maximum_longitude=lon_ref+0.05,
+            start_datetime=start, end_datetime=end,
+        )
+    except Exception as e:
+        print(f'  [CMEMS] erro: {e}')
+        return None
+
+    import numpy as np
+    lats = ds.latitude.values
+    lons = ds.longitude.values
+    lat_idx = int(abs(lats - lat_ref).argmin())
+    lon_idx = int(abs(lons - lon_ref).argmin())
+
+    def avg_val(var):
+        if var not in ds: return None
+        vals = ds[var].values[:, lat_idx, lon_idx].astype(float)
+        valid = vals[~np.isnan(vals)]
+        return round(float(np.mean(valid)), 3) if len(valid) > 0 else None
+
+    def avg_dir(var):
+        if var not in ds: return None
+        vals = ds[var].values[:, lat_idx, lon_idx].astype(float)
+        valid = vals[~np.isnan(vals)]
+        if len(valid) == 0: return None
+        s = float(np.sum(np.sin(np.radians(valid))))
+        c = float(np.sum(np.cos(np.radians(valid))))
+        return round(float(np.degrees(np.arctan2(s, c))) % 360, 1)
+
+    hs = avg_val('VHM0')
+    if hs is None:
+        return None
+
+    sw1_hs = avg_val('VHM0_SW1'); sw1_t = avg_val('VTM01_SW1'); sw1_dir = avg_dir('VMDR_SW1')
+    sw2_hs = avg_val('VHM0_SW2'); sw2_t = avg_val('VTM01_SW2'); sw2_dir = avg_dir('VMDR_SW2')
+    ww_hs  = avg_val('VHM0_WW');  ww_t  = avg_val('VTM01_WW');  ww_dir  = avg_dir('VMDR_WW')
+
+    def wp_ef_comp(hs_c, t_c, dir_c):
+        if not hs_c or not t_c: return None
+        f = factor_swell(spot_id, dir_c, t_c)
+        if f is None: return None
+        return round(0.5 * hs_c**2 * t_c * f, 2)
+
+    wp1  = wp_ef_comp(sw1_hs, sw1_t, sw1_dir)
+    wp2  = wp_ef_comp(sw2_hs, sw2_t, sw2_dir)
+    f_ww = factor_swell(spot_id, ww_dir, ww_t)
+    wp_ww = wp_ef_comp(ww_hs, ww_t, ww_dir) if (f_ww and f_ww >= 0.50) else None
+    wp_total = round(sum(v for v in [wp1, wp2, wp_ww] if v), 2)
+
+    return {
+        'hs': hs,
+        'sw1_hs': sw1_hs, 'sw1_t': sw1_t, 'sw1_dir': sw1_dir,
+        'sw1_dir_c': graus_para_cardinal(sw1_dir),
+        'sw1_factor': factor_swell(spot_id, sw1_dir, sw1_t), 'sw1_wp_ef': wp1,
+        'sw2_hs': sw2_hs, 'sw2_t': sw2_t, 'sw2_dir': sw2_dir,
+        'sw2_dir_c': graus_para_cardinal(sw2_dir),
+        'sw2_factor': factor_swell(spot_id, sw2_dir, sw2_t), 'sw2_wp_ef': wp2,
+        'ww_hs': ww_hs, 'ww_t': ww_t, 'ww_dir': ww_dir,
+        'ww_dir_c': graus_para_cardinal(ww_dir), 'ww_factor': f_ww, 'ww_wp_ef': wp_ww,
+        'wp_ef_total': wp_total,
+        'ref_lat': float(lats[lat_idx]), 'ref_lon': float(lons[lon_idx]),
+    }
 
 # ─── Modelo de marés para Ponta Delgada ─────────────────────────────────
 # Timing: harmónico M2 (período 12.42h)
@@ -156,6 +289,76 @@ def dir_dominante(lista, i0, i1):
     cos_sum = sum(math.cos(math.radians(v)) for v in vals)
     return round(math.degrees(math.atan2(sin_sum, cos_sum)) % 360, 1)
 
+# ─── Stormglass — segundo swell ─────────────────────────────────────────────────
+
+def _azores_utc_offset(data_str):
+    month = int(data_str.split('-')[1])
+    return 0 if 4 <= month <= 10 else -1
+
+def _load_stormglass_key():
+    key = os.environ.get('STORMGLASS_API_KEY', '')
+    if key:
+        return key
+    env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '.env')
+    try:
+        with open(env_path) as f:
+            for line in f:
+                if line.startswith('STORMGLASS_API_KEY='):
+                    return line.strip().split('=', 1)[1]
+    except FileNotFoundError:
+        pass
+    return None
+
+def _sg_val(entry, key):
+    src = entry.get(key, {})
+    for source in ('sg', 'noaa', 'meteo', 'icon'):
+        if source in src and src[source] is not None:
+            return src[source]
+    vals = [v for v in src.values() if v is not None]
+    return vals[0] if vals else None
+
+def fetch_stormglass_swell2(lat, lon, data_str, h_ini, h_fim):
+    key = _load_stormglass_key()
+    if not key:
+        return None
+    offset = _azores_utc_offset(data_str)
+    h_ini_utc = h_ini - offset
+    h_fim_utc = h_fim - offset
+    start = f"{data_str}T{h_ini_utc:02d}:00:00Z"
+    end   = f"{data_str}T{h_fim_utc:02d}:00:00Z"
+    params = 'secondarySwellHeight,secondarySwellDirection,secondarySwellPeriod'
+    url = (f'https://api.stormglass.io/v2/weather/point'
+           f'?lat={lat}&lng={lon}&params={params}&start={start}&end={end}')
+    req = urllib.request.Request(url, headers={'Authorization': key})
+    try:
+        with urllib.request.urlopen(req, timeout=15) as r:
+            data = json.loads(r.read())
+    except Exception as e:
+        print(f'  [Stormglass] erro: {e}')
+        return None
+    hours = data.get('hours', [])
+    if not hours:
+        return None
+    hs_list, dir_list, t_list = [], [], []
+    for h in hours:
+        hs_v  = _sg_val(h, 'secondarySwellHeight')
+        dir_v = _sg_val(h, 'secondarySwellDirection')
+        t_v   = _sg_val(h, 'secondarySwellPeriod')
+        if hs_v  is not None: hs_list.append(hs_v)
+        if dir_v is not None: dir_list.append(dir_v)
+        if t_v   is not None: t_list.append(t_v)
+    if not hs_list:
+        return None
+    avg_hs  = round(sum(hs_list) / len(hs_list), 2)
+    avg_t   = round(sum(t_list)  / len(t_list),  2) if t_list else None
+    avg_dir = dir_dominante(dir_list, 0, len(dir_list) - 1) if dir_list else None
+    return {
+        'swell2_hs': avg_hs,
+        'swell2_dir_graus': avg_dir,
+        'swell2_dir': graus_para_cardinal(avg_dir),
+        'swell2_t': avg_t,
+    }
+
 # ─── Função principal ─────────────────────────────────────────────────────────
 
 def obter_condicoes(data_str, hora_ini_str, hora_fim_str, spot_id):
@@ -172,6 +375,8 @@ def obter_condicoes(data_str, hora_ini_str, hora_fim_str, spot_id):
     horas = ondas['hourly']['time']
     i0 = hora_para_idx(f'{data_str}T{hora_ini_str}', horas)
     i1 = hora_para_idx(f'{data_str}T{hora_fim_str}', horas)
+
+    cmems = fetch_cmems_waves(spot_id, data_str, h_ini, h_fim)
 
     hs       = media_intervalo(ondas['hourly']['wave_height'], i0, i1)
     t_med    = media_intervalo(ondas['hourly']['wave_period'], i0, i1)
@@ -194,12 +399,16 @@ def obter_condicoes(data_str, hora_ini_str, hora_fim_str, spot_id):
     ma = min(maximos, key=lambda x: abs((x[0]-base).total_seconds()), default=None)
     amplitude = round(ma[1] - mb[1], 2) if ma and mb else None
 
+    swell2 = fetch_stormglass_swell2(lat, lon, data_str, h_ini, h_fim)
+
     return {
         'spot': spot['nome'], 'spot_id': spot_id,
         'data': data_str, 'hora_ini': hora_ini_str, 'hora_fim': hora_fim_str,
         'hs': hs, 'period': t_med, 'wave_power': wp,
         'swell_hs': sw_hs, 'swell_t': sw_t,
         'swell_dir': graus_para_cardinal(sw_dir_g), 'swell_dir_graus': sw_dir_g,
+        'swell2': swell2,
+        'cmems': cmems,
         'vento_kmh': v_spd,
         'vento_dir': graus_para_cardinal(v_dir_g), 'vento_dir_graus': v_dir_g,
         'mare_baixa_hora': mb[0].strftime('%H:%M') if mb else '?',
@@ -230,13 +439,40 @@ def imprimir_resumo(c):
            'Boas' if wp < 10 else 'Ideais' if wp < 18 else
            'Exigentes' if wp < 35 else 'Muito exig.')
     curr_nos = ms_para_nos(c.get('corrente_ms', None))
+    curr_nos = ms_para_nos(c.get('corrente_ms', None))
+    cmems = c.get('cmems')
+    if cmems:
+        def fmt_comp(pfx, hs, t, dir_c, dir_g, f, wp):
+            if not hs: return ''
+            f_str = f'f={f:.2f}' if f is not None else 'f=?'
+            wp_str = f'WP_ef={wp:.1f}' if wp is not None else 'WP_ef=?'
+            t_str = f'T={t:.1f}s' if t else ''
+            if wp is None: return f'  {pfx}: {dir_c} ({dir_g}°)  Hs={hs}m  f={f:.2f}  → descartado'
+            return f'  {pfx}: {dir_c} ({dir_g}°)  Hs={hs}m  {t_str}  {f_str}  → {wp_str} kW/m'
+        cls_ef = ('Fracas' if not cmems['wp_ef_total'] or cmems['wp_ef_total'] < 4 else
+                  'Aceitaveis' if cmems['wp_ef_total'] < 7 else 'Boas' if cmems['wp_ef_total'] < 10 else
+                  'Ideais' if cmems['wp_ef_total'] < 18 else 'Exigentes' if cmems['wp_ef_total'] < 35 else 'Muito exig.')
+        sw_lines = [fmt_comp('SW1',cmems['sw1_hs'],cmems['sw1_t'],cmems['sw1_dir_c'],cmems['sw1_dir'],cmems['sw1_factor'],cmems['sw1_wp_ef']),
+                    fmt_comp('SW2',cmems['sw2_hs'],cmems['sw2_t'],cmems['sw2_dir_c'],cmems['sw2_dir'],cmems['sw2_factor'],cmems['sw2_wp_ef']),
+                    fmt_comp('WW ',cmems['ww_hs'], cmems['ww_t'], cmems['ww_dir_c'], cmems['ww_dir'], cmems['ww_factor'], cmems['ww_wp_ef'])]
+        sw_block = chr(10).join(l for l in sw_lines if l)
+        wave_hdr = f"Wave Power ef: {cmems['wp_ef_total']} kW/m  [{cls_ef}]  (CMEMS MFWAM · ref {cmems['ref_lat']:.3f}N {cmems['ref_lon']:.3f}W)"
+        wave_det = f"Hs offshore={cmems['hs']}m{chr(10)}{sw_block}"
+    else:
+        swell_t_str = f"  T={c['swell_t']}s" if c.get('swell_t') else ''
+        swell2 = c.get('swell2')
+        s2_line = ''
+        if swell2 and swell2.get('swell2_hs'):
+            t2 = f"  T={swell2['swell2_t']}s" if swell2.get('swell2_t') else ''
+            s2_line = chr(10) + f"  Swell 2: {swell2['swell2_dir']} ({swell2['swell2_dir_graus']}°)  Hs={swell2['swell2_hs']}m{t2}  [Stormglass]"
+        wave_hdr = f"Wave Power : {c['wave_power']} kW/m  [{cls}]"
+        wave_det = f"Hs={c['hs']}m  T={c['period']}s{chr(10)}  Swell 1: {c['swell_dir']} ({c['swell_dir_graus']}°)  Hs={c['swell_hs']}m{swell_t_str}{s2_line}"
     print(f"""
 Condicoes: {c['spot']}
 {c['data']}  {c['hora_ini']}-{c['hora_fim']}
 --------------------------------------------
-Wave Power : {c['wave_power']} kW/m  [{cls}]
-Hs={c['hs']}m  T={c['period']}s
-Swell      : {c['swell_dir']} ({c['swell_dir_graus']} graus)  Hs={c['swell_hs']}m
+{wave_hdr}
+{wave_det}
 Vento      : {c['vento_kmh']} km/h  {c['vento_dir']} ({c['vento_dir_graus']} graus)
 Mare baixa : {c['mare_baixa_hora']}  {mb_alt_str}
 Mare alta  : {c['mare_alta_hora']}  {ma_alt_str}
