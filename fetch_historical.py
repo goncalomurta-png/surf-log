@@ -120,6 +120,7 @@ def load_sessions():
                 'wp_stored': s.get('wp_ef'),
                 'classe':    s.get('classe'),
                 'cond_obs':  s.get('cond_obs'),
+                'hs_obs':    s.get('hs_obs'),
                 'sg_key':    session_group_key(s['data'], hora_ini, spot_id),
             })
     return sessions
@@ -207,10 +208,14 @@ def main():
 
         prefix = f'  {key} ({s["data"]} {s["hora_ini"]}–{s["hora_fim"]} · {s["spot_id"]}) [{age}d]'
 
+        # ── Metadados da sessão (sempre actualizar para reflectir JSONs correntes) ──
+        if entry.get('session') != s:
+            entry['session'] = s
+            updated += 1
+
         # ── Open-Meteo ──────────────────────────────────────────────────────
         if force or 'om' not in entry:
             print(f'{prefix}  OM...', end=' ', flush=True)
-            entry['session'] = s
             entry['om']      = fetch_om(s['spot_id'], s['data'], s['hora_ini'], s['hora_fim'])
             print('OK' if 'error' not in entry['om'] else f'ERRO: {entry["om"].get("error","")[:40]}')
             time.sleep(0.2)

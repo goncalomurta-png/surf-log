@@ -35,12 +35,13 @@ CLASSE_RANGES = [
 ]
 
 FACTORES_ACTUAIS_SUL = {
-    'S (T≥12s)':  0.90,
-    'S (T<12s)':  0.85,
-    'W/SW/WNW':   0.68,
-    'NW (270–320°)': 0.65,
-    'N/NE':       0.25,
-    'SE':         0.35,
+    'S (T≥12s)':      0.90,
+    'S (T<12s)':      0.85,
+    'W/SW/WNW':       1.00,  # calibrado: f_real 1.42–1.87 para WSW/W (225–290°)
+    'NW (270–320°)':  0.65,  # calibrado: f_real 0.58 para NW (290–320°)
+    'NNW (320–345°)': 0.55,  # calibrado: f_real 1.00 para NNW wrapping parcial
+    'N/NE':           0.35,  # calibrado: f_real mediana 0.33 para N puro bloqueado
+    'SE':             0.35,
 }
 
 CARDINAL_GRAUS = {
@@ -69,18 +70,20 @@ def wp_para_classe(wp):
 def dir_bucket(dir_graus, period=None):
     if dir_graus is None:
         return 'desconhecida'
-    if dir_graus >= 320 or dir_graus <= 45:
+    if dir_graus >= 345 or dir_graus <= 45:
         return 'N/NE'
-    if 45 < dir_graus < 90:
-        return 'NE/E'
-    if 90 <= dir_graus < 135:
-        return 'SE'
+    if 320 <= dir_graus < 345:
+        return 'NNW (320–345°)'
+    if 290 <= dir_graus < 320:
+        return 'NW (270–320°)'
+    if 225 < dir_graus < 290:
+        return 'W/SW/WNW'
     if 135 <= dir_graus <= 225:
         return 'S (T≥12s)' if (period and period >= 12) else 'S (T<12s)'
-    if 225 < dir_graus < 270:
-        return 'W/SW/WNW'
-    if 270 <= dir_graus < 320:
-        return 'W/SW/WNW'
+    if 90 <= dir_graus < 135:
+        return 'SE'
+    if 45 < dir_graus < 90:
+        return 'NE/E'
     return 'outra'
 
 
@@ -183,6 +186,17 @@ def dominant_dir(components):
     return best.get('dir'), best.get('t')
 
 
+def offshore_sw1(entry):
+    """Devolve (hs_offshore, t, dir_graus, dir_c) do SW1 dominante (CMEMS → OM)."""
+    cmems = entry.get('cmems')
+    om    = entry.get('om', {})
+    if cmems and cmems.get('sw1_hs') and cmems.get('sw1_t'):
+        return cmems['sw1_hs'], cmems['sw1_t'], cmems.get('sw1_dir'), cmems.get('sw1_dir_c', '?')
+    if om.get('sw_hs') and om.get('sw_t'):
+        return om['sw_hs'], om['sw_t'], om.get('sw_dir'), om.get('sw_dir_c', '?')
+    return None, None, None, None
+
+
 def load_cache():
     if not CACHE_FILE.exists():
         print(f'Cache não encontrado: {CACHE_FILE}')
@@ -264,6 +278,68 @@ def main():
     correct = sum(1 for m, r in valid if m == r)
     print(f'Acurácia de classe: {correct}/{len(valid)} ({100*correct/len(valid):.0f}%)'
           if valid else 'Sem dados suficientes')
+
+    # ── Calibração real baseada em hs_obs ────────────────────────────────────
+    print()
+    print('═' * 60)
+    print('CALIBRAÇÃO REAL — forecast vs observação (hs_obs)')
+    print()
+
+    obs_calibration = {}
+    n_com_obs = 0
+    n_sem_obs = 0
+
+    for key in sorted(cache):
+        entry   = cache[key]
+        s       = entry.get('session', {})
+        hs_obs  = s.get('hs_obs')
+        spot_id = s.get('spot_id', 'milicias')
+
+        if hs_obs is None:
+            n_sem_obs += 1
+            continue
+
+        n_com_obs += 1
+        hs_off, t_dom, dir_graus, dir_c = offshore_sw1(entry)
+
+        if not hs_off or not t_dom or hs_off <= 0:
+            print(f'  {key:18s}  hs_obs={hs_obs}m  sem Hs offshore — ignorado')
+            continue
+
+        # f_real: factor que reconcilia offshore com observação
+        # wp = 0.5 × Hs_off² × T × f  →  f = (hs_obs/hs_off)²
+        f_real  = round((hs_obs / hs_off) ** 2, 3)
+        bucket  = dir_bucket(dir_graus, t_dom)
+        f_atual = FACTORES_ACTUAIS_SUL.get(bucket)
+        delta_s = f'{f_real - f_atual:+.3f}' if f_atual else '?'
+
+        obs_calibration.setdefault(bucket, []).append(f_real)
+        print(f'  {key:18s}  hs_obs={hs_obs}m  hs_off={hs_off}m  T={t_dom:.1f}s  '
+              f'dir={dir_c:4s}  f_real={f_real:.3f}  f_atual={f_atual}  δ={delta_s}')
+
+    print()
+    if n_com_obs == 0:
+        print(f'  Nenhuma sessão tem hs_obs. Preencher no Passo 1b do workflow (pergunta de condições).')
+        print(f'  {n_sem_obs} sessões sem hs_obs.')
+    else:
+        print(f'  {n_com_obs} sessão(ões) com hs_obs · {n_sem_obs} sem hs_obs')
+        if obs_calibration:
+            print()
+            print(f'  {"Bucket":20s} {"n":3s}  {"f_real médio":13s} {"f_real med.":11s} {"f_atual":8s}  {"δ":8s}  {"Acção"}')
+            print(f'  {"─"*20} {"─"*3}  {"─"*13} {"─"*11} {"─"*8}  {"─"*8}  {"─"*20}')
+            for bucket in sorted(obs_calibration):
+                fs      = obs_calibration[bucket]
+                n       = len(fs)
+                mean_f  = round(sum(fs) / n, 3)
+                med_f   = sorted(fs)[n // 2]
+                f_at    = FACTORES_ACTUAIS_SUL.get(bucket)
+                f_at_s  = f'{f_at:.2f}' if f_at else '?'
+                delta   = round(mean_f - f_at, 3) if f_at else None
+                delta_s = f'{delta:+.3f}' if delta is not None else '?'
+                acao    = ('↑ aumentar' if delta and delta > 0.05
+                           else '↓ reduzir' if delta and delta < -0.05
+                           else '✓ ok') if delta is not None else '?'
+                print(f'  {bucket:20s} {n:3d}  {mean_f:.3f}{"":10s} {med_f:.3f}{"":8s} {f_at_s:8s}  {delta_s:8s}  {acao}')
 
     # ── Status de cobertura ───────────────────────────────────────────────────
     print()

@@ -48,23 +48,35 @@ def factor_swell(spot_id, dir_graus, period=None):
     """Factor offshore→praia para um swell na direcção dir_graus.
     dir_graus = direcção DE ONDE o swell vem (convenção meteorológica).
     Sul (Milícias): exposta a SW/W/S · bloqueada a N/NE pela ilha.
+
+    Factores calibrados com 22 sessões (hs_obs vs hs_offshore CMEMS/OM):
+      S T≥12s: 0.90  S T<12s: 0.85  (1 sessão — manter conservador)
+      SW/W/WSW (225–290°): 1.0   calibrado f_real médio 1.42–1.87 · 4 sessões
+      WNW/NW  (290–320°): 0.65  calibrado f_real 0.58 · 2 sessões
+      NNW     (320–345°): 0.55  calibrado f_real 1.00 · 4 sessões (wrapping parcial)
+      N/NNE/NE (345–90°): 0.35  calibrado f_real mediana 0.33 · 10 sessões puras N
+      Costa norte NW/N/NE: 1.5  calibrado f_real 7.25 · 1 sessão (conservador)
     """
     if dir_graus is None:
         return None
     costa = SPOTS.get(spot_id, {}).get('costa', '')
     if costa == 'sul':
-        if 135 <= dir_graus <= 225:         # S directo — exposição total
+        if 135 <= dir_graus <= 225:              # S directo — exposição total
             return 0.90 if (period and period >= 12) else 0.85
-        elif 225 < dir_graus < 320:         # SW / W / WNW — boa exposição
-            return 0.68
-        elif 90 < dir_graus < 135:          # SE — refracção parcial costa este
+        elif 225 < dir_graus < 290:              # SW / W / WSW — calibrado
+            return 1.0
+        elif 290 <= dir_graus < 320:             # WNW / NW — exposição parcial
+            return 0.65
+        elif 320 <= dir_graus < 345:             # NNW — wrapping parcial
+            return 0.55
+        elif 90 < dir_graus < 135:               # SE — refracção parcial costa este
             return 0.35
-        elif dir_graus <= 90 or dir_graus >= 320:  # N / NNE / NE / NNW — bloqueado pela ilha
-            return 0.25
+        else:                                    # N / NNE / NE (345–90°) — bloqueado
+            return 0.35
     elif costa == 'norte':
         if dir_graus >= 270 or dir_graus <= 90:  # NW / N / NE — exposição directa
-            return 0.65
-        else:                               # S não chega ao norte
+            return 1.5
+        else:                                    # S não chega ao norte
             return 0.10
     elif costa == 'noroeste':
         if 225 <= dir_graus <= 360 or dir_graus <= 45:  # W / NW / N
