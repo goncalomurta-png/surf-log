@@ -145,3 +145,5 @@ Stormglass SW2 (budget 8 calls/run)                → actualizar fetch_conditio
 | B.1 · fix acento surfer_id update_session.py | `auditor_accepted` | `zip(surfers, sd_list)` linha 625; HTML 485 K sem duplicação |
 | B.2 · actualizar insert_before_id JSONs | `auditor_accepted` | rodrigo→s10 · tomas→s9 verificados |
 | B.3 · git commit + push S10/S9 | `auditor_accepted` | commit `6fc528f` · branch sincronizada |
+| V.1 · Radar + Sparklines (ambos atletas) | `auditor_accepted` | radar valores corretos vs JSON; sparklines 2×3 com bandas e threshold; textos Tomás corrigidos; HTML corrompido L1777 corrigido · 17 Mai 2026 |
+| A.1 · notas/cond_grid/horas s0–s4 (ambos) | `auditor_accepted` | zero campos vazios; rodrigo-s0 hora+trainer_comment confirmados; rodrigo-s3 wp_ef=17 ✓ · 17 Mai 2026 |
