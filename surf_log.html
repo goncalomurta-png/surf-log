@@ -675,6 +675,293 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
     <div class="kpi"><div class="kpi-num">2</div><div class="kpi-lbl">Spots</div></div>
     <div class="kpi"><div class="kpi-num">3</div><div class="kpi-lbl">Pranchas</div></div>
   </div>
+        <div class="sec-label">Evolução</div>
+    <!-- ── Gráfico de linhas Rodrigo — 5 sessões ── -->
+    <!-- Dados sessão a sessão (ordem cronológica S1→S4):
+         Leitura:      4, 3, 4, 3
+         Take-off:     4, 2, 4, 3
+         Paddle:       4, 3, 4, 3
+         Manobras:     2, 2, 2, 2
+         Equilíbrio:   3, 3, 4, 3
+         Posicionam.:  4, 3, 4, 2
+         Datas: 03Abr · 04Abr · 07Abr · 08Abr
+    -->
+    <!-- Gráfico escalável: adicionar sessões aumentando o viewBox e os pontos -->
+    <div class="evo-card">
+      <div class="evo-header">
+        <span class="evo-header-title">📈 Evolução por competência</span>
+        <span class="evo-sessions-label">13 sessões · Mai 2026</span>
+      </div>
+      <div class="evo-body">
+        <!-- RADAR + SPARKLINES (substituiu gráfico de linhas) -->
+        <div class="radar-wrap">
+          <svg viewBox="0 0 220 220" width="220" height="220" xmlns="http://www.w3.org/2000/svg" font-family="Barlow,sans-serif">
+            <!-- Rings L1–L5 -->
+            <polygon points="110,92 126,101 126,119 110,128 94,119 94,101" fill="none" stroke="#e8e4dc" stroke-width="0.7"/>
+            <polygon points="110,74 141,92 141,128 110,146 79,128 79,92" fill="none" stroke="#e8e4dc" stroke-width="0.7"/>
+            <polygon points="110,56 157,83 157,137 110,164 63,137 63,83" fill="none" stroke="#e8e4dc" stroke-width="0.7"/>
+            <polygon points="110,38 172,74 172,146 110,182 48,146 48,74" fill="none" stroke="#e0dbd2" stroke-width="0.8"/>
+            <polygon points="110,20 188,65 188,155 110,200 32,155 32,65" fill="none" stroke="#d5d0c8" stroke-width="1"/>
+            <!-- Axis lines -->
+            <g stroke="#e0ddd6" stroke-width="0.5">
+              <line x1="110" y1="110" x2="110" y2="20"/>
+              <line x1="110" y1="110" x2="188" y2="65"/>
+              <line x1="110" y1="110" x2="188" y2="155"/>
+              <line x1="110" y1="110" x2="110" y2="200"/>
+              <line x1="110" y1="110" x2="32" y2="155"/>
+              <line x1="110" y1="110" x2="32" y2="65"/>
+            </g>
+            <!-- Expected polygon — tecnico midpoint r=63 (tracejado) -->
+            <polygon points="110,47 165,79 165,141 110,173 55,141 55,79" fill="none" stroke="#bbb" stroke-width="1.2" stroke-dasharray="4,3"/>
+            <!-- Athlete polygon — Rodrigo (leitura,takeoff,paddle,manobras,equilibrio,posic.) -->
+            <polygon points="110,46 155,84 172,146 110,146 69,133 44,72" fill="rgba(41,128,185,0.15)" stroke="#2980b9" stroke-width="2" stroke-linejoin="round"/>
+            <!-- Axis labels -->
+            <text x="110" y="10" text-anchor="middle" font-size="9" fill="#555">Leitura</text>
+            <text x="193" y="63" text-anchor="start" font-size="9" fill="#555">Take-off</text>
+            <text x="193" y="158" text-anchor="start" font-size="9" fill="#555">Paddle</text>
+            <text x="110" y="213" text-anchor="middle" font-size="9" fill="#555">Manobras</text>
+            <text x="27" y="158" text-anchor="end" font-size="9" fill="#555">Equilíbrio</text>
+            <text x="27" y="63" text-anchor="end" font-size="9" fill="#555">Posic.</text>
+            <!-- Level labels on leitura axis -->
+            <text x="114" y="128" font-size="7" fill="#ccc">1</text>
+            <text x="114" y="110" font-size="7" fill="#ccc">2</text>
+            <text x="114" y="92" font-size="7" fill="#ccc">3</text>
+            <text x="114" y="74" font-size="7" fill="#ccc">4</text>
+            <text x="114" y="56" font-size="7" fill="#ccc">5</text>
+          </svg>
+        </div>
+        <!-- Sparklines 2×3 — fonte: skills_hist por sessão (ordem cronológica) -->
+        <!-- Rodrigo: 13 sessões · nivel tecnico (range 3.0–4.0 · threshold 4.0) -->
+        <!-- X: 2,10,18,26,34,42,50,58,66,74,82,90,98  Y=48-val*8 -->
+        <div class="spark-grid">
+          <!-- Leitura: [4,3,4,3,2,4,3,3,3,3,4,4,3] media=3.56 ★★★★☆ banda laranja (in range) -->
+          <div class="spark-card">
+            <div class="spark-header">
+              <span class="spark-title">🌊 Leitura</span>
+              <span class="spark-trend-down">↓</span>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px">
+              <span class="spark-val" style="color:#2e86c1">3.6</span>
+              <span class="spark-stars" style="color:#2e86c1">★★★★☆</span>
+            </div>
+            <svg viewBox="0 0 100 44" width="100%" height="44" xmlns="http://www.w3.org/2000/svg">
+              <rect x="2" y="16" width="96" height="8" fill="#fef9ec"/>
+              <line x1="2" y1="16" x2="98" y2="16" stroke="#e0c060" stroke-width="0.7" stroke-dasharray="2,2"/>
+              <polyline points="2,16 10,24 18,16 26,24 34,32 42,16 50,24 58,24 66,24 74,24 82,16 90,16 98,24" fill="none" stroke="#2e86c1" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
+              <circle cx="98" cy="24" r="2.5" fill="#2e86c1" stroke="white" stroke-width="1"/>
+            </svg>
+            <div class="spark-next">próx. nível: manter ≥4 por 3 sessões</div>
+          </div>
+          <!-- Takeoff: [4,2,4,3,3,3,3,3,3,3,3,3,2] media=2.86 ★★★☆☆ banda vermelha (below range) -->
+          <div class="spark-card">
+            <div class="spark-header">
+              <span class="spark-title">🏄 Take-off</span>
+              <span class="spark-trend-down">↓</span>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px">
+              <span class="spark-val" style="color:#e67e22">2.9</span>
+              <span class="spark-stars" style="color:#e67e22">★★★☆☆</span>
+            </div>
+            <svg viewBox="0 0 100 44" width="100%" height="44" xmlns="http://www.w3.org/2000/svg">
+              <rect x="2" y="16" width="96" height="8" fill="#fdf0f0"/>
+              <line x1="2" y1="16" x2="98" y2="16" stroke="#e07060" stroke-width="0.7" stroke-dasharray="2,2"/>
+              <polyline points="2,16 10,32 18,16 26,24 34,24 42,24 50,24 58,24 66,24 74,24 82,24 90,24 98,32" fill="none" stroke="#e67e22" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
+              <circle cx="98" cy="32" r="2.5" fill="#e67e22" stroke="white" stroke-width="1"/>
+            </svg>
+            <div class="spark-next">próx. nível: rotação de anca consistente</div>
+          </div>
+          <!-- Paddle: [4,3,4,3,2,4,4,5,4,5,4,4,3] media=4.0 ★★★★☆ banda verde (≥ threshold) -->
+          <div class="spark-card">
+            <div class="spark-header">
+              <span class="spark-title">🚣 Paddle</span>
+              <span class="spark-trend-down">↓</span>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px">
+              <span class="spark-val" style="color:#1e8449">4.0</span>
+              <span class="spark-stars" style="color:#1e8449">★★★★☆</span>
+            </div>
+            <svg viewBox="0 0 100 44" width="100%" height="44" xmlns="http://www.w3.org/2000/svg">
+              <rect x="2" y="16" width="96" height="8" fill="#edf8f1"/>
+              <line x1="2" y1="16" x2="98" y2="16" stroke="#60c080" stroke-width="0.7" stroke-dasharray="2,2"/>
+              <polyline points="2,16 10,24 18,16 26,24 34,32 42,16 50,16 58,8 66,16 74,8 82,16 90,16 98,24" fill="none" stroke="#1e8449" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
+              <circle cx="98" cy="24" r="2.5" fill="#1e8449" stroke="white" stroke-width="1"/>
+            </svg>
+            <div class="spark-next">próx. nível: paddle em ondas ≥1.5m</div>
+          </div>
+          <!-- Manobras: [2,2,2,2,1,2,2,2,2,2,2,2,2] media=2.0 ★★☆☆☆ banda vermelha (below range) -->
+          <div class="spark-card">
+            <div class="spark-header">
+              <span class="spark-title">↩️ Manobras</span>
+              <span class="spark-trend-flat">→</span>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px">
+              <span class="spark-val" style="color:#c0392b">2.0</span>
+              <span class="spark-stars" style="color:#c0392b">★★☆☆☆</span>
+            </div>
+            <svg viewBox="0 0 100 44" width="100%" height="44" xmlns="http://www.w3.org/2000/svg">
+              <rect x="2" y="16" width="96" height="8" fill="#fdf0f0"/>
+              <line x1="2" y1="16" x2="98" y2="16" stroke="#e07060" stroke-width="0.7" stroke-dasharray="2,2"/>
+              <polyline points="2,32 10,32 18,32 26,32 34,40 42,32 50,32 58,32 66,32 74,32 82,32 90,32 98,32" fill="none" stroke="#c0392b" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
+              <circle cx="98" cy="32" r="2.5" fill="#c0392b" stroke="white" stroke-width="1"/>
+            </svg>
+            <div class="spark-next">próx. nível: bottom turn controlado</div>
+          </div>
+          <!-- Equilibrio: [3,3,4,3,3,3,3,3,3,3,3,2,3] media=2.6 ★★★☆☆ banda vermelha (below range) -->
+          <div class="spark-card">
+            <div class="spark-header">
+              <span class="spark-title">⚖️ Equilíbrio</span>
+              <span class="spark-trend-flat">→</span>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px">
+              <span class="spark-val" style="color:#8e44ad">2.6</span>
+              <span class="spark-stars" style="color:#8e44ad">★★★☆☆</span>
+            </div>
+            <svg viewBox="0 0 100 44" width="100%" height="44" xmlns="http://www.w3.org/2000/svg">
+              <rect x="2" y="16" width="96" height="8" fill="#fdf0f0"/>
+              <line x1="2" y1="16" x2="98" y2="16" stroke="#e07060" stroke-width="0.7" stroke-dasharray="2,2"/>
+              <polyline points="2,24 10,24 18,16 26,24 34,24 42,24 50,24 58,24 66,24 74,24 82,24 90,32 98,24" fill="none" stroke="#8e44ad" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
+              <circle cx="98" cy="24" r="2.5" fill="#8e44ad" stroke="white" stroke-width="1"/>
+            </svg>
+            <div class="spark-next">próx. nível: estável em ondas 1m+</div>
+          </div>
+          <!-- Posicionamento: [3,3,4,2,2,4,4,4,4,5,5,4,4] media=4.24 ★★★★☆ banda verde (≥ threshold) -->
+          <div class="spark-card">
+            <div class="spark-header">
+              <span class="spark-title">🧭 Posicion.</span>
+              <span class="spark-trend-down">↓</span>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px">
+              <span class="spark-val" style="color:#d4a017">4.2</span>
+              <span class="spark-stars" style="color:#d4a017">★★★★☆</span>
+            </div>
+            <svg viewBox="0 0 100 44" width="100%" height="44" xmlns="http://www.w3.org/2000/svg">
+              <rect x="2" y="16" width="96" height="8" fill="#edf8f1"/>
+              <line x1="2" y1="16" x2="98" y2="16" stroke="#60c080" stroke-width="0.7" stroke-dasharray="2,2"/>
+              <polyline points="2,24 10,24 18,16 26,32 34,32 42,16 50,16 58,16 66,16 74,8 82,8 90,16 98,16" fill="none" stroke="#d4a017" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
+              <circle cx="98" cy="16" r="2.5" fill="#d4a017" stroke="white" stroke-width="1"/>
+            </svg>
+            <div class="spark-next">próx. nível: leitura de sets em outside</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="sec-label">Objetivos</div>
+    <div class="obj-card">
+    <div class="obj-header"><span>🎯</span><span class="obj-horizon">Próxima sessão</span><span class="obj-period">Abr 2026</span></div>
+    <div class="obj-list">
+      <div class="obj-item progress"><span class="obj-status">🟡</span><div class="obj-text"><div class="obj-title">Trabalhar bottom turn</div><div class="obj-desc">Completar a curva na base da onda antes de subir</div></div></div>
+      <div class="obj-item todo"><span class="obj-status">🔴</span><div class="obj-text"><div class="obj-title">Melhorar escolha de ondas</div><div class="obj-desc">Reduzir ondas pobres — seleccionar apenas ondas com parede</div></div></div>
+    </div>
+  </div>
+  <div class="obj-card">
+    <div class="obj-header"><span>📅</span><span class="obj-horizon">Próximo mês</span><span class="obj-period">Mai–Jun 2026</span></div>
+    <div class="obj-list">
+      <div class="obj-item todo"><span class="obj-status">🔴</span><div class="obj-text"><div class="obj-title">Cutback controlado</div><div class="obj-desc">Executar uma mudança de direcção completa na onda</div></div></div>
+      <div class="obj-item todo"><span class="obj-status">🔴</span><div class="obj-text"><div class="obj-title">Consistência no take-off</div><div class="obj-desc">Take-off limpo em 8 de cada 10 ondas apanhadas</div></div></div>
+    </div>
+  </div>
+  <div class="obj-card">
+    <div class="obj-header"><span>🏆</span><span class="obj-horizon">Final de época</span><span class="obj-period">Set 2026</span></div>
+    <div class="obj-list">
+      <div class="obj-item todo"><span class="obj-status">🔴</span><div class="obj-text"><div class="obj-title">Surfar ondas de 1m+ com conforto</div><div class="obj-desc">Santa Bárbara ou Ribeira Grande em condições ideais</div></div></div>
+      <div class="obj-item todo"><span class="obj-status">🔴</span><div class="obj-text"><div class="obj-title">4★ em Manobras</div><div class="obj-desc">Dominar bottom turn e topo de onda básico</div></div></div>
+      <div class="obj-item todo"><span class="obj-status">🔴</span><div class="obj-text"><div class="obj-title">Testar prancha de fibra</div><div class="obj-desc">Sessão comparativa com hardboard 6'0" em condições ideais</div></div></div>
+    </div>
+  </div>
+    <div class="sec-label">Condições preferidas</div>
+    <div class="prog-card">
+      <div class="prog-header">
+        <span class="prog-header-title">Swell × Performance</span>
+        <span class="prog-date">10 Abr 26</span>
+      </div>
+      <div class="prog-body">
+        <div class="prog-formula">Performance média (6 competências) vs. wave power · 13 sessões · Milícias<br><small>🟢 zona surf ideal &nbsp;·&nbsp; 🟡 marginal/difícil &nbsp;·&nbsp; 🔴 extremos</small></div>
+        <div class="evo-chart-wrap">
+          <svg viewBox="0 0 320 185" xmlns="http://www.w3.org/2000/svg">
+            <!-- Traffic light zones -->
+            <!-- RED: 0–2 kW/m → x:45–56 -->
+            <rect x="45" y="15" width="11" height="140" fill="rgba(231,76,60,0.22)"/>
+            <!-- YELLOW: 2–4 kW/m → x:56–66 -->
+            <rect x="56" y="15" width="10" height="140" fill="rgba(241,196,15,0.28)"/>
+            <!-- GREEN: 4–18 kW/m → x:66–140 -->
+            <rect x="66" y="15" width="74" height="140" fill="rgba(39,174,96,0.20)"/>
+            <!-- YELLOW: 18–35 kW/m → x:140–231 -->
+            <rect x="140" y="15" width="91" height="140" fill="rgba(241,196,15,0.24)"/>
+            <!-- RED: 35–50 kW/m → x:231–310 -->
+            <rect x="231" y="15" width="79" height="140" fill="rgba(231,76,60,0.20)"/>
+            <!-- Zone labels inside bands -->
+            <text x="103" y="28" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="8" fill="rgba(30,132,73,0.7)" font-weight="700">SURF ✓</text>
+            <text x="185" y="28" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="7.5" fill="rgba(180,130,0,0.75)">DIFÍCIL</text>
+            <text x="270" y="28" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="7.5" fill="rgba(192,57,43,0.7)">EXTREMO</text>
+            <!-- Y grid -->
+            <line x1="45" y1="15" x2="310" y2="15" stroke="rgba(255,255,255,0.6)" stroke-width="0.7"/>
+            <line x1="45" y1="50" x2="310" y2="50" stroke="rgba(255,255,255,0.6)" stroke-width="0.7"/>
+            <line x1="45" y1="85" x2="310" y2="85" stroke="rgba(255,255,255,0.6)" stroke-width="0.7"/>
+            <line x1="45" y1="120" x2="310" y2="120" stroke="rgba(255,255,255,0.6)" stroke-width="0.7"/>
+            <line x1="45" y1="155" x2="310" y2="155" stroke="rgba(255,255,255,0.6)" stroke-width="0.7"/>
+            <!-- Y labels -->
+            <text x="40" y="18" text-anchor="end" font-family="Barlow,sans-serif" font-size="8" fill="#999">5</text>
+            <text x="40" y="53" text-anchor="end" font-family="Barlow,sans-serif" font-size="8" fill="#999">4</text>
+            <text x="40" y="88" text-anchor="end" font-family="Barlow,sans-serif" font-size="8" fill="#999">3</text>
+            <text x="40" y="123" text-anchor="end" font-family="Barlow,sans-serif" font-size="8" fill="#999">2</text>
+            <text x="40" y="158" text-anchor="end" font-family="Barlow,sans-serif" font-size="8" fill="#999">1</text>
+            <!-- Axes -->
+            <line x1="45" y1="15" x2="45" y2="155" stroke="#bbb" stroke-width="1"/>
+            <line x1="45" y1="155" x2="310" y2="155" stroke="#bbb" stroke-width="1"/>
+            <!-- X boundary ticks + labels -->
+            <line x1="56" y1="152" x2="56" y2="158" stroke="#bbb" stroke-width="0.8"/>
+            <text x="56" y="166" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#aaa">2</text>
+            <line x1="66" y1="152" x2="66" y2="158" stroke="#bbb" stroke-width="0.8"/>
+            <text x="66" y="166" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#aaa">4</text>
+            <line x1="140" y1="152" x2="140" y2="158" stroke="#bbb" stroke-width="0.8"/>
+            <text x="140" y="166" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#aaa">18</text>
+            <line x1="231" y1="152" x2="231" y2="158" stroke="#bbb" stroke-width="0.8"/>
+            <text x="231" y="166" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#aaa">35</text>
+            <!-- X axis title -->
+            <text x="177" y="183" text-anchor="middle" font-family="Barlow,sans-serif" font-size="8" fill="#999">Wave Power (kW/m)</text>
+            <!-- Data points -->
+            <circle cx="61" cy="114" r="5" fill="#1e8449" opacity="0.9"/>
+            <text x="61" y="106" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">10/4</text>
+            <circle cx="66" cy="132" r="5" fill="#1e8449" opacity="0.9"/>
+            <text x="66" y="124" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">03/4</text>
+            <circle cx="82" cy="126" r="5" fill="#1e8449" opacity="0.9"/>
+            <text x="82" y="118" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">04/4</text>
+            <circle cx="135" cy="85" r="5" fill="#1e8449" opacity="0.9"/>
+            <text x="135" y="77" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">08/4</text>
+            <circle cx="284" cy="85" r="5" fill="#1e8449" opacity="0.9"/>
+            <text x="284" y="77" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">07/4</text>
+            <circle cx="69" cy="74" r="5" fill="#1e8449" opacity="0.9"/>
+            <text x="69" y="66" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">18/4</text>
+                      <circle cx="92" cy="73" r="5" fill="#1e8449" opacity="0.9"/>
+            <text x="92" y="65" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">25/4</text>
+                        <circle cx="90" cy="79" r="5" fill="#1e8449" opacity="0.9"/>
+            <text x="90" y="71" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">25/4</text>
+                        <circle cx="69" cy="79" r="5" fill="#1e8449" opacity="0.9"/>
+            <text x="69" y="71" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">26/4</text>
+                        <circle cx="73" cy="68" r="5" fill="#1e8449" opacity="0.9"/>
+            <text x="73" y="60" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">9/5</text>
+                        <circle cx="69" cy="68" r="5" fill="#1e8449" opacity="0.9"/>
+            <text x="69" y="60" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">10/5</text>
+                        <circle cx="90" cy="79" r="5" fill="#1e8449" opacity="0.9"/>
+            <text x="90" y="71" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">11/5</text>
+                        <circle cx="49" cy="91" r="5" fill="#1e8449" opacity="0.9"/>
+            <text x="49" y="83" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">14/5</text>
+            </svg>
+        </div>
+        <div style="font-size:0.62rem;color:var(--grey);padding:2px 0 0;line-height:1.6">● Rodrigo &nbsp;·&nbsp; Milícias · 13 pontos · calibração em curso</div>
+      </div>
+    </div>
+
+    <div class="footer">
+    <svg width="18" height="18" viewBox="0 0 46 46" fill="none"><circle cx="23" cy="23" r="22" fill="#2c2c2c"/><path d="M8 12 L15 32 L23 18 L31 32 L38 12" stroke="white" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 32 L23 18 L31 32" stroke="white" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <a href="https://www.azoreswatergliders.com" target="_blank">azoreswatergliders.com</a>
+    &nbsp;·&nbsp; Actualizado 14 Maio 2026
+  </div>
+  </div>
+</div>
+<!-- ═══════════════════════════════════════
+     PÁGINA: TOMÁS
+════════════════════════════════════════ -->
     <div class="sec-label">Sessões registadas</div>
     <!-- Sessão 18 Abr 26 — Rodrigo S6 -->
                             <div class="session-card energy-fraca" id="rodrigo-s12" data-zona="inside" onclick="toggleSession(this)">
@@ -1554,293 +1841,6 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
         </div>
       </div>
     </div>
-        <div class="sec-label">Evolução</div>
-    <!-- ── Gráfico de linhas Rodrigo — 5 sessões ── -->
-    <!-- Dados sessão a sessão (ordem cronológica S1→S4):
-         Leitura:      4, 3, 4, 3
-         Take-off:     4, 2, 4, 3
-         Paddle:       4, 3, 4, 3
-         Manobras:     2, 2, 2, 2
-         Equilíbrio:   3, 3, 4, 3
-         Posicionam.:  4, 3, 4, 2
-         Datas: 03Abr · 04Abr · 07Abr · 08Abr
-    -->
-    <!-- Gráfico escalável: adicionar sessões aumentando o viewBox e os pontos -->
-    <div class="evo-card">
-      <div class="evo-header">
-        <span class="evo-header-title">📈 Evolução por competência</span>
-        <span class="evo-sessions-label">13 sessões · Mai 2026</span>
-      </div>
-      <div class="evo-body">
-        <!-- RADAR + SPARKLINES (substituiu gráfico de linhas) -->
-        <div class="radar-wrap">
-          <svg viewBox="0 0 220 220" width="220" height="220" xmlns="http://www.w3.org/2000/svg" font-family="Barlow,sans-serif">
-            <!-- Rings L1–L5 -->
-            <polygon points="110,92 126,101 126,119 110,128 94,119 94,101" fill="none" stroke="#e8e4dc" stroke-width="0.7"/>
-            <polygon points="110,74 141,92 141,128 110,146 79,128 79,92" fill="none" stroke="#e8e4dc" stroke-width="0.7"/>
-            <polygon points="110,56 157,83 157,137 110,164 63,137 63,83" fill="none" stroke="#e8e4dc" stroke-width="0.7"/>
-            <polygon points="110,38 172,74 172,146 110,182 48,146 48,74" fill="none" stroke="#e0dbd2" stroke-width="0.8"/>
-            <polygon points="110,20 188,65 188,155 110,200 32,155 32,65" fill="none" stroke="#d5d0c8" stroke-width="1"/>
-            <!-- Axis lines -->
-            <g stroke="#e0ddd6" stroke-width="0.5">
-              <line x1="110" y1="110" x2="110" y2="20"/>
-              <line x1="110" y1="110" x2="188" y2="65"/>
-              <line x1="110" y1="110" x2="188" y2="155"/>
-              <line x1="110" y1="110" x2="110" y2="200"/>
-              <line x1="110" y1="110" x2="32" y2="155"/>
-              <line x1="110" y1="110" x2="32" y2="65"/>
-            </g>
-            <!-- Expected polygon — tecnico midpoint r=63 (tracejado) -->
-            <polygon points="110,47 165,79 165,141 110,173 55,141 55,79" fill="none" stroke="#bbb" stroke-width="1.2" stroke-dasharray="4,3"/>
-            <!-- Athlete polygon — Rodrigo (leitura,takeoff,paddle,manobras,equilibrio,posic.) -->
-            <polygon points="110,46 155,84 172,146 110,146 69,133 44,72" fill="rgba(41,128,185,0.15)" stroke="#2980b9" stroke-width="2" stroke-linejoin="round"/>
-            <!-- Axis labels -->
-            <text x="110" y="10" text-anchor="middle" font-size="9" fill="#555">Leitura</text>
-            <text x="193" y="63" text-anchor="start" font-size="9" fill="#555">Take-off</text>
-            <text x="193" y="158" text-anchor="start" font-size="9" fill="#555">Paddle</text>
-            <text x="110" y="213" text-anchor="middle" font-size="9" fill="#555">Manobras</text>
-            <text x="27" y="158" text-anchor="end" font-size="9" fill="#555">Equilíbrio</text>
-            <text x="27" y="63" text-anchor="end" font-size="9" fill="#555">Posic.</text>
-            <!-- Level labels on leitura axis -->
-            <text x="114" y="128" font-size="7" fill="#ccc">1</text>
-            <text x="114" y="110" font-size="7" fill="#ccc">2</text>
-            <text x="114" y="92" font-size="7" fill="#ccc">3</text>
-            <text x="114" y="74" font-size="7" fill="#ccc">4</text>
-            <text x="114" y="56" font-size="7" fill="#ccc">5</text>
-          </svg>
-        </div>
-        <!-- Sparklines 2×3 — fonte: skills_hist por sessão (ordem cronológica) -->
-        <!-- Rodrigo: 13 sessões · nivel tecnico (range 3.0–4.0 · threshold 4.0) -->
-        <!-- X: 2,10,18,26,34,42,50,58,66,74,82,90,98  Y=48-val*8 -->
-        <div class="spark-grid">
-          <!-- Leitura: [4,3,4,3,2,4,3,3,3,3,4,4,3] media=3.56 ★★★★☆ banda laranja (in range) -->
-          <div class="spark-card">
-            <div class="spark-header">
-              <span class="spark-title">🌊 Leitura</span>
-              <span class="spark-trend-down">↓</span>
-            </div>
-            <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px">
-              <span class="spark-val" style="color:#2e86c1">3.6</span>
-              <span class="spark-stars" style="color:#2e86c1">★★★★☆</span>
-            </div>
-            <svg viewBox="0 0 100 44" width="100%" height="44" xmlns="http://www.w3.org/2000/svg">
-              <rect x="2" y="16" width="96" height="8" fill="#fef9ec"/>
-              <line x1="2" y1="16" x2="98" y2="16" stroke="#e0c060" stroke-width="0.7" stroke-dasharray="2,2"/>
-              <polyline points="2,16 10,24 18,16 26,24 34,32 42,16 50,24 58,24 66,24 74,24 82,16 90,16 98,24" fill="none" stroke="#2e86c1" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
-              <circle cx="98" cy="24" r="2.5" fill="#2e86c1" stroke="white" stroke-width="1"/>
-            </svg>
-            <div class="spark-next">próx. nível: manter ≥4 por 3 sessões</div>
-          </div>
-          <!-- Takeoff: [4,2,4,3,3,3,3,3,3,3,3,3,2] media=2.86 ★★★☆☆ banda vermelha (below range) -->
-          <div class="spark-card">
-            <div class="spark-header">
-              <span class="spark-title">🏄 Take-off</span>
-              <span class="spark-trend-down">↓</span>
-            </div>
-            <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px">
-              <span class="spark-val" style="color:#e67e22">2.9</span>
-              <span class="spark-stars" style="color:#e67e22">★★★☆☆</span>
-            </div>
-            <svg viewBox="0 0 100 44" width="100%" height="44" xmlns="http://www.w3.org/2000/svg">
-              <rect x="2" y="16" width="96" height="8" fill="#fdf0f0"/>
-              <line x1="2" y1="16" x2="98" y2="16" stroke="#e07060" stroke-width="0.7" stroke-dasharray="2,2"/>
-              <polyline points="2,16 10,32 18,16 26,24 34,24 42,24 50,24 58,24 66,24 74,24 82,24 90,24 98,32" fill="none" stroke="#e67e22" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
-              <circle cx="98" cy="32" r="2.5" fill="#e67e22" stroke="white" stroke-width="1"/>
-            </svg>
-            <div class="spark-next">próx. nível: rotação de anca consistente</div>
-          </div>
-          <!-- Paddle: [4,3,4,3,2,4,4,5,4,5,4,4,3] media=4.0 ★★★★☆ banda verde (≥ threshold) -->
-          <div class="spark-card">
-            <div class="spark-header">
-              <span class="spark-title">🚣 Paddle</span>
-              <span class="spark-trend-down">↓</span>
-            </div>
-            <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px">
-              <span class="spark-val" style="color:#1e8449">4.0</span>
-              <span class="spark-stars" style="color:#1e8449">★★★★☆</span>
-            </div>
-            <svg viewBox="0 0 100 44" width="100%" height="44" xmlns="http://www.w3.org/2000/svg">
-              <rect x="2" y="16" width="96" height="8" fill="#edf8f1"/>
-              <line x1="2" y1="16" x2="98" y2="16" stroke="#60c080" stroke-width="0.7" stroke-dasharray="2,2"/>
-              <polyline points="2,16 10,24 18,16 26,24 34,32 42,16 50,16 58,8 66,16 74,8 82,16 90,16 98,24" fill="none" stroke="#1e8449" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
-              <circle cx="98" cy="24" r="2.5" fill="#1e8449" stroke="white" stroke-width="1"/>
-            </svg>
-            <div class="spark-next">próx. nível: paddle em ondas ≥1.5m</div>
-          </div>
-          <!-- Manobras: [2,2,2,2,1,2,2,2,2,2,2,2,2] media=2.0 ★★☆☆☆ banda vermelha (below range) -->
-          <div class="spark-card">
-            <div class="spark-header">
-              <span class="spark-title">↩️ Manobras</span>
-              <span class="spark-trend-flat">→</span>
-            </div>
-            <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px">
-              <span class="spark-val" style="color:#c0392b">2.0</span>
-              <span class="spark-stars" style="color:#c0392b">★★☆☆☆</span>
-            </div>
-            <svg viewBox="0 0 100 44" width="100%" height="44" xmlns="http://www.w3.org/2000/svg">
-              <rect x="2" y="16" width="96" height="8" fill="#fdf0f0"/>
-              <line x1="2" y1="16" x2="98" y2="16" stroke="#e07060" stroke-width="0.7" stroke-dasharray="2,2"/>
-              <polyline points="2,32 10,32 18,32 26,32 34,40 42,32 50,32 58,32 66,32 74,32 82,32 90,32 98,32" fill="none" stroke="#c0392b" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
-              <circle cx="98" cy="32" r="2.5" fill="#c0392b" stroke="white" stroke-width="1"/>
-            </svg>
-            <div class="spark-next">próx. nível: bottom turn controlado</div>
-          </div>
-          <!-- Equilibrio: [3,3,4,3,3,3,3,3,3,3,3,2,3] media=2.6 ★★★☆☆ banda vermelha (below range) -->
-          <div class="spark-card">
-            <div class="spark-header">
-              <span class="spark-title">⚖️ Equilíbrio</span>
-              <span class="spark-trend-flat">→</span>
-            </div>
-            <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px">
-              <span class="spark-val" style="color:#8e44ad">2.6</span>
-              <span class="spark-stars" style="color:#8e44ad">★★★☆☆</span>
-            </div>
-            <svg viewBox="0 0 100 44" width="100%" height="44" xmlns="http://www.w3.org/2000/svg">
-              <rect x="2" y="16" width="96" height="8" fill="#fdf0f0"/>
-              <line x1="2" y1="16" x2="98" y2="16" stroke="#e07060" stroke-width="0.7" stroke-dasharray="2,2"/>
-              <polyline points="2,24 10,24 18,16 26,24 34,24 42,24 50,24 58,24 66,24 74,24 82,24 90,32 98,24" fill="none" stroke="#8e44ad" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
-              <circle cx="98" cy="24" r="2.5" fill="#8e44ad" stroke="white" stroke-width="1"/>
-            </svg>
-            <div class="spark-next">próx. nível: estável em ondas 1m+</div>
-          </div>
-          <!-- Posicionamento: [3,3,4,2,2,4,4,4,4,5,5,4,4] media=4.24 ★★★★☆ banda verde (≥ threshold) -->
-          <div class="spark-card">
-            <div class="spark-header">
-              <span class="spark-title">🧭 Posicion.</span>
-              <span class="spark-trend-down">↓</span>
-            </div>
-            <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px">
-              <span class="spark-val" style="color:#d4a017">4.2</span>
-              <span class="spark-stars" style="color:#d4a017">★★★★☆</span>
-            </div>
-            <svg viewBox="0 0 100 44" width="100%" height="44" xmlns="http://www.w3.org/2000/svg">
-              <rect x="2" y="16" width="96" height="8" fill="#edf8f1"/>
-              <line x1="2" y1="16" x2="98" y2="16" stroke="#60c080" stroke-width="0.7" stroke-dasharray="2,2"/>
-              <polyline points="2,24 10,24 18,16 26,32 34,32 42,16 50,16 58,16 66,16 74,8 82,8 90,16 98,16" fill="none" stroke="#d4a017" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
-              <circle cx="98" cy="16" r="2.5" fill="#d4a017" stroke="white" stroke-width="1"/>
-            </svg>
-            <div class="spark-next">próx. nível: leitura de sets em outside</div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="sec-label">Objetivos</div>
-    <div class="obj-card">
-    <div class="obj-header"><span>🎯</span><span class="obj-horizon">Próxima sessão</span><span class="obj-period">Abr 2026</span></div>
-    <div class="obj-list">
-      <div class="obj-item progress"><span class="obj-status">🟡</span><div class="obj-text"><div class="obj-title">Trabalhar bottom turn</div><div class="obj-desc">Completar a curva na base da onda antes de subir</div></div></div>
-      <div class="obj-item todo"><span class="obj-status">🔴</span><div class="obj-text"><div class="obj-title">Melhorar escolha de ondas</div><div class="obj-desc">Reduzir ondas pobres — seleccionar apenas ondas com parede</div></div></div>
-    </div>
-  </div>
-  <div class="obj-card">
-    <div class="obj-header"><span>📅</span><span class="obj-horizon">Próximo mês</span><span class="obj-period">Mai–Jun 2026</span></div>
-    <div class="obj-list">
-      <div class="obj-item todo"><span class="obj-status">🔴</span><div class="obj-text"><div class="obj-title">Cutback controlado</div><div class="obj-desc">Executar uma mudança de direcção completa na onda</div></div></div>
-      <div class="obj-item todo"><span class="obj-status">🔴</span><div class="obj-text"><div class="obj-title">Consistência no take-off</div><div class="obj-desc">Take-off limpo em 8 de cada 10 ondas apanhadas</div></div></div>
-    </div>
-  </div>
-  <div class="obj-card">
-    <div class="obj-header"><span>🏆</span><span class="obj-horizon">Final de época</span><span class="obj-period">Set 2026</span></div>
-    <div class="obj-list">
-      <div class="obj-item todo"><span class="obj-status">🔴</span><div class="obj-text"><div class="obj-title">Surfar ondas de 1m+ com conforto</div><div class="obj-desc">Santa Bárbara ou Ribeira Grande em condições ideais</div></div></div>
-      <div class="obj-item todo"><span class="obj-status">🔴</span><div class="obj-text"><div class="obj-title">4★ em Manobras</div><div class="obj-desc">Dominar bottom turn e topo de onda básico</div></div></div>
-      <div class="obj-item todo"><span class="obj-status">🔴</span><div class="obj-text"><div class="obj-title">Testar prancha de fibra</div><div class="obj-desc">Sessão comparativa com hardboard 6'0" em condições ideais</div></div></div>
-    </div>
-  </div>
-    <div class="sec-label">Condições preferidas</div>
-    <div class="prog-card">
-      <div class="prog-header">
-        <span class="prog-header-title">Swell × Performance</span>
-        <span class="prog-date">10 Abr 26</span>
-      </div>
-      <div class="prog-body">
-        <div class="prog-formula">Performance média (6 competências) vs. wave power · 13 sessões · Milícias<br><small>🟢 zona surf ideal &nbsp;·&nbsp; 🟡 marginal/difícil &nbsp;·&nbsp; 🔴 extremos</small></div>
-        <div class="evo-chart-wrap">
-          <svg viewBox="0 0 320 185" xmlns="http://www.w3.org/2000/svg">
-            <!-- Traffic light zones -->
-            <!-- RED: 0–2 kW/m → x:45–56 -->
-            <rect x="45" y="15" width="11" height="140" fill="rgba(231,76,60,0.22)"/>
-            <!-- YELLOW: 2–4 kW/m → x:56–66 -->
-            <rect x="56" y="15" width="10" height="140" fill="rgba(241,196,15,0.28)"/>
-            <!-- GREEN: 4–18 kW/m → x:66–140 -->
-            <rect x="66" y="15" width="74" height="140" fill="rgba(39,174,96,0.20)"/>
-            <!-- YELLOW: 18–35 kW/m → x:140–231 -->
-            <rect x="140" y="15" width="91" height="140" fill="rgba(241,196,15,0.24)"/>
-            <!-- RED: 35–50 kW/m → x:231–310 -->
-            <rect x="231" y="15" width="79" height="140" fill="rgba(231,76,60,0.20)"/>
-            <!-- Zone labels inside bands -->
-            <text x="103" y="28" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="8" fill="rgba(30,132,73,0.7)" font-weight="700">SURF ✓</text>
-            <text x="185" y="28" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="7.5" fill="rgba(180,130,0,0.75)">DIFÍCIL</text>
-            <text x="270" y="28" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="7.5" fill="rgba(192,57,43,0.7)">EXTREMO</text>
-            <!-- Y grid -->
-            <line x1="45" y1="15" x2="310" y2="15" stroke="rgba(255,255,255,0.6)" stroke-width="0.7"/>
-            <line x1="45" y1="50" x2="310" y2="50" stroke="rgba(255,255,255,0.6)" stroke-width="0.7"/>
-            <line x1="45" y1="85" x2="310" y2="85" stroke="rgba(255,255,255,0.6)" stroke-width="0.7"/>
-            <line x1="45" y1="120" x2="310" y2="120" stroke="rgba(255,255,255,0.6)" stroke-width="0.7"/>
-            <line x1="45" y1="155" x2="310" y2="155" stroke="rgba(255,255,255,0.6)" stroke-width="0.7"/>
-            <!-- Y labels -->
-            <text x="40" y="18" text-anchor="end" font-family="Barlow,sans-serif" font-size="8" fill="#999">5</text>
-            <text x="40" y="53" text-anchor="end" font-family="Barlow,sans-serif" font-size="8" fill="#999">4</text>
-            <text x="40" y="88" text-anchor="end" font-family="Barlow,sans-serif" font-size="8" fill="#999">3</text>
-            <text x="40" y="123" text-anchor="end" font-family="Barlow,sans-serif" font-size="8" fill="#999">2</text>
-            <text x="40" y="158" text-anchor="end" font-family="Barlow,sans-serif" font-size="8" fill="#999">1</text>
-            <!-- Axes -->
-            <line x1="45" y1="15" x2="45" y2="155" stroke="#bbb" stroke-width="1"/>
-            <line x1="45" y1="155" x2="310" y2="155" stroke="#bbb" stroke-width="1"/>
-            <!-- X boundary ticks + labels -->
-            <line x1="56" y1="152" x2="56" y2="158" stroke="#bbb" stroke-width="0.8"/>
-            <text x="56" y="166" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#aaa">2</text>
-            <line x1="66" y1="152" x2="66" y2="158" stroke="#bbb" stroke-width="0.8"/>
-            <text x="66" y="166" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#aaa">4</text>
-            <line x1="140" y1="152" x2="140" y2="158" stroke="#bbb" stroke-width="0.8"/>
-            <text x="140" y="166" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#aaa">18</text>
-            <line x1="231" y1="152" x2="231" y2="158" stroke="#bbb" stroke-width="0.8"/>
-            <text x="231" y="166" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#aaa">35</text>
-            <!-- X axis title -->
-            <text x="177" y="183" text-anchor="middle" font-family="Barlow,sans-serif" font-size="8" fill="#999">Wave Power (kW/m)</text>
-            <!-- Data points -->
-            <circle cx="61" cy="114" r="5" fill="#1e8449" opacity="0.9"/>
-            <text x="61" y="106" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">10/4</text>
-            <circle cx="66" cy="132" r="5" fill="#1e8449" opacity="0.9"/>
-            <text x="66" y="124" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">03/4</text>
-            <circle cx="82" cy="126" r="5" fill="#1e8449" opacity="0.9"/>
-            <text x="82" y="118" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">04/4</text>
-            <circle cx="135" cy="85" r="5" fill="#1e8449" opacity="0.9"/>
-            <text x="135" y="77" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">08/4</text>
-            <circle cx="284" cy="85" r="5" fill="#1e8449" opacity="0.9"/>
-            <text x="284" y="77" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">07/4</text>
-            <circle cx="69" cy="74" r="5" fill="#1e8449" opacity="0.9"/>
-            <text x="69" y="66" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">18/4</text>
-                      <circle cx="92" cy="73" r="5" fill="#1e8449" opacity="0.9"/>
-            <text x="92" y="65" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">25/4</text>
-                        <circle cx="90" cy="79" r="5" fill="#1e8449" opacity="0.9"/>
-            <text x="90" y="71" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">25/4</text>
-                        <circle cx="69" cy="79" r="5" fill="#1e8449" opacity="0.9"/>
-            <text x="69" y="71" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">26/4</text>
-                        <circle cx="73" cy="68" r="5" fill="#1e8449" opacity="0.9"/>
-            <text x="73" y="60" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">9/5</text>
-                        <circle cx="69" cy="68" r="5" fill="#1e8449" opacity="0.9"/>
-            <text x="69" y="60" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">10/5</text>
-                        <circle cx="90" cy="79" r="5" fill="#1e8449" opacity="0.9"/>
-            <text x="90" y="71" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">11/5</text>
-                        <circle cx="49" cy="91" r="5" fill="#1e8449" opacity="0.9"/>
-            <text x="49" y="83" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">14/5</text>
-            </svg>
-        </div>
-        <div style="font-size:0.62rem;color:var(--grey);padding:2px 0 0;line-height:1.6">● Rodrigo &nbsp;·&nbsp; Milícias · 13 pontos · calibração em curso</div>
-      </div>
-    </div>
-
-    <div class="footer">
-    <svg width="18" height="18" viewBox="0 0 46 46" fill="none"><circle cx="23" cy="23" r="22" fill="#2c2c2c"/><path d="M8 12 L15 32 L23 18 L31 32 L38 12" stroke="white" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 32 L23 18 L31 32" stroke="white" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <a href="https://www.azoreswatergliders.com" target="_blank">azoreswatergliders.com</a>
-    &nbsp;·&nbsp; Actualizado 14 Maio 2026
-  </div>
-  </div>
-</div>
-<!-- ═══════════════════════════════════════
-     PÁGINA: TOMÁS
-════════════════════════════════════════ -->
 <div id="page-tomas" class="page">
   <div class="surfer-header">
     <div class="surfer-header-inner">
@@ -1865,6 +1865,285 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
     <div class="kpi"><div class="kpi-num">1</div><div class="kpi-lbl">Spots</div></div>
     <div class="kpi"><div class="kpi-num">2</div><div class="kpi-lbl">Pranchas</div></div>
   </div>
+        <div class="sec-label">Evolução</div>
+    <!-- ── Gráfico de linhas Tomás — 5 sessões ── -->
+    <!-- Dados sessão a sessão (ordem cronológica S1→S4):
+         Leitura:      2, 2, 4, 4
+         Take-off:     2, 2, 3, 3
+         Paddle:       2, 2, 3, 3
+         Manobras:     1, 1, 2, 2
+         Equilíbrio:   2, 2, 4, 4
+         Posicionam.:  1, 2, 2, 2
+         Datas: 03Abr · 04Abr · 07Abr · 08Abr
+    -->
+    <div class="evo-card">
+      <div class="evo-header">
+        <span class="evo-header-title">📈 Evolução por competência</span>
+        <span class="evo-sessions-label">11 sessões · Mai 2026</span>
+      </div>
+      <div class="evo-body">
+        <!-- RADAR + SPARKLINES (substituiu gráfico de linhas) -->
+        <div class="radar-wrap">
+          <svg viewBox="0 0 220 220" width="220" height="220" xmlns="http://www.w3.org/2000/svg" font-family="Barlow,sans-serif">
+            <!-- Rings L1–L5 -->
+            <polygon points="110,92 126,101 126,119 110,128 94,119 94,101" fill="none" stroke="#e8e4dc" stroke-width="0.7"/>
+            <polygon points="110,74 141,92 141,128 110,146 79,128 79,92" fill="none" stroke="#e8e4dc" stroke-width="0.7"/>
+            <polygon points="110,56 157,83 157,137 110,164 63,137 63,83" fill="none" stroke="#e8e4dc" stroke-width="0.7"/>
+            <polygon points="110,38 172,74 172,146 110,182 48,146 48,74" fill="none" stroke="#e0dbd2" stroke-width="0.8"/>
+            <polygon points="110,20 188,65 188,155 110,200 32,155 32,65" fill="none" stroke="#d5d0c8" stroke-width="1"/>
+            <!-- Axis lines -->
+            <g stroke="#e0ddd6" stroke-width="0.5">
+              <line x1="110" y1="110" x2="110" y2="20"/>
+              <line x1="110" y1="110" x2="188" y2="65"/>
+              <line x1="110" y1="110" x2="188" y2="155"/>
+              <line x1="110" y1="110" x2="110" y2="200"/>
+              <line x1="110" y1="110" x2="32" y2="155"/>
+              <line x1="110" y1="110" x2="32" y2="65"/>
+            </g>
+            <!-- Expected polygon — autonomo midpoint r=54 (tracejado) -->
+            <polygon points="110,56 157,83 157,137 110,164 63,137 63,83" fill="none" stroke="#bbb" stroke-width="1.2" stroke-dasharray="4,3"/>
+            <!-- Athlete polygon — Tomás (leitura,takeoff,paddle,manobras,equilibrio,posic.) -->
+            <polygon points="110,39 173,74 155,136 110,139 57,141 53,77" fill="rgba(39,174,96,0.15)" stroke="#27ae60" stroke-width="2" stroke-linejoin="round"/>
+            <!-- Axis labels -->
+            <text x="110" y="10" text-anchor="middle" font-size="9" fill="#555">Leitura</text>
+            <text x="193" y="63" text-anchor="start" font-size="9" fill="#555">Take-off</text>
+            <text x="193" y="158" text-anchor="start" font-size="9" fill="#555">Paddle</text>
+            <text x="110" y="213" text-anchor="middle" font-size="9" fill="#555">Manobras</text>
+            <text x="27" y="158" text-anchor="end" font-size="9" fill="#555">Equilíbrio</text>
+            <text x="27" y="63" text-anchor="end" font-size="9" fill="#555">Posic.</text>
+            <!-- Level labels on leitura axis -->
+            <text x="114" y="128" font-size="7" fill="#ccc">1</text>
+            <text x="114" y="110" font-size="7" fill="#ccc">2</text>
+            <text x="114" y="92" font-size="7" fill="#ccc">3</text>
+            <text x="114" y="74" font-size="7" fill="#ccc">4</text>
+            <text x="114" y="56" font-size="7" fill="#ccc">5</text>
+          </svg>
+        </div>
+        <!-- Sparklines 2×3 — fonte: skills_hist por sessão (ordem cronológica) -->
+        <!-- Tomás: 11 sessões · nivel autonomo (range 2.5–3.5 · threshold 3.5) -->
+        <!-- X: 2,12,21,31,40,50,60,69,79,88,98  Y=48-val*8 -->
+        <div class="spark-grid">
+          <!-- Leitura: [2,2,4,4,2,4,4,4,3,5,3] media=3.93 ★★★★☆ banda verde (≥ threshold) -->
+          <div class="spark-card">
+            <div class="spark-header">
+              <span class="spark-title">🌊 Leitura</span>
+              <span class="spark-trend-flat">→</span>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px">
+              <span class="spark-val" style="color:#2e86c1">3.9</span>
+              <span class="spark-stars" style="color:#2e86c1">★★★★☆</span>
+            </div>
+            <svg viewBox="0 0 100 44" width="100%" height="44" xmlns="http://www.w3.org/2000/svg">
+              <rect x="2" y="20" width="96" height="8" fill="#edf8f1"/>
+              <line x1="2" y1="20" x2="98" y2="20" stroke="#60c080" stroke-width="0.7" stroke-dasharray="2,2"/>
+              <polyline points="2,32 12,32 21,16 31,16 40,32 50,16 60,16 69,16 79,24 88,8 98,24" fill="none" stroke="#2e86c1" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
+              <circle cx="98" cy="24" r="2.5" fill="#2e86c1" stroke="white" stroke-width="1"/>
+            </svg>
+            <div class="spark-next">próx. nível: escolher pico sem ajuda</div>
+          </div>
+          <!-- Takeoff: [2,2,3,3,3,3,4,4,5,4,4] media=4.05 ★★★★☆ banda verde (≥ threshold) -->
+          <div class="spark-card">
+            <div class="spark-header">
+              <span class="spark-title">🏄 Take-off</span>
+              <span class="spark-trend-down">↓</span>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px">
+              <span class="spark-val" style="color:#e67e22">4.1</span>
+              <span class="spark-stars" style="color:#e67e22">★★★★☆</span>
+            </div>
+            <svg viewBox="0 0 100 44" width="100%" height="44" xmlns="http://www.w3.org/2000/svg">
+              <rect x="2" y="20" width="96" height="8" fill="#edf8f1"/>
+              <line x1="2" y1="20" x2="98" y2="20" stroke="#60c080" stroke-width="0.7" stroke-dasharray="2,2"/>
+              <polyline points="2,32 12,32 21,24 31,24 40,24 50,24 60,16 69,16 79,8 88,16 98,16" fill="none" stroke="#e67e22" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
+              <circle cx="98" cy="16" r="2.5" fill="#e67e22" stroke="white" stroke-width="1"/>
+            </svg>
+            <div class="spark-next">próx. nível: pop-up consistente sem espuma</div>
+          </div>
+          <!-- Paddle: [2,2,3,3,2,4,4,4,2,3,2] media=2.9 ★★★☆☆ banda laranja (in range) -->
+          <div class="spark-card">
+            <div class="spark-header">
+              <span class="spark-title">🚣 Paddle</span>
+              <span class="spark-trend-flat">→</span>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px">
+              <span class="spark-val" style="color:#1e8449">2.9</span>
+              <span class="spark-stars" style="color:#1e8449">★★★☆☆</span>
+            </div>
+            <svg viewBox="0 0 100 44" width="100%" height="44" xmlns="http://www.w3.org/2000/svg">
+              <rect x="2" y="20" width="96" height="8" fill="#fef9ec"/>
+              <line x1="2" y1="20" x2="98" y2="20" stroke="#e0c060" stroke-width="0.7" stroke-dasharray="2,2"/>
+              <polyline points="2,32 12,32 21,24 31,24 40,32 50,16 60,16 69,16 79,32 88,24 98,32" fill="none" stroke="#1e8449" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
+              <circle cx="98" cy="32" r="2.5" fill="#1e8449" stroke="white" stroke-width="1"/>
+            </svg>
+            <div class="spark-next">próx. nível: duck dive básico</div>
+          </div>
+          <!-- Manobras: [1,1,2,2,1,3,3,1,2,2,2] media=1.6 ★★☆☆☆ banda vermelha (below range) -->
+          <div class="spark-card">
+            <div class="spark-header">
+              <span class="spark-title">↩️ Manobras</span>
+              <span class="spark-trend-flat">→</span>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px">
+              <span class="spark-val" style="color:#c0392b">1.6</span>
+              <span class="spark-stars" style="color:#c0392b">★★☆☆☆</span>
+            </div>
+            <svg viewBox="0 0 100 44" width="100%" height="44" xmlns="http://www.w3.org/2000/svg">
+              <rect x="2" y="20" width="96" height="8" fill="#fdf0f0"/>
+              <line x1="2" y1="20" x2="98" y2="20" stroke="#e07060" stroke-width="0.7" stroke-dasharray="2,2"/>
+              <polyline points="2,40 12,40 21,32 31,32 40,40 50,24 60,24 69,40 79,32 88,32 98,32" fill="none" stroke="#c0392b" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
+              <circle cx="98" cy="32" r="2.5" fill="#c0392b" stroke="white" stroke-width="1"/>
+            </svg>
+            <div class="spark-next">próx. nível: primeira curva controlada</div>
+          </div>
+          <!-- Equilibrio: [2,2,4,4,3,5,4,4,4,3,3] media=3.42 ★★★☆☆ banda laranja (in range) -->
+          <div class="spark-card">
+            <div class="spark-header">
+              <span class="spark-title">⚖️ Equilíbrio</span>
+              <span class="spark-trend-down">↓</span>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px">
+              <span class="spark-val" style="color:#8e44ad">3.4</span>
+              <span class="spark-stars" style="color:#8e44ad">★★★☆☆</span>
+            </div>
+            <svg viewBox="0 0 100 44" width="100%" height="44" xmlns="http://www.w3.org/2000/svg">
+              <rect x="2" y="20" width="96" height="8" fill="#fef9ec"/>
+              <line x1="2" y1="20" x2="98" y2="20" stroke="#e0c060" stroke-width="0.7" stroke-dasharray="2,2"/>
+              <polyline points="2,32 12,32 21,16 31,16 40,24 50,8 60,16 69,16 79,16 88,24 98,24" fill="none" stroke="#8e44ad" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
+              <circle cx="98" cy="24" r="2.5" fill="#8e44ad" stroke="white" stroke-width="1"/>
+            </svg>
+            <div class="spark-next">próx. nível: estável em espuma</div>
+          </div>
+          <!-- Posicionamento: [1,2,2,2,2,2,4,4,3,4,4] media=3.67 ★★★★☆ banda verde (≥ threshold) -->
+          <div class="spark-card">
+            <div class="spark-header">
+              <span class="spark-title">🧭 Posicion.</span>
+              <span class="spark-trend-up">↑</span>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px">
+              <span class="spark-val" style="color:#d4a017">3.7</span>
+              <span class="spark-stars" style="color:#d4a017">★★★★☆</span>
+            </div>
+            <svg viewBox="0 0 100 44" width="100%" height="44" xmlns="http://www.w3.org/2000/svg">
+              <rect x="2" y="20" width="96" height="8" fill="#edf8f1"/>
+              <line x1="2" y1="20" x2="98" y2="20" stroke="#60c080" stroke-width="0.7" stroke-dasharray="2,2"/>
+              <polyline points="2,40 12,32 21,32 31,32 40,32 50,32 60,16 69,16 79,24 88,16 98,16" fill="none" stroke="#d4a017" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
+              <circle cx="98" cy="16" r="2.5" fill="#d4a017" stroke="white" stroke-width="1"/>
+            </svg>
+            <div class="spark-next">próx. nível: posicionar no pico sem ajuda</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="sec-label">Objetivos</div>
+    <div class="obj-card">
+    <div class="obj-header"><span>🎯</span><span class="obj-horizon">Próxima sessão</span><span class="obj-period">Abr 2026</span></div>
+    <div class="obj-list">
+      <div class="obj-item progress"><span class="obj-status">🟡</span><div class="obj-text"><div class="obj-title">Take-off mais cedo</div><div class="obj-desc">Antecipar o levantar — take-off tardio identificado em 7 Abr</div></div></div>
+      <div class="obj-item todo"><span class="obj-status">🔴</span><div class="obj-text"><div class="obj-title">Paddle autónomo para apanhar onda</div><div class="obj-desc">Remar sozinho para sincronizar com a onda</div></div></div>
+    </div>
+  </div>
+  <div class="obj-card">
+    <div class="obj-header"><span>📅</span><span class="obj-horizon">Próximo mês</span><span class="obj-period">Mai–Jun 2026</span></div>
+    <div class="obj-list">
+      <div class="obj-item todo"><span class="obj-status">🔴</span><div class="obj-text"><div class="obj-title">Apanhar 3 ondas sozinho</div><div class="obj-desc">Sem assistência do treinador em ondas limpas</div></div></div>
+      <div class="obj-item todo"><span class="obj-status">🔴</span><div class="obj-text"><div class="obj-title">Paddle autónomo até ao pico</div><div class="obj-desc">Entrar e sair da água sem apoio</div></div></div>
+    </div>
+  </div>
+  <div class="obj-card">
+    <div class="obj-header"><span>🏆</span><span class="obj-horizon">Final de época</span><span class="obj-period">Set 2026</span></div>
+    <div class="obj-list">
+      <div class="obj-item todo"><span class="obj-status">🔴</span><div class="obj-text"><div class="obj-title">Autonomia total</div><div class="obj-desc">Surfar sessão completa sem apoio do treinador</div></div></div>
+      <div class="obj-item todo"><span class="obj-status">🔴</span><div class="obj-text"><div class="obj-title">3★ em todas as competências</div><div class="obj-desc">Nível intermédio consolidado</div></div></div>
+    </div>
+  </div>
+    <div class="sec-label">Condições preferidas</div>
+    <div class="prog-card">
+      <div class="prog-header">
+        <span class="prog-header-title">Swell × Performance</span>
+        <span class="prog-date">25 Abr 26</span>
+      </div>
+      <div class="prog-body">
+        <div class="prog-formula">Performance média (6 competências) vs. wave power · 11 sessões · Milícias<br><small>🟢 zona surf ideal &nbsp;·&nbsp; 🟡 marginal/difícil &nbsp;·&nbsp; 🔴 extremos</small></div>
+        <div class="evo-chart-wrap">
+          <svg viewBox="0 0 320 185" xmlns="http://www.w3.org/2000/svg">
+            <!-- Traffic light zones -->
+            <rect x="45" y="15" width="11" height="140" fill="rgba(231,76,60,0.22)"/>
+            <rect x="56" y="15" width="10" height="140" fill="rgba(241,196,15,0.28)"/>
+            <rect x="66" y="15" width="74" height="140" fill="rgba(39,174,96,0.20)"/>
+            <rect x="140" y="15" width="91" height="140" fill="rgba(241,196,15,0.24)"/>
+            <rect x="231" y="15" width="79" height="140" fill="rgba(231,76,60,0.20)"/>
+            <!-- Zone labels -->
+            <text x="103" y="28" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="8" fill="rgba(30,132,73,0.7)" font-weight="700">SURF ✓</text>
+            <text x="185" y="28" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="7.5" fill="rgba(180,130,0,0.75)">DIFÍCIL</text>
+            <text x="270" y="28" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="7.5" fill="rgba(192,57,43,0.7)">EXTREMO</text>
+            <!-- Y grid -->
+            <line x1="45" y1="15" x2="310" y2="15" stroke="rgba(255,255,255,0.6)" stroke-width="0.7"/>
+            <line x1="45" y1="50" x2="310" y2="50" stroke="rgba(255,255,255,0.6)" stroke-width="0.7"/>
+            <line x1="45" y1="85" x2="310" y2="85" stroke="rgba(255,255,255,0.6)" stroke-width="0.7"/>
+            <line x1="45" y1="120" x2="310" y2="120" stroke="rgba(255,255,255,0.6)" stroke-width="0.7"/>
+            <line x1="45" y1="155" x2="310" y2="155" stroke="rgba(255,255,255,0.6)" stroke-width="0.7"/>
+            <!-- Y labels -->
+            <text x="40" y="18" text-anchor="end" font-family="Barlow,sans-serif" font-size="8" fill="#999">5</text>
+            <text x="40" y="53" text-anchor="end" font-family="Barlow,sans-serif" font-size="8" fill="#999">4</text>
+            <text x="40" y="88" text-anchor="end" font-family="Barlow,sans-serif" font-size="8" fill="#999">3</text>
+            <text x="40" y="123" text-anchor="end" font-family="Barlow,sans-serif" font-size="8" fill="#999">2</text>
+            <text x="40" y="158" text-anchor="end" font-family="Barlow,sans-serif" font-size="8" fill="#999">1</text>
+            <!-- Axes -->
+            <line x1="45" y1="15" x2="45" y2="155" stroke="#bbb" stroke-width="1"/>
+            <line x1="45" y1="155" x2="310" y2="155" stroke="#bbb" stroke-width="1"/>
+            <!-- X ticks -->
+            <line x1="56" y1="152" x2="56" y2="158" stroke="#bbb" stroke-width="0.8"/>
+            <text x="56" y="166" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#aaa">2</text>
+            <line x1="66" y1="152" x2="66" y2="158" stroke="#bbb" stroke-width="0.8"/>
+            <text x="66" y="166" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#aaa">4</text>
+            <line x1="140" y1="152" x2="140" y2="158" stroke="#bbb" stroke-width="0.8"/>
+            <text x="140" y="166" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#aaa">18</text>
+            <line x1="231" y1="152" x2="231" y2="158" stroke="#bbb" stroke-width="0.8"/>
+            <text x="231" y="166" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#aaa">35</text>
+            <text x="177" y="183" text-anchor="middle" font-family="Barlow,sans-serif" font-size="8" fill="#999">Wave Power (kW/m)</text>
+            <!-- Tomás data points -->
+            <circle cx="61" cy="114" r="5" fill="#1e8449" opacity="0.9"/>
+            <text x="61" y="106" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">10/4</text>
+            <circle cx="66" cy="132" r="5" fill="#1e8449" opacity="0.9"/>
+            <text x="75" y="131" text-anchor="start" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">03/4</text>
+            <circle cx="82" cy="126" r="5" fill="#1e8449" opacity="0.9"/>
+            <text x="82" y="118" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">04/4</text>
+            <circle cx="135" cy="85" r="5" fill="#1e8449" opacity="0.9"/>
+            <text x="135" y="77" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">08/4</text>
+            <circle cx="284" cy="85" r="5" fill="#1e8449" opacity="0.9"/>
+            <text x="284" y="77" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">07/4</text>
+            <circle cx="69" cy="62" r="5" fill="#1e8449" opacity="0.9"/>
+            <text x="69" y="54" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">18/4</text>
+            <circle cx="90" cy="50" r="5" fill="#1e8449" opacity="0.9"/>
+            <text x="90" y="42" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">25/4</text>
+                      <circle cx="67" cy="68" r="5" fill="#1e8449" opacity="0.9"/>
+            <text x="67" y="60" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">2/5</text>
+                        <circle cx="73" cy="79" r="5" fill="#1e8449" opacity="0.9"/>
+            <text x="73" y="71" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">9/5</text>
+                        <circle cx="69" cy="68" r="5" fill="#1e8449" opacity="0.9"/>
+            <text x="69" y="60" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">10/5</text>
+                        <circle cx="49" cy="85" r="5" fill="#1e8449" opacity="0.9"/>
+            <text x="49" y="77" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">14/5</text>
+            </svg>
+        </div>
+        <div style="font-size:0.62rem;color:var(--grey);padding:2px 0 0;line-height:1.6">● Tomás &nbsp;·&nbsp; Milícias · 11 pontos · calibração em curso</div>
+      </div>
+    </div>
+
+    <div class="footer">
+    <svg width="18" height="18" viewBox="0 0 46 46" fill="none"><circle cx="23" cy="23" r="22" fill="#2c2c2c"/><path d="M8 12 L15 32 L23 18 L31 32 L38 12" stroke="white" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 32 L23 18 L31 32" stroke="white" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <a href="https://www.azoreswatergliders.com" target="_blank">azoreswatergliders.com</a>
+    &nbsp;·&nbsp; Actualizado 14 Maio 2026
+  </div>
+  </div>
+</div>
+<!-- ═══════════════════════════════════════
+     PÁGINA: QUIVER & PRANCHAS
+     Organizado por estado:
+     Em uso | Referência | A testar | Próximas
+     Cada card tem: riders, nota técnica,
+     condições ideais, link site
+════════════════════════════════════════ -->
     <div class="sec-label">Sessões registadas</div>
     <!-- Sessão 25 Abr 26 — Tomás S7 -->
                     <div class="session-card energy-fraca" id="tomas-s10" data-zona="inside" onclick="toggleSession(this)">
@@ -2609,285 +2888,6 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
         </div>
       </div>
     </div>
-        <div class="sec-label">Evolução</div>
-    <!-- ── Gráfico de linhas Tomás — 5 sessões ── -->
-    <!-- Dados sessão a sessão (ordem cronológica S1→S4):
-         Leitura:      2, 2, 4, 4
-         Take-off:     2, 2, 3, 3
-         Paddle:       2, 2, 3, 3
-         Manobras:     1, 1, 2, 2
-         Equilíbrio:   2, 2, 4, 4
-         Posicionam.:  1, 2, 2, 2
-         Datas: 03Abr · 04Abr · 07Abr · 08Abr
-    -->
-    <div class="evo-card">
-      <div class="evo-header">
-        <span class="evo-header-title">📈 Evolução por competência</span>
-        <span class="evo-sessions-label">11 sessões · Mai 2026</span>
-      </div>
-      <div class="evo-body">
-        <!-- RADAR + SPARKLINES (substituiu gráfico de linhas) -->
-        <div class="radar-wrap">
-          <svg viewBox="0 0 220 220" width="220" height="220" xmlns="http://www.w3.org/2000/svg" font-family="Barlow,sans-serif">
-            <!-- Rings L1–L5 -->
-            <polygon points="110,92 126,101 126,119 110,128 94,119 94,101" fill="none" stroke="#e8e4dc" stroke-width="0.7"/>
-            <polygon points="110,74 141,92 141,128 110,146 79,128 79,92" fill="none" stroke="#e8e4dc" stroke-width="0.7"/>
-            <polygon points="110,56 157,83 157,137 110,164 63,137 63,83" fill="none" stroke="#e8e4dc" stroke-width="0.7"/>
-            <polygon points="110,38 172,74 172,146 110,182 48,146 48,74" fill="none" stroke="#e0dbd2" stroke-width="0.8"/>
-            <polygon points="110,20 188,65 188,155 110,200 32,155 32,65" fill="none" stroke="#d5d0c8" stroke-width="1"/>
-            <!-- Axis lines -->
-            <g stroke="#e0ddd6" stroke-width="0.5">
-              <line x1="110" y1="110" x2="110" y2="20"/>
-              <line x1="110" y1="110" x2="188" y2="65"/>
-              <line x1="110" y1="110" x2="188" y2="155"/>
-              <line x1="110" y1="110" x2="110" y2="200"/>
-              <line x1="110" y1="110" x2="32" y2="155"/>
-              <line x1="110" y1="110" x2="32" y2="65"/>
-            </g>
-            <!-- Expected polygon — autonomo midpoint r=54 (tracejado) -->
-            <polygon points="110,56 157,83 157,137 110,164 63,137 63,83" fill="none" stroke="#bbb" stroke-width="1.2" stroke-dasharray="4,3"/>
-            <!-- Athlete polygon — Tomás (leitura,takeoff,paddle,manobras,equilibrio,posic.) -->
-            <polygon points="110,39 173,74 155,136 110,139 57,141 53,77" fill="rgba(39,174,96,0.15)" stroke="#27ae60" stroke-width="2" stroke-linejoin="round"/>
-            <!-- Axis labels -->
-            <text x="110" y="10" text-anchor="middle" font-size="9" fill="#555">Leitura</text>
-            <text x="193" y="63" text-anchor="start" font-size="9" fill="#555">Take-off</text>
-            <text x="193" y="158" text-anchor="start" font-size="9" fill="#555">Paddle</text>
-            <text x="110" y="213" text-anchor="middle" font-size="9" fill="#555">Manobras</text>
-            <text x="27" y="158" text-anchor="end" font-size="9" fill="#555">Equilíbrio</text>
-            <text x="27" y="63" text-anchor="end" font-size="9" fill="#555">Posic.</text>
-            <!-- Level labels on leitura axis -->
-            <text x="114" y="128" font-size="7" fill="#ccc">1</text>
-            <text x="114" y="110" font-size="7" fill="#ccc">2</text>
-            <text x="114" y="92" font-size="7" fill="#ccc">3</text>
-            <text x="114" y="74" font-size="7" fill="#ccc">4</text>
-            <text x="114" y="56" font-size="7" fill="#ccc">5</text>
-          </svg>
-        </div>
-        <!-- Sparklines 2×3 — fonte: skills_hist por sessão (ordem cronológica) -->
-        <!-- Tomás: 11 sessões · nivel autonomo (range 2.5–3.5 · threshold 3.5) -->
-        <!-- X: 2,12,21,31,40,50,60,69,79,88,98  Y=48-val*8 -->
-        <div class="spark-grid">
-          <!-- Leitura: [2,2,4,4,2,4,4,4,3,5,3] media=3.93 ★★★★☆ banda verde (≥ threshold) -->
-          <div class="spark-card">
-            <div class="spark-header">
-              <span class="spark-title">🌊 Leitura</span>
-              <span class="spark-trend-flat">→</span>
-            </div>
-            <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px">
-              <span class="spark-val" style="color:#2e86c1">3.9</span>
-              <span class="spark-stars" style="color:#2e86c1">★★★★☆</span>
-            </div>
-            <svg viewBox="0 0 100 44" width="100%" height="44" xmlns="http://www.w3.org/2000/svg">
-              <rect x="2" y="20" width="96" height="8" fill="#edf8f1"/>
-              <line x1="2" y1="20" x2="98" y2="20" stroke="#60c080" stroke-width="0.7" stroke-dasharray="2,2"/>
-              <polyline points="2,32 12,32 21,16 31,16 40,32 50,16 60,16 69,16 79,24 88,8 98,24" fill="none" stroke="#2e86c1" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
-              <circle cx="98" cy="24" r="2.5" fill="#2e86c1" stroke="white" stroke-width="1"/>
-            </svg>
-            <div class="spark-next">próx. nível: escolher pico sem ajuda</div>
-          </div>
-          <!-- Takeoff: [2,2,3,3,3,3,4,4,5,4,4] media=4.05 ★★★★☆ banda verde (≥ threshold) -->
-          <div class="spark-card">
-            <div class="spark-header">
-              <span class="spark-title">🏄 Take-off</span>
-              <span class="spark-trend-down">↓</span>
-            </div>
-            <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px">
-              <span class="spark-val" style="color:#e67e22">4.1</span>
-              <span class="spark-stars" style="color:#e67e22">★★★★☆</span>
-            </div>
-            <svg viewBox="0 0 100 44" width="100%" height="44" xmlns="http://www.w3.org/2000/svg">
-              <rect x="2" y="20" width="96" height="8" fill="#edf8f1"/>
-              <line x1="2" y1="20" x2="98" y2="20" stroke="#60c080" stroke-width="0.7" stroke-dasharray="2,2"/>
-              <polyline points="2,32 12,32 21,24 31,24 40,24 50,24 60,16 69,16 79,8 88,16 98,16" fill="none" stroke="#e67e22" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
-              <circle cx="98" cy="16" r="2.5" fill="#e67e22" stroke="white" stroke-width="1"/>
-            </svg>
-            <div class="spark-next">próx. nível: pop-up consistente sem espuma</div>
-          </div>
-          <!-- Paddle: [2,2,3,3,2,4,4,4,2,3,2] media=2.9 ★★★☆☆ banda laranja (in range) -->
-          <div class="spark-card">
-            <div class="spark-header">
-              <span class="spark-title">🚣 Paddle</span>
-              <span class="spark-trend-flat">→</span>
-            </div>
-            <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px">
-              <span class="spark-val" style="color:#1e8449">2.9</span>
-              <span class="spark-stars" style="color:#1e8449">★★★☆☆</span>
-            </div>
-            <svg viewBox="0 0 100 44" width="100%" height="44" xmlns="http://www.w3.org/2000/svg">
-              <rect x="2" y="20" width="96" height="8" fill="#fef9ec"/>
-              <line x1="2" y1="20" x2="98" y2="20" stroke="#e0c060" stroke-width="0.7" stroke-dasharray="2,2"/>
-              <polyline points="2,32 12,32 21,24 31,24 40,32 50,16 60,16 69,16 79,32 88,24 98,32" fill="none" stroke="#1e8449" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
-              <circle cx="98" cy="32" r="2.5" fill="#1e8449" stroke="white" stroke-width="1"/>
-            </svg>
-            <div class="spark-next">próx. nível: duck dive básico</div>
-          </div>
-          <!-- Manobras: [1,1,2,2,1,3,3,1,2,2,2] media=1.6 ★★☆☆☆ banda vermelha (below range) -->
-          <div class="spark-card">
-            <div class="spark-header">
-              <span class="spark-title">↩️ Manobras</span>
-              <span class="spark-trend-flat">→</span>
-            </div>
-            <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px">
-              <span class="spark-val" style="color:#c0392b">1.6</span>
-              <span class="spark-stars" style="color:#c0392b">★★☆☆☆</span>
-            </div>
-            <svg viewBox="0 0 100 44" width="100%" height="44" xmlns="http://www.w3.org/2000/svg">
-              <rect x="2" y="20" width="96" height="8" fill="#fdf0f0"/>
-              <line x1="2" y1="20" x2="98" y2="20" stroke="#e07060" stroke-width="0.7" stroke-dasharray="2,2"/>
-              <polyline points="2,40 12,40 21,32 31,32 40,40 50,24 60,24 69,40 79,32 88,32 98,32" fill="none" stroke="#c0392b" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
-              <circle cx="98" cy="32" r="2.5" fill="#c0392b" stroke="white" stroke-width="1"/>
-            </svg>
-            <div class="spark-next">próx. nível: primeira curva controlada</div>
-          </div>
-          <!-- Equilibrio: [2,2,4,4,3,5,4,4,4,3,3] media=3.42 ★★★☆☆ banda laranja (in range) -->
-          <div class="spark-card">
-            <div class="spark-header">
-              <span class="spark-title">⚖️ Equilíbrio</span>
-              <span class="spark-trend-down">↓</span>
-            </div>
-            <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px">
-              <span class="spark-val" style="color:#8e44ad">3.4</span>
-              <span class="spark-stars" style="color:#8e44ad">★★★☆☆</span>
-            </div>
-            <svg viewBox="0 0 100 44" width="100%" height="44" xmlns="http://www.w3.org/2000/svg">
-              <rect x="2" y="20" width="96" height="8" fill="#fef9ec"/>
-              <line x1="2" y1="20" x2="98" y2="20" stroke="#e0c060" stroke-width="0.7" stroke-dasharray="2,2"/>
-              <polyline points="2,32 12,32 21,16 31,16 40,24 50,8 60,16 69,16 79,16 88,24 98,24" fill="none" stroke="#8e44ad" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
-              <circle cx="98" cy="24" r="2.5" fill="#8e44ad" stroke="white" stroke-width="1"/>
-            </svg>
-            <div class="spark-next">próx. nível: estável em espuma</div>
-          </div>
-          <!-- Posicionamento: [1,2,2,2,2,2,4,4,3,4,4] media=3.67 ★★★★☆ banda verde (≥ threshold) -->
-          <div class="spark-card">
-            <div class="spark-header">
-              <span class="spark-title">🧭 Posicion.</span>
-              <span class="spark-trend-up">↑</span>
-            </div>
-            <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px">
-              <span class="spark-val" style="color:#d4a017">3.7</span>
-              <span class="spark-stars" style="color:#d4a017">★★★★☆</span>
-            </div>
-            <svg viewBox="0 0 100 44" width="100%" height="44" xmlns="http://www.w3.org/2000/svg">
-              <rect x="2" y="20" width="96" height="8" fill="#edf8f1"/>
-              <line x1="2" y1="20" x2="98" y2="20" stroke="#60c080" stroke-width="0.7" stroke-dasharray="2,2"/>
-              <polyline points="2,40 12,32 21,32 31,32 40,32 50,32 60,16 69,16 79,24 88,16 98,16" fill="none" stroke="#d4a017" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
-              <circle cx="98" cy="16" r="2.5" fill="#d4a017" stroke="white" stroke-width="1"/>
-            </svg>
-            <div class="spark-next">próx. nível: posicionar no pico sem ajuda</div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="sec-label">Objetivos</div>
-    <div class="obj-card">
-    <div class="obj-header"><span>🎯</span><span class="obj-horizon">Próxima sessão</span><span class="obj-period">Abr 2026</span></div>
-    <div class="obj-list">
-      <div class="obj-item progress"><span class="obj-status">🟡</span><div class="obj-text"><div class="obj-title">Take-off mais cedo</div><div class="obj-desc">Antecipar o levantar — take-off tardio identificado em 7 Abr</div></div></div>
-      <div class="obj-item todo"><span class="obj-status">🔴</span><div class="obj-text"><div class="obj-title">Paddle autónomo para apanhar onda</div><div class="obj-desc">Remar sozinho para sincronizar com a onda</div></div></div>
-    </div>
-  </div>
-  <div class="obj-card">
-    <div class="obj-header"><span>📅</span><span class="obj-horizon">Próximo mês</span><span class="obj-period">Mai–Jun 2026</span></div>
-    <div class="obj-list">
-      <div class="obj-item todo"><span class="obj-status">🔴</span><div class="obj-text"><div class="obj-title">Apanhar 3 ondas sozinho</div><div class="obj-desc">Sem assistência do treinador em ondas limpas</div></div></div>
-      <div class="obj-item todo"><span class="obj-status">🔴</span><div class="obj-text"><div class="obj-title">Paddle autónomo até ao pico</div><div class="obj-desc">Entrar e sair da água sem apoio</div></div></div>
-    </div>
-  </div>
-  <div class="obj-card">
-    <div class="obj-header"><span>🏆</span><span class="obj-horizon">Final de época</span><span class="obj-period">Set 2026</span></div>
-    <div class="obj-list">
-      <div class="obj-item todo"><span class="obj-status">🔴</span><div class="obj-text"><div class="obj-title">Autonomia total</div><div class="obj-desc">Surfar sessão completa sem apoio do treinador</div></div></div>
-      <div class="obj-item todo"><span class="obj-status">🔴</span><div class="obj-text"><div class="obj-title">3★ em todas as competências</div><div class="obj-desc">Nível intermédio consolidado</div></div></div>
-    </div>
-  </div>
-    <div class="sec-label">Condições preferidas</div>
-    <div class="prog-card">
-      <div class="prog-header">
-        <span class="prog-header-title">Swell × Performance</span>
-        <span class="prog-date">25 Abr 26</span>
-      </div>
-      <div class="prog-body">
-        <div class="prog-formula">Performance média (6 competências) vs. wave power · 11 sessões · Milícias<br><small>🟢 zona surf ideal &nbsp;·&nbsp; 🟡 marginal/difícil &nbsp;·&nbsp; 🔴 extremos</small></div>
-        <div class="evo-chart-wrap">
-          <svg viewBox="0 0 320 185" xmlns="http://www.w3.org/2000/svg">
-            <!-- Traffic light zones -->
-            <rect x="45" y="15" width="11" height="140" fill="rgba(231,76,60,0.22)"/>
-            <rect x="56" y="15" width="10" height="140" fill="rgba(241,196,15,0.28)"/>
-            <rect x="66" y="15" width="74" height="140" fill="rgba(39,174,96,0.20)"/>
-            <rect x="140" y="15" width="91" height="140" fill="rgba(241,196,15,0.24)"/>
-            <rect x="231" y="15" width="79" height="140" fill="rgba(231,76,60,0.20)"/>
-            <!-- Zone labels -->
-            <text x="103" y="28" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="8" fill="rgba(30,132,73,0.7)" font-weight="700">SURF ✓</text>
-            <text x="185" y="28" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="7.5" fill="rgba(180,130,0,0.75)">DIFÍCIL</text>
-            <text x="270" y="28" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="7.5" fill="rgba(192,57,43,0.7)">EXTREMO</text>
-            <!-- Y grid -->
-            <line x1="45" y1="15" x2="310" y2="15" stroke="rgba(255,255,255,0.6)" stroke-width="0.7"/>
-            <line x1="45" y1="50" x2="310" y2="50" stroke="rgba(255,255,255,0.6)" stroke-width="0.7"/>
-            <line x1="45" y1="85" x2="310" y2="85" stroke="rgba(255,255,255,0.6)" stroke-width="0.7"/>
-            <line x1="45" y1="120" x2="310" y2="120" stroke="rgba(255,255,255,0.6)" stroke-width="0.7"/>
-            <line x1="45" y1="155" x2="310" y2="155" stroke="rgba(255,255,255,0.6)" stroke-width="0.7"/>
-            <!-- Y labels -->
-            <text x="40" y="18" text-anchor="end" font-family="Barlow,sans-serif" font-size="8" fill="#999">5</text>
-            <text x="40" y="53" text-anchor="end" font-family="Barlow,sans-serif" font-size="8" fill="#999">4</text>
-            <text x="40" y="88" text-anchor="end" font-family="Barlow,sans-serif" font-size="8" fill="#999">3</text>
-            <text x="40" y="123" text-anchor="end" font-family="Barlow,sans-serif" font-size="8" fill="#999">2</text>
-            <text x="40" y="158" text-anchor="end" font-family="Barlow,sans-serif" font-size="8" fill="#999">1</text>
-            <!-- Axes -->
-            <line x1="45" y1="15" x2="45" y2="155" stroke="#bbb" stroke-width="1"/>
-            <line x1="45" y1="155" x2="310" y2="155" stroke="#bbb" stroke-width="1"/>
-            <!-- X ticks -->
-            <line x1="56" y1="152" x2="56" y2="158" stroke="#bbb" stroke-width="0.8"/>
-            <text x="56" y="166" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#aaa">2</text>
-            <line x1="66" y1="152" x2="66" y2="158" stroke="#bbb" stroke-width="0.8"/>
-            <text x="66" y="166" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#aaa">4</text>
-            <line x1="140" y1="152" x2="140" y2="158" stroke="#bbb" stroke-width="0.8"/>
-            <text x="140" y="166" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#aaa">18</text>
-            <line x1="231" y1="152" x2="231" y2="158" stroke="#bbb" stroke-width="0.8"/>
-            <text x="231" y="166" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#aaa">35</text>
-            <text x="177" y="183" text-anchor="middle" font-family="Barlow,sans-serif" font-size="8" fill="#999">Wave Power (kW/m)</text>
-            <!-- Tomás data points -->
-            <circle cx="61" cy="114" r="5" fill="#1e8449" opacity="0.9"/>
-            <text x="61" y="106" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">10/4</text>
-            <circle cx="66" cy="132" r="5" fill="#1e8449" opacity="0.9"/>
-            <text x="75" y="131" text-anchor="start" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">03/4</text>
-            <circle cx="82" cy="126" r="5" fill="#1e8449" opacity="0.9"/>
-            <text x="82" y="118" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">04/4</text>
-            <circle cx="135" cy="85" r="5" fill="#1e8449" opacity="0.9"/>
-            <text x="135" y="77" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">08/4</text>
-            <circle cx="284" cy="85" r="5" fill="#1e8449" opacity="0.9"/>
-            <text x="284" y="77" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">07/4</text>
-            <circle cx="69" cy="62" r="5" fill="#1e8449" opacity="0.9"/>
-            <text x="69" y="54" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">18/4</text>
-            <circle cx="90" cy="50" r="5" fill="#1e8449" opacity="0.9"/>
-            <text x="90" y="42" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">25/4</text>
-                      <circle cx="67" cy="68" r="5" fill="#1e8449" opacity="0.9"/>
-            <text x="67" y="60" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">2/5</text>
-                        <circle cx="73" cy="79" r="5" fill="#1e8449" opacity="0.9"/>
-            <text x="73" y="71" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">9/5</text>
-                        <circle cx="69" cy="68" r="5" fill="#1e8449" opacity="0.9"/>
-            <text x="69" y="60" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">10/5</text>
-                        <circle cx="49" cy="85" r="5" fill="#1e8449" opacity="0.9"/>
-            <text x="49" y="77" text-anchor="middle" font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">14/5</text>
-            </svg>
-        </div>
-        <div style="font-size:0.62rem;color:var(--grey);padding:2px 0 0;line-height:1.6">● Tomás &nbsp;·&nbsp; Milícias · 11 pontos · calibração em curso</div>
-      </div>
-    </div>
-
-    <div class="footer">
-    <svg width="18" height="18" viewBox="0 0 46 46" fill="none"><circle cx="23" cy="23" r="22" fill="#2c2c2c"/><path d="M8 12 L15 32 L23 18 L31 32 L38 12" stroke="white" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 32 L23 18 L31 32" stroke="white" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <a href="https://www.azoreswatergliders.com" target="_blank">azoreswatergliders.com</a>
-    &nbsp;·&nbsp; Actualizado 14 Maio 2026
-  </div>
-  </div>
-</div>
-<!-- ═══════════════════════════════════════
-     PÁGINA: QUIVER & PRANCHAS
-     Organizado por estado:
-     Em uso | Referência | A testar | Próximas
-     Cada card tem: riders, nota técnica,
-     condições ideais, link site
-════════════════════════════════════════ -->
 <div id="page-quiver" class="page">
 
   <div class="quiver-header">
