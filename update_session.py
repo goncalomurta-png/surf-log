@@ -44,6 +44,20 @@ SCATTER_X = [(0,45), (2,56), (4,66), (18,140), (35,231), (50,310)]
 # Mapeamento skill_order → chave no JSON progressao
 PROG_KEYS = ['leitura_onda', 'takeoff', 'paddle', 'manobras', 'equilibrio', 'posicionamento']
 
+# Direcções de swell marcadas como Desfavorável na rosa das Milícias (costa sul)
+_DESFAV_DIRS_MILICIA = {'E', 'ENE', 'NE', 'NNE', 'S', 'SE', 'SSE', 'SSW'}
+
+# Fallback matriz wave power por nível quando não há sessões na classe
+_MATRIX_FALLBACK = {
+    #              Fracas  Aceit.  Boas  Ideais  Exig.  M.Exig.
+    'iniciacao': ['⚠️',   '⚠️',  '❌', '❌',   '❌',  '❌'],
+    'progresso': ['⚠️',   '✅',  '✅', '⚠️',   '❌',  '❌'],
+    'autonomo':  ['⚠️',   '✅',  '✅', '⚠️',   '❌',  '❌'],
+    'tecnico':   ['⚠️',   '✅',  '✅', '✅',    '⚠️',  '❌'],
+    'avancado':  ['⚠️',   '✅',  '✅', '✅',    '✅',  '⚠️'],
+}
+_MATRIX_CLASSES = ['Fracas', 'Aceitáveis', 'Boas', 'Ideais', 'Exigentes', 'Muito exig.']
+
 MESES_ABR  = {1:'Jan',2:'Fev',3:'Mar',4:'Abr',5:'Mai',6:'Jun',
               7:'Jul',8:'Ago',9:'Set',10:'Out',11:'Nov',12:'Dez'}
 MESES_FULL = {1:'Janeiro',2:'Fevereiro',3:'Março',4:'Abril',5:'Maio',6:'Junho',
@@ -452,6 +466,175 @@ def update_surfer(html, surfer_id, sd):
     return html[:p_start] + page + html[p_end:]
 
 
+def calc_matrix(data):
+    """Calcula emoji de capacidade por classe de condições para um atleta."""
+    nivel = data['nivel_atual']['autonomia']
+    fallback = _MATRIX_FALLBACK.get(nivel, _MATRIX_FALLBACK['progresso'])
+    result = {}
+    for i, cls in enumerate(_MATRIX_CLASSES):
+        sessoes = [s for s in data['sessoes'] if s.get('classe') == cls and s.get('skills_hist')]
+        if sessoes:
+            media = sum(sum(s['skills_hist']) / len(s['skills_hist']) for s in sessoes) / len(sessoes)
+            result[cls] = ('✅' if media >= 3.5 else ('⚠️' if media >= 2.5 else '❌'))
+        else:
+            result[cls] = fallback[i]
+    return result
+
+
+def _matrix_row(label, r_val, t_val, inferred_r, inferred_t):
+    r_cell = f'<td class="matrix-cell matrix-inferred" title="inferido por nível">{r_val}</td>' if inferred_r else f'<td class="matrix-cell">{r_val}</td>'
+    t_cell = f'<td class="matrix-cell matrix-inferred" title="inferido por nível">{t_val}</td>' if inferred_t else f'<td class="matrix-cell">{t_val}</td>'
+    return f'            <tr><td class="matrix-cond">{label}</td>{r_cell}{t_cell}</tr>'
+
+
+def update_wave_matrix(html, sd_list):
+    """Substitui os tbodys das tabelas Wave Power com valores calculados a partir dos JSONs."""
+    r_data = next(sd for sd in sd_list if sd.get('surfer', '').lower() == 'rodrigo')
+    t_data = next(sd for sd in sd_list if sd.get('surfer', '').lower() == 'tomás' or sd.get('surfer', '').lower() == 'tomas')
+
+    r_matrix = calc_matrix(r_data)
+    t_matrix = calc_matrix(t_data)
+
+    r_nivel = r_data['nivel_atual']['autonomia']
+    t_nivel = t_data['nivel_atual']['autonomia']
+    r_n_sess = sum(1 for s in r_data['sessoes'] if s.get('skills_hist'))
+    t_n_sess = sum(1 for s in t_data['sessoes'] if s.get('skills_hist'))
+
+    labels = [
+        '&lt; 4 kW/m · Fracas',
+        '4–7 kW/m · Aceitáveis',
+        '7–10 kW/m · Boas',
+        '10–18 kW/m · Ideais',
+        '18–35 kW/m · Exigentes',
+        '&gt; 35 kW/m · Muito exig.',
+    ]
+    rows = []
+    for label, cls in zip(labels, _MATRIX_CLASSES):
+        r_sessoes = [s for s in r_data['sessoes'] if s.get('classe') == cls and s.get('skills_hist')]
+        t_sessoes = [s for s in t_data['sessoes'] if s.get('classe') == cls and s.get('skills_hist')]
+        rows.append(_matrix_row(label, r_matrix[cls], t_matrix[cls], not r_sessoes, not t_sessoes))
+
+    tbody_content = '\n'.join(rows)
+    _d = datetime.now()
+    data_hoje = f"{_d.day} {MESES_ABR[_d.month]} {_d.year}"
+    footnote = (f'<p class="matrix-footnote">Gerado automaticamente · '
+                f'Rodrigo: {r_n_sess} sessões ({r_nivel}) · '
+                f'Tomás: {t_n_sess} sessões ({t_nivel}) · '
+                f'actualizado em {data_hoje} · '
+                f'<span style="opacity:.6">célula acinzentada = inferido por nível</span></p>')
+
+    # Substituir os tbodys de todas as tabelas Wave Power (identificadas pelo header th "Wave Power")
+    count = 0
+    result = html
+    search_start = 0
+    while True:
+        wp_pos = result.find('>Wave Power</th>', search_start)
+        if wp_pos == -1:
+            break
+        tbody_start = result.find('<tbody>', wp_pos)
+        tbody_end = result.find('</tbody>', tbody_start) + len('</tbody>')
+        if tbody_start == -1 or tbody_end == -1:
+            break
+        old_tbody = result[tbody_start:tbody_end]
+        new_tbody = f'<tbody>\n{tbody_content}\n          </tbody>'
+        result = result[:tbody_start] + new_tbody + result[tbody_end:]
+        # Also update the footnote after </table></div> following this matrix
+        table_end = result.find('</table>', tbody_start + len(new_tbody)) + len('</table>')
+        div_end = result.find('</div>', table_end) + len('</div>')
+        # Remove existing footnote if any
+        existing_fn = re.search(r'\s*<p class="matrix-footnote">[^<]*(?:<[^>]+>[^<]*)*</p>', result[div_end:div_end+400])
+        if existing_fn:
+            fn_start = div_end + existing_fn.start()
+            fn_end = div_end + existing_fn.end()
+            result = result[:fn_start] + result[fn_end:]
+            div_end = div_end  # recalculate if needed
+        result = result[:div_end] + f'\n      {footnote}' + result[div_end:]
+        search_start = div_end + len(footnote) + 10
+        count += 1
+
+    print(f'  ✓ Wave Power matrix: {count} tabela(s) actualizadas · Rodrigo {r_nivel} · Tomás {t_nivel}')
+    return result
+
+
+def detect_spot_override(nova):
+    """Avisa se swell desfavorável produziu perf ≥ 2.5 — candidato a spot_override."""
+    swell_duo = nova.get('swell_duo', [])
+    if not swell_duo or not nova.get('skills_hist'):
+        return
+    dir_raw = swell_duo[0].get('dir', '')
+    # extrair cardinal do formato "↗ ENE 66°"
+    parts = dir_raw.split()
+    cardinal = parts[1] if len(parts) >= 2 else parts[0] if parts else ''
+    if cardinal not in _DESFAV_DIRS_MILICIA:
+        return
+    pm = sum(nova['skills_hist']) / len(nova['skills_hist'])
+    if pm >= 2.5:
+        print(f"\n  ⚠  SPOT OVERRIDE DETECTADO: swell {dir_raw} (marcado Desfavorável) · perf média {pm:.1f}")
+        print(f"     Considera adicionar spot_override a esta sessão no JSON.")
+
+
+def agg_spot_overrides(sd_list):
+    """Agrega todos os spot_override existentes nas sessões de todos os atletas."""
+    overrides = []
+    for sd in sd_list:
+        for s in sd.get('sessoes', []):
+            if 'spot_override' in s:
+                overrides.append({
+                    'data': s['data'],
+                    'html_id': s['html_id'],
+                    'surfer': sd.get('surfer', ''),
+                    **s['spot_override']
+                })
+    return sorted(overrides, key=lambda x: x['data'])
+
+
+def update_spot_overrides_section(html, sd_list):
+    """Actualiza a secção 'Observações locais · Milícias' e o badge das rosas."""
+    overrides = agg_spot_overrides(sd_list)
+    n = len(overrides)
+
+    # Badge das rosas: substituir contagem
+    badge_txt = f'{n} observações locais' if n != 1 else '1 observação local'
+    badge_style = ' style="background:#e67e22;color:white"' if n >= 3 else ''
+    new_badge = f'<span class="rosa-badge"{badge_style}>{badge_txt}</span>'
+    html = re.sub(r'<span class="rosa-badge"[^>]*>[^<]*</span>', new_badge, html)
+
+    # Secção de overrides: substituir entre anchors
+    anchor_start = '<!-- SPOT-OVERRIDES-START -->'
+    anchor_end = '<!-- SPOT-OVERRIDES-END -->'
+    if anchor_start not in html:
+        return html
+
+    if not overrides:
+        section_html = ''
+    else:
+        items = []
+        for ov in overrides:
+            data_fmt = fmt_dd_m(ov['data'])
+            items.append(
+                f'          <div class="so-item">'
+                f'<span class="so-dir">{ov.get("dir_swell","?")}</span> · '
+                f'<span class="so-cond">{ov.get("condicao","?")}</span> · '
+                f'{data_fmt} · perf {ov.get("performance","?")}<br>'
+                f'<span class="so-nota">"{ov.get("nota","")}"</span> '
+                f'<a href="#{ov["html_id"]}" class="so-link">[{ov["html_id"]}]</a>'
+                f'</div>'
+            )
+        items_html = '\n'.join(items)
+        section_html = f'''        <div class="so-card">
+          <div class="so-header">Observações locais · Milícias</div>
+          <p class="so-intro">Estas observações contradizem as classificações teóricas.<br>Revê as rosas quando houver ≥3 observações na mesma direcção.</p>
+{items_html}
+        </div>'''
+
+    start_pos = html.find(anchor_start)
+    end_pos = html.find(anchor_end) + len(anchor_end)
+    html = html[:start_pos] + anchor_start + section_html + anchor_end + html[end_pos:]
+
+    print(f'  ✓ Spot overrides: {n} observações locais · badge actualizado')
+    return html
+
+
 def update_quiver(html, sd_list):
     """Actualiza a página Quiver (Última sessão + footer)."""
     q_start = html.find('id="page-quiver"')
@@ -630,8 +813,11 @@ def main():
             print(f"     O script só deve ser executado para inserir uma NOVA sessão.")
             print(f"     Actualiza sessions/{surfer}.md e o JSON com a nova sessão primeiro.")
             sys.exit(1)
+        detect_spot_override(nova)
         html = update_surfer(html, surfer, sd)
 
+    html = update_wave_matrix(html, sd_list)
+    html = update_spot_overrides_section(html, sd_list)
     html = update_quiver(html, sd_list)
 
     HTML_PATH.write_text(html, encoding='utf-8')

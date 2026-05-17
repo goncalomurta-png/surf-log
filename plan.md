@@ -147,3 +147,7 @@ Stormglass SW2 (budget 8 calls/run)                → actualizar fetch_conditio
 | B.3 · git commit + push S10/S9 | `auditor_accepted` | commit `6fc528f` · branch sincronizada |
 | V.1 · Radar + Sparklines (ambos atletas) | `auditor_accepted` | radar valores corretos vs JSON; sparklines 2×3 com bandas e threshold; textos Tomás corrigidos; HTML corrompido L1777 corrigido · 17 Mai 2026 |
 | A.1 · notas/cond_grid/horas s0–s4 (ambos) | `auditor_accepted` | zero campos vazios; rodrigo-s0 hora+trainer_comment confirmados; rodrigo-s3 wp_ef=17 ✓ · 17 Mai 2026 |
+| V.2 · Remover Progressão + reordenar secções | `evidence_pending` | Progressão removida (Rodrigo+Tomás); Evolução movida antes de Objetivos; CSS prog- classes mantidas (usadas em Swell×Perf) · 17 Mai 2026 |
+| V.5 · Links pranchas + quiver sincronizado | `evidence_pending` | CI OG Flyer card adicionado (Rodrigo·Principal·link CI); Flowt 6'0" → Tomás·Cedida; Joselito: nota shaper artesanal cabo-verdiano · 17 Mai 2026 |
+| V.3 · Matriz Wave Power gerada automaticamente | `evidence_pending` | calc_matrix() + update_wave_matrix() em update_session.py; 7 tabelas actualizadas; 6 classes (Boas separadas); fallback por nível; célula acinzentada = inferido · 17 Mai 2026 |
+| V.4 · spot_override: detecção + secção HTML | `evidence_pending` | detect_spot_override() + agg_spot_overrides() + update_spot_overrides_section(); anchors HTML; rosa-badge; CSS so-*; 2 overrides detectados (s11+s12) · 17 Mai 2026 |
