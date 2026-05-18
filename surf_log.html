@@ -129,6 +129,8 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
   margin: 24px 0 12px; display: flex; align-items: center; gap: 10px; opacity: 0.65;
 }
 .sec-label::after { content: ''; flex: 1; height: 1px; background: currentColor; opacity: 0.2; }
+.month-sep { display:flex; align-items:center; gap:10px; margin:18px 0 10px; font-size:0.7rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--grey); }
+.month-sep::before, .month-sep::after { content:''; flex:1; height:1px; background:var(--grey); opacity:0.25; }
 .sec-label:first-child { margin-top: 0; }
 
 /* ─── KPI cards do topo (sessões, horas, spots, pranchas) ─── */
@@ -286,6 +288,10 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
 .evo-card { background: var(--white); border-radius: 14px; overflow: hidden; box-shadow: 0 2px 12px rgba(11,30,45,0.08); margin-bottom: 10px; }
 .evo-header { background: var(--charcoal); padding: 11px 16px; display: flex; align-items: center; justify-content: space-between; }
 .evo-header-title { font-family: 'Raleway', sans-serif; font-size: 0.6rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.22em; color: rgba(255,255,255,0.55); }
+.evo-nivel-row { display:flex; align-items:center; gap:8px; margin:4px 0 12px; font-size:0.78rem; flex-wrap:wrap; }
+.evo-nivel-atual { background:var(--ocean); color:#fff; border-radius:20px; padding:2px 10px; font-weight:600; }
+.evo-nivel-seta { color:var(--grey); font-size:0.9rem; }
+.evo-nivel-prox { background:var(--sand); color:var(--ocean); border:1px solid var(--ocean); border-radius:20px; padding:2px 10px; font-weight:500; opacity:0.8; }
 .evo-sessions-label { font-size: 0.6rem; color: rgba(255,255,255,0.3); }
 .evo-body { padding: 16px; }
 .evo-chart-wrap { position: relative; width: 100%; margin: 0 auto 14px; }
@@ -693,6 +699,11 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
         <span class="evo-sessions-label">13 sessões · Mai 2026</span>
       </div>
       <div class="evo-body">
+        <div class="evo-nivel-row">
+          <span class="evo-nivel-atual">Autónomo · Outside</span>
+          <span class="evo-nivel-seta">→</span>
+          <span class="evo-nivel-prox">Técnico Inside</span>
+        </div>
         <!-- RADAR + SPARKLINES (substituiu gráfico de linhas) -->
         <div class="radar-wrap">
           <svg viewBox="0 0 220 220" width="220" height="220" xmlns="http://www.w3.org/2000/svg" font-family="Barlow,sans-serif">
@@ -962,6 +973,8 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
 ════════════════════════════════════════ -->
     <div class="sec-label">Sessões registadas</div>
     <!-- Sessão 18 Abr 26 — Rodrigo S6 -->
+
+    <div class="month-sep">Maio 2026</div>
                             <div class="session-card energy-fraca" id="rodrigo-s12" data-zona="inside" onclick="toggleSession(this)">
       <div class="session-summary">
         <div class="s-date"><div class="s-day">14</div><div class="s-month">Mai 26</div></div>
@@ -1230,6 +1243,8 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
         </div>
       </div>
     </div>
+
+    <div class="month-sep">Abril 2026</div>
 <div class="session-card energy-media" id="rodrigo-s8" data-zona="outside" onclick="toggleSession(this)">
       <div class="session-summary">
         <div class="s-date"><div class="s-day">26</div><div class="s-month">Abr 26</div></div>
@@ -1882,6 +1897,11 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
         <span class="evo-sessions-label">11 sessões · Mai 2026</span>
       </div>
       <div class="evo-body">
+        <div class="evo-nivel-row">
+          <span class="evo-nivel-atual">Autónomo · Inside</span>
+          <span class="evo-nivel-seta">→</span>
+          <span class="evo-nivel-prox">Autónomo Outside</span>
+        </div>
         <!-- RADAR + SPARKLINES (substituiu gráfico de linhas) -->
         <div class="radar-wrap">
           <svg viewBox="0 0 220 220" width="220" height="220" xmlns="http://www.w3.org/2000/svg" font-family="Barlow,sans-serif">
@@ -2144,6 +2164,8 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
 ════════════════════════════════════════ -->
     <div class="sec-label">Sessões registadas</div>
     <!-- Sessão 25 Abr 26 — Tomás S7 -->
+
+    <div class="month-sep">Maio 2026</div>
                     <div class="session-card energy-fraca" id="tomas-s10" data-zona="inside" onclick="toggleSession(this)">
       <div class="session-summary">
         <div class="s-date"><div class="s-day">14</div><div class="s-month">Mai 26</div></div>
@@ -2412,6 +2434,8 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
         </div>
       </div>
     </div>
+
+    <div class="month-sep">Abril 2026</div>
 <div class="session-card energy-media" id="tomas-s6" data-zona="outside" onclick="toggleSession(this)">
       <div class="session-summary">
         <div class="s-date"><div class="s-day">25</div><div class="s-month">Abr 26</div></div>
@@ -3119,19 +3143,19 @@ function showSpot(id) {
         <div class="guide-section-title" style="margin-top:4px">Autonomia</div>
         <div class="nivel-grid" style="margin-bottom:14px">
           <div class="nivel-item">
-            <div class="nivel-name">Assistido</div>
+            <div class="nivel-name">1 · Assistido</div>
             <div class="nivel-desc">Take-off e posicionamento com apoio directo do treinador</div>
           </div>
           <div class="nivel-item">
-            <div class="nivel-name">Autónomo</div>
+            <div class="nivel-name">2 · Autónomo</div>
             <div class="nivel-desc">Rema e apanha ondas sozinho em condições adequadas</div>
           </div>
           <div class="nivel-item">
-            <div class="nivel-name">Técnico</div>
+            <div class="nivel-name">3 · Técnico</div>
             <div class="nivel-desc">Execução consistente, lê o lineup, inicia manobras</div>
           </div>
           <div class="nivel-item">
-            <div class="nivel-name">Performer</div>
+            <div class="nivel-name">4 · Performer</div>
             <div class="nivel-desc">Domínio completo — manobras, adaptação, estratégia</div>
           </div>
         </div>

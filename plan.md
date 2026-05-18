@@ -152,3 +152,6 @@ Stormglass SW2 (budget 8 calls/run)                → actualizar fetch_conditio
 | V.3 · Matriz Wave Power gerada automaticamente | `auditor_accepted` | calc_matrix() + update_wave_matrix() em update_session.py; 7 tabelas actualizadas; 6 classes (Boas separadas); fallback por nível; célula acinzentada = inferido · 17 Mai 2026 |
 | V.4 · spot_override: detecção + secção HTML | `auditor_accepted` | detect_spot_override() + agg_spot_overrides() + update_spot_overrides_section(); anchors HTML; rosa-badge; CSS so-*; 2 overrides detectados (s11+s12) · 17 Mai 2026 |
 | V.6 · Reordenar secções macro (ambos atletas) | `auditor_accepted` | Rodrigo+Tomás: Evolução→Objetivos→Condições→Sessões; KPIs intactos; verificado com grep de sec-labels · 17 Mai 2026 |
+| N.1 · Nível actual + próximo na secção Evolução | `evidence_pending` | CSS evo-nivel-row/atual/seta/prox; Rodrigo: "Autónomo · Outside → Técnico Inside"; Tomás: "Autónomo · Inside → Autónomo Outside" · 18 Mai 2026 |
+| N.2 · Numeração 1→4 nos blocos Autonomia do Guia | `evidence_pending` | 1·Assistido / 2·Autónomo / 3·Técnico / 4·Performer · 18 Mai 2026 |
+| N.3 · Separadores de mês nas sessões (ambos) | `evidence_pending` | CSS month-sep; Rodrigo: Maio(s12–s9) Abril(s8–s0); Tomás: Maio(s10–s7) Abril(s6–s0) · 18 Mai 2026 |
