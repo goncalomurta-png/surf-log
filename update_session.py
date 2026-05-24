@@ -474,7 +474,7 @@ def calc_matrix(data):
     for i, cls in enumerate(_MATRIX_CLASSES):
         sessoes = [s for s in data['sessoes'] if s.get('classe') == cls and s.get('skills_hist')]
         if sessoes:
-            media = sum(sum(s['skills_hist']) / len(s['skills_hist']) for s in sessoes) / len(sessoes)
+            media = sum(sum(v for v in s['skills_hist'] if v is not None) / max(1, sum(1 for v in s['skills_hist'] if v is not None)) for s in sessoes) / len(sessoes)
             result[cls] = ('✅' if media >= 3.5 else ('⚠️' if media >= 2.5 else '❌'))
         else:
             result[cls] = fallback[i]
