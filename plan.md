@@ -158,3 +158,4 @@ Stormglass SW2 (budget 8 calls/run)                → actualizar fetch_conditio
 | N.1 · Nível actual + próximo na secção Evolução | `evidence_pending` | CSS evo-nivel-row/atual/seta/prox; Rodrigo: "Autónomo · Outside → Técnico Inside"; Tomás: "Autónomo · Inside → Autónomo Outside" · 18 Mai 2026 |
 | N.2 · Numeração 1→4 nos blocos Autonomia do Guia | `evidence_pending` | 1·Assistido / 2·Autónomo / 3·Técnico / 4·Performer · 18 Mai 2026 |
 | N.3 · Separadores de mês nas sessões (ambos) | `evidence_pending` | CSS month-sep; Rodrigo: Maio(s12–s9) Abril(s8–s0); Tomás: Maio(s10–s7) Abril(s6–s0) · 18 Mai 2026 |
+| F.1 · Fix calc_matrix() — mín 2 sessões + recência | `evidence_pending` | _REC_W + nova calc_matrix() ponderada + _apply_monotonicity(); Rodrigo: Muito exig.❌(era✅); Aceitáveis✅; Boas✅; Ideais✅(fallback); Tomás: Muito exig.❌(era⚠️); Aceitáveis✅; update_wave_matrix inferred=len<2 · 24 Mai 2026 |

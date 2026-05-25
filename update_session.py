@@ -47,6 +47,9 @@ PROG_KEYS = ['leitura_onda', 'takeoff', 'paddle', 'manobras', 'equilibrio', 'pos
 # Direcções de swell marcadas como Desfavorável na rosa das Milícias (costa sul)
 _DESFAV_DIRS_MILICIA = {'E', 'ENE', 'NE', 'NNE', 'S', 'SE', 'SSE', 'SSW'}
 
+# Pesos de recência global (índice 0 = sessão mais recente)
+_REC_W = [1.00, 1.00, 0.60, 0.40, 0.25, 0.15, 0.10, 0.07, 0.05, 0.03] + [0.02] * 100
+
 # Fallback matriz wave power por nível quando não há sessões na classe
 _MATRIX_FALLBACK = {
     #              Fracas  Aceit.  Boas  Ideais  Exig.  M.Exig.
@@ -467,17 +470,50 @@ def update_surfer(html, surfer_id, sd):
 
 
 def calc_matrix(data):
-    """Calcula emoji de capacidade por classe de condições para um atleta."""
+    """Calcula emoji de capacidade por classe de condições para um atleta.
+
+    Regras:
+    - < 2 sessões na classe → fallback por nível (sem dados suficientes)
+    - ≥ 2 sessões → média ponderada por recência global (índice no array sessoes[])
+    """
     nivel = data['nivel_atual']['autonomia']
     fallback = _MATRIX_FALLBACK.get(nivel, _MATRIX_FALLBACK['progresso'])
+    all_sessions = data['sessoes']  # índice 0 = mais recente
     result = {}
+    cls_map = {}
     for i, cls in enumerate(_MATRIX_CLASSES):
-        sessoes = [s for s in data['sessoes'] if s.get('classe') == cls and s.get('skills_hist')]
-        if sessoes:
-            media = sum(sum(v for v in s['skills_hist'] if v is not None) / max(1, sum(1 for v in s['skills_hist'] if v is not None)) for s in sessoes) / len(sessoes)
-            result[cls] = ('✅' if media >= 3.5 else ('⚠️' if media >= 2.5 else '❌'))
+        cls_idx = [(idx, s) for idx, s in enumerate(all_sessions)
+                   if s.get('classe') == cls and s.get('skills_hist')]
+        cls_map[cls] = cls_idx
+        if len(cls_idx) >= 2:
+            total_w = sum(_REC_W[idx] for idx, _ in cls_idx)
+            media = sum(
+                _REC_W[idx] * sum(v for v in s['skills_hist'] if v is not None) /
+                max(1, sum(1 for v in s['skills_hist'] if v is not None))
+                for idx, s in cls_idx
+            ) / total_w
+            result[cls] = '✅' if media >= 3.0 else ('⚠️' if media >= 2.5 else '❌')
         else:
             result[cls] = fallback[i]
+    data_classes = {cls for cls, entries in cls_map.items() if len(entries) >= 2}
+    result = _apply_monotonicity(result, data_classes)
+    return result
+
+
+_CLS_HARDER_FIRST = ['Muito exig.', 'Exigentes', 'Ideais', 'Boas', 'Aceitáveis']
+# Fracas excluída — tem semântica diferente ("pouco surf", não incapacidade)
+_EMOJI_RANK = {'✅': 2, '⚠️': 1, '❌': 0}
+_RANK_EMOJI = {2: '✅', 1: '⚠️', 0: '❌'}
+
+
+def _apply_monotonicity(result, data_classes):
+    """Propaga: se classe mais exigente tem melhor rating E ambas têm dados reais → eleva a mais fácil."""
+    for i in range(len(_CLS_HARDER_FIRST) - 1):
+        harder = _CLS_HARDER_FIRST[i]
+        easier = _CLS_HARDER_FIRST[i + 1]
+        if harder in data_classes and easier in data_classes:
+            if _EMOJI_RANK[result[harder]] > _EMOJI_RANK[result[easier]]:
+                result[easier] = result[harder]
     return result
 
 
@@ -512,7 +548,7 @@ def update_wave_matrix(html, sd_list):
     for label, cls in zip(labels, _MATRIX_CLASSES):
         r_sessoes = [s for s in r_data['sessoes'] if s.get('classe') == cls and s.get('skills_hist')]
         t_sessoes = [s for s in t_data['sessoes'] if s.get('classe') == cls and s.get('skills_hist')]
-        rows.append(_matrix_row(label, r_matrix[cls], t_matrix[cls], not r_sessoes, not t_sessoes))
+        rows.append(_matrix_row(label, r_matrix[cls], t_matrix[cls], len(r_sessoes) < 2, len(t_sessoes) < 2))
 
     tbody_content = '\n'.join(rows)
     _d = datetime.now()
