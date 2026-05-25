@@ -1,7 +1,7 @@
 # Plan — Surf Log (Azores Water Gliders)
 **Surfistas:** Rodrigo (11a) · Tomás (9a) · Spot: Milícias, Ponta Delgada, Açores  
-**Última sessão:** Rodrigo S10 (rodrigo-s10) · 10 Mai 2026 · Tomás S9 (tomas-s9) · 10 Mai 2026  
-**Última auditoria:** 2026-05-11 (iteração 5 · fix acento surfer_id · commit 6fc528f)
+**Última sessão:** Rodrigo S13 (rodrigo-s13) · Tomás S11 (tomas-s11) · 23 Mai 2026 · Sta. Bárbara  
+**Última auditoria:** 2026-05-25 (iteração 6 · F.1 calc_matrix + S13/S11 + O.1 pendente)
 
 ---
 
@@ -9,17 +9,17 @@
 
 | Componente | Estado |
 |---|---|
-| surf_log.html | ✅ Sincronizado (S10 Rodrigo · S9 Tomás · 10 Mai 2026) · 485 K |
-| data/rodrigo.json | ✅ Completo (S0–S10) · insert_before_id = rodrigo-s10 |
-| data/tomas.json | ✅ Completo (S0–S9) · insert_before_id = tomas-s9 |
+| surf_log.html | ✅ Sincronizado (S13 Rodrigo · S11 Tomás · 23 Mai 2026) · commit 6721027 |
+| data/rodrigo.json | ✅ Completo (S0–S13, 14 sessões) · insert_before_id = rodrigo-s13 · ⚠️ next_sessao por corrigir (O.1) |
+| data/tomas.json | ✅ Completo (S0–S11, 12 sessões) · insert_before_id = tomas-s11 · ⚠️ next_sessao por corrigir (O.1) |
 | update_session.py | ✅ Bug acento corrigido (6fc528f) |
-| validate_progression.py | ✅ Operacional (validação pesos e médias) |
+| validate_progression.py | ⚠️ Falha com KeyError:'surfer' — script desactualizado face ao schema JSON actual |
 | fetch_conditions.py | ✅ Operacional (Open-Meteo) |
 | Correlação Wave Power × Performance | r = 0.942 (6 pontos · recalcular com ≥2 novos) |
 
 **Níveis actuais:**
-- Rodrigo: Técnico Outside (zona base; sessão S10 foi Milícias Outside)
-- Tomás: Assistido Outside (zona base; sessão S9 foi Milícias Outside)
+- Rodrigo: Técnico Outside (S13 foi Sta. Bárbara Outside)
+- Tomás: Autónomo Outside (S11 foi Sta. Bárbara Espuma)
 
 ---
 
@@ -152,10 +152,9 @@ Stormglass SW2 (budget 8 calls/run)                → actualizar fetch_conditio
 | V.3 · Matriz Wave Power gerada automaticamente | `auditor_accepted` | calc_matrix() + update_wave_matrix() em update_session.py; 7 tabelas actualizadas; 6 classes (Boas separadas); fallback por nível; célula acinzentada = inferido · 17 Mai 2026 |
 | V.4 · spot_override: detecção + secção HTML | `auditor_accepted` | detect_spot_override() + agg_spot_overrides() + update_spot_overrides_section(); anchors HTML; rosa-badge; CSS so-*; 2 overrides detectados (s11+s12) · 17 Mai 2026 |
 | V.6 · Reordenar secções macro (ambos atletas) | `auditor_accepted` | Rodrigo+Tomás: Evolução→Objetivos→Condições→Sessões; KPIs intactos; verificado com grep de sec-labels · 17 Mai 2026 |
-| N.1 · Nível global actual + próximo (ambos atletas) | `auditor_accepted` | Rodrigo: Autónomo·Outside→Técnico Inside (L702); Tomás: Autónomo·Inside→Autónomo Outside (L1900); CSS evo-nivel-* · 18 Mai 2026 |
+| N.1 · Nível actual + próximo na secção Evolução | `auditor_accepted` | CSS evo-nivel-row/atual/seta/prox; Rodrigo "Autónomo·Outside→Técnico Inside"; Tomás "Autónomo·Inside→Autónomo Outside" · 18 Mai 2026 |
 | N.2 · Numeração 1→4 Autonomia no Guia | `auditor_accepted` | 1·Assistido / 2·Autónomo / 3·Técnico / 4·Performer em nivel-name (L3146–3158) · 18 Mai 2026 |
-| N.3 · Separadores de mês nas sessões (ambos atletas) | `auditor_accepted` | Rodrigo: Maio(L977→s12) Abril(L1247→s8); Tomás: Maio(L2168→s10) Abril(L2438→s6); todas dentro das pages · 18 Mai 2026 |
-| N.1 · Nível actual + próximo na secção Evolução | `evidence_pending` | CSS evo-nivel-row/atual/seta/prox; Rodrigo: "Autónomo · Outside → Técnico Inside"; Tomás: "Autónomo · Inside → Autónomo Outside" · 18 Mai 2026 |
-| N.2 · Numeração 1→4 nos blocos Autonomia do Guia | `evidence_pending` | 1·Assistido / 2·Autónomo / 3·Técnico / 4·Performer · 18 Mai 2026 |
-| N.3 · Separadores de mês nas sessões (ambos) | `evidence_pending` | CSS month-sep; Rodrigo: Maio(s12–s9) Abril(s8–s0); Tomás: Maio(s10–s7) Abril(s6–s0) · 18 Mai 2026 |
-| F.1 · Fix calc_matrix() — mín 2 sessões + recência | `evidence_pending` | _REC_W + nova calc_matrix() ponderada + _apply_monotonicity(); Rodrigo: Muito exig.❌(era✅); Aceitáveis✅; Boas✅; Ideais✅(fallback); Tomás: Muito exig.❌(era⚠️); Aceitáveis✅; update_wave_matrix inferred=len<2 · 24 Mai 2026 |
+| N.3 · Separadores de mês nas sessões (ambos) | `auditor_accepted` | CSS month-sep; Rodrigo: Maio(s13+s12→s9) Abril(s8→s0); Tomás: Maio(s11+s10→s7) Abril(s6→s0) · 18 Mai 2026 |
+| S13/S11 · Sessões Sta. Bárbara · 23 Mai 2026 | `auditor_accepted` | JSON+HTML correctos; KPIs: R=14s/28h20/3spots; T=12s/22h20/2spots; month-sep Maio correcto · 25 Mai 2026 |
+| F.1 · Fix calc_matrix() — mín 2 sessões + recência | `auditor_accepted` | _REC_W + calc_matrix() ponderada + _apply_monotonicity(); HTML regenerado (commit 6721027); R:⚠️✅✅✅❌; T:⚠️✅✅⚠️❌❌ · 25 Mai 2026 |
+| O.1 · Fix next_sessao após S13/S11 | `evidence_pending` | rodrigo: html_id=s14 n=15 s-0=s13; tomas: html_id=s12 n=13 s-0=s11; data/ no .gitignore — edição local · 25 Mai 2026 |
