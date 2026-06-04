@@ -311,7 +311,7 @@ def _load_stormglass_key():
     key = os.environ.get('STORMGLASS_API_KEY', '')
     if key:
         return key
-    env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '.env')
+    env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '.env')
     try:
         with open(env_path) as f:
             for line in f:

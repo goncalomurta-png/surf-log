@@ -25,7 +25,7 @@ Após correr o script, Claude deve:
 import sys, json, re, shutil, pathlib
 from datetime import datetime
 
-BASE      = pathlib.Path(__file__).resolve().parent
+BASE      = pathlib.Path(__file__).resolve().parent.parent
 HTML_PATH = BASE / "surf_log.html"
 
 # ── Constantes ────────────────────────────────────────────────────────────────
