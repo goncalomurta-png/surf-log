@@ -525,8 +525,19 @@ def _matrix_row(label, r_val, t_val, inferred_r, inferred_t):
 
 def update_wave_matrix(html, sd_list):
     """Substitui os tbodys das tabelas Wave Power com valores calculados a partir dos JSONs."""
-    r_data = next(sd for sd in sd_list if sd.get('surfer', '').lower() == 'rodrigo')
-    t_data = next(sd for sd in sd_list if sd.get('surfer', '').lower() == 'tomás' or sd.get('surfer', '').lower() == 'tomas')
+    # Normalizar nomes para lookup (tomás → tomas)
+    by_name = {sd.get('surfer', '').lower().replace('á', 'a').replace('ã', 'a'): sd for sd in sd_list}
+    # Se só um surfista foi processado, carregar o outro JSON para a matriz
+    for surfer in ('rodrigo', 'tomas'):
+        if surfer not in by_name:
+            json_path = BASE / f'data/{surfer}.json'
+            if json_path.exists():
+                by_name[surfer] = json.loads(json_path.read_text(encoding='utf-8'))
+    r_data = by_name.get('rodrigo')
+    t_data = by_name.get('tomas')
+    if r_data is None or t_data is None:
+        print('  ⚠ Wave matrix: dados de um surfista em falta — a saltar')
+        return html
 
     r_matrix = calc_matrix(r_data)
     t_matrix = calc_matrix(t_data)
