@@ -729,6 +729,12 @@ def validate_session_data(sd, surfer):
         print(f"  ✗ [{nome}] sessoes[0] não tem 'skills' nem 'skills_hist'")
         ok = False
 
+    # Campos de schema completo — avisos (⚠) para campos em falta mas não bloqueiam
+    schema_warn = ['cond_obs', 'hs_obs', 'nivel', 'tags', 'notes', 'tide_strip', 'swell_duo', 'cond_grid']
+    for campo in schema_warn:
+        if campo not in nova:
+            print(f"  ⚠ [{nome}] sessoes[0]: campo '{campo}' ausente")
+
     # Validar todas as sessões
     for i, s in enumerate(sd['sessoes']):
         sid = s.get('html_id', f'sessao[{i}]')

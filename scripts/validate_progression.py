@@ -34,18 +34,25 @@ def rec_for_index(idx: int, table: dict) -> float:
 
 def validate_surfer(path: str) -> tuple[str, list[str]]:
     data = json.loads(Path(path).read_text(encoding="utf-8"))
+
+    # A.1: ignorar JSONs que não sejam de surfistas (ex: backtest_cache.json)
+    if "surfer" not in data:
+        return None, []
+
     name = data["surfer"]
     errors = []
 
-    factores    = data["factores_condicoes"]
-    rec_table   = {slot_index(k): v for k, v in data["recencia"].items()}
-    rec_ordem   = data["next_sessao"]["recencia_ordem"]
-    id_to_slot  = {v: slot_index(k) for k, v in rec_ordem.items()}
+    factores  = data["factores_condicoes"]
+    rec_table = {slot_index(k): v for k, v in data["recencia"].items()}
+    rec_ordem = data["next_sessao"]["recencia_ordem"]
+    # A.2: id_to_slot a partir de next_sessao.recencia_ordem reflecte os slots actuais
+    # (s-0 = mais recente actual, que passa a s-1 quando a próxima sessão for inserida)
+    id_to_slot = {v: slot_index(k) for k, v in rec_ordem.items()}
 
     # Acumuladores
-    peso_total  = 0.0
-    skill_num   = {sk: 0.0 for sk in SKILLS}
-    skill_den   = {sk: 0.0 for sk in SKILLS}
+    peso_total = 0.0
+    skill_num  = {sk: 0.0 for sk in SKILLS}
+    skill_den  = {sk: 0.0 for sk in SKILLS}
 
     for sess in data["sessoes"]:
         html_id = sess["html_id"]
@@ -60,28 +67,23 @@ def validate_surfer(path: str) -> tuple[str, list[str]]:
             errors.append(f"  [{html_id}] classe '{classe}' não encontrada em factores_condicoes")
             continue
 
-        fator       = fator_entry["factor"]
-        slot_idx    = id_to_slot.get(html_id, 10)
-        rec_calc    = rec_for_index(slot_idx, rec_table)
-        peso_calc   = rec_calc * fator
+        fator    = fator_entry["factor"]
+        slot_idx = id_to_slot.get(html_id, 10)
+        rec_calc = rec_for_index(slot_idx, rec_table)
+        peso_calc = rec_calc * fator
 
-        # Verificar rec e peso armazenados
-        stored_rec  = sess.get("rec")
-        stored_peso = sess.get("peso")
-        if stored_rec is not None and abs(stored_rec - rec_calc) > TOLERANCE:
-            errors.append(
-                f"  [{html_id}] rec: armazenado={stored_rec}, calculado={rec_calc:.4f}"
-            )
-        if stored_peso is not None and abs(stored_peso - peso_calc) > TOLERANCE:
-            errors.append(
-                f"  [{html_id}] peso: armazenado={stored_peso}, calculado={peso_calc:.4f}"
-            )
+        # NOTA A.2: rec e peso armazenados por sessão são históricos (valor quando inseridos).
+        # Não os comparamos com o slot actual — só os totais de progressao{} são validados.
 
         peso_total += peso_calc
 
-        # Acumular skills (excluir null)
-        for sk in SKILLS:
+        # Acumular skills — skills.*.val tem precedência; fallback para skills_hist
+        # (sessões antigas podem não ter dict skills mas têm skills_hist com valores reais)
+        hist = sess.get("skills_hist")  # [leitura, takeoff, paddle, manobras, equilibrio, posic.]
+        for si, sk in enumerate(SKILLS):
             val = sess.get("skills", {}).get(sk, {}).get("val")
+            if val is None and hist and si < len(hist):
+                val = hist[si]  # fallback para skills_hist
             if val is not None:
                 skill_num[sk] += val * peso_calc
                 skill_den[sk] += peso_calc
@@ -132,6 +134,8 @@ def main() -> int:
     total_errors = 0
     for path in json_files:
         name, errors = validate_surfer(path)
+        if name is None:
+            continue  # não é JSON de surfista
         if errors:
             print(f"\n❌ {name} — {len(errors)} divergência(s):")
             for e in errors:
