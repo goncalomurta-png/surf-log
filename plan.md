@@ -157,4 +157,5 @@ Stormglass SW2 (budget 8 calls/run)                → actualizar fetch_conditio
 | N.3 · Separadores de mês nas sessões (ambos) | `auditor_accepted` | CSS month-sep; Rodrigo: Maio(s13+s12→s9) Abril(s8→s0); Tomás: Maio(s11+s10→s7) Abril(s6→s0) · 18 Mai 2026 |
 | S13/S11 · Sessões Sta. Bárbara · 23 Mai 2026 | `auditor_accepted` | JSON+HTML correctos; KPIs: R=14s/28h20/3spots; T=12s/22h20/2spots; month-sep Maio correcto · 25 Mai 2026 |
 | F.1 · Fix calc_matrix() — mín 2 sessões + recência | `auditor_accepted` | _REC_W + calc_matrix() ponderada + _apply_monotonicity(); HTML regenerado (commit 6721027); R:⚠️✅✅✅❌; T:⚠️✅✅⚠️❌❌ · 25 Mai 2026 |
+| S20+S21 · Rodrigo · Monteverde · 16 Jun 2026 | `completed` | S20 09:30 Ideais 11.9kW/m mar grande ~2.2m (hs_obs/modelo ratio 1.8×); S21 13:30 Ideais 10.3kW/m 2 ondas + trimming; progressão peso_total=3.283; sparklines+radar actualizados (22s); validate OK · 16 Jun 2026 |
 | O.1 · Fix next_sessao após S13/S11 | `evidence_pending` | rodrigo: html_id=s14 n=15 s-0=s13; tomas: html_id=s12 n=13 s-0=s11; data/ no .gitignore — edição local · 25 Mai 2026 |

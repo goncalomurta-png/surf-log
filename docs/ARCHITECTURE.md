@@ -63,7 +63,7 @@ O eixo X do scatter (Wave Power) não é linear nem logarítmico puro — a esca
 
 ## Estado actual dos dados (16 Jun 2026)
 
-### Sessões registadas: 20 Rodrigo (S1–S20) · 17 Tomás (S1–S17)
+### Sessões registadas: 22 Rodrigo (S1–S22) · 17 Tomás (S1–S17)
 
 **Nota sobre div_id:** s0/s1/s2 não têm `id=` no div raiz do card (apenas `data-sid` nas stars). s3+ têm `id=`. Sessões geradas pelo script têm sempre `id=`.
 
@@ -71,13 +71,13 @@ O eixo X do scatter (Wave Power) não é linear nem logarítmico puro — a esca
 
 | | Rodrigo | Tomás |
 |--|---------|-------|
-| Leitura onda | ★★★★ (3.56) | ★★★★ (3.58) |
-| Take-off | ★★★ (3.37) | ★★★ (2.90) |
-| Paddle | ★★★★ (3.98) | ★★★ (3.26) |
-| Manobras | ★★★ (3.20) | ★★ (1.97) |
-| Equilíbrio | ★★★ (3.21) | ★★★ (3.04) |
-| Posicionamento | ★★★ (3.34) | ★★★★ (3.54) |
-| Peso total | 2.638 | 2.647 |
+| Leitura onda | ★★★ (3.49) | ★★★★ (3.58) |
+| Take-off | ★★★ (3.12) | ★★★ (2.90) |
+| Paddle | ★★★ (3.38) | ★★★ (3.26) |
+| Manobras | ★★★ (3.50) | ★★ (1.97) |
+| Equilíbrio | ★★★ (3.37) | ★★★ (3.04) |
+| Posicionamento | ★★★ (3.43) | ★★★★ (3.54) |
+| Peso total | 3.283 | 2.647 |
 
 ### Spots activos
 
@@ -85,7 +85,7 @@ O eixo X do scatter (Wave Power) não é linear nem logarítmico puro — a esca
 |------|---------|-------|
 | Milícias · Costa Sul | S1–S17, S19, S20 | S1–S16 |
 | Santa Bárbara · Costa Norte | S15, S16 | S13 |
-| Monteverde · Costa Norte | S18, S19, S20 | S16 |
+| Monteverde · Costa Norte | S18, S19, S20, S21, S22 | S16 |
 
 ---
 
@@ -177,4 +177,4 @@ y = round(155 - (perf_media - 1) * 35)  # perf 1–5 → pixel (5→15, 1→155)
 
 ---
 
-_Actualizado: 16 Jun 2026 · 20 sessões Rodrigo · 17 sessões Tomás · 3 spots activos · Auditoria Codex A.1–A.6 aplicada_
+_Actualizado: 16 Jun 2026 · 22 sessões Rodrigo (S20+S21 Monteverde 16 Jun) · 17 sessões Tomás · 3 spots activos · Auditoria Codex A.1–A.6 aplicada_
