@@ -9,4 +9,8 @@ WORKFLOW.md
 comments.md
 comments_archive.md
 sketch_sparklines.html
-.claude/
+# Ignorar .claude/* mas trackear commands/
+.claude/*
+!.claude/commands/
+.claude/active.lock
+.claude/settings.local.json
