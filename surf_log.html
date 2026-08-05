@@ -260,6 +260,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
 .bb-principal { background: var(--charcoal); color: var(--white); }
 .bb-ref       { background: #eaecee; color: #5d6d7e; }
 .bb-testar    { background: #fef9e7; color: #9a7d0a; }
+.bb-aluguer   { background: #eaf4fb; color: #1a6ea8; }
 .bb-historico { background: #f4ecfb; color: #7d3c98; }
 .board-detail { border-top: 1px solid #f0ece6; padding: 12px 16px; background: #fafafa; }
 .board-note { font-size: 0.74rem; color: #5a6d7a; line-height: 1.6; margin-bottom: 10px; }
@@ -4101,6 +4102,82 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
 
   <div class="main">
 
+    <div class="sec-label">Comparação rápida</div>
+    <div class="guide-card" style="overflow-x:auto">
+      <table class="cond-table" style="text-align:left">
+        <thead>
+          <tr>
+            <th style="text-align:left">Prancha</th>
+            <th>Surfista</th>
+            <th>Volume</th>
+            <th>Estado</th>
+            <th>Última sessão</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>CI OG Flyer 5'8"</td>
+            <td><span class="rider-chip rc-r">Rodrigo</span></td>
+            <td>26.4L</td>
+            <td>Principal</td>
+            <td>16 Jun 26</td>
+          </tr>
+          <tr>
+            <td>Torq 6'6" (aluguer)</td>
+            <td><span class="rider-chip rc-r">Rodrigo</span> <span class="rider-chip rc-t">Tomás</span></td>
+            <td>~38–42L est.</td>
+            <td>Aluguer</td>
+            <td>26 Jul 26</td>
+          </tr>
+          <tr>
+            <td>Flowt 6'6" 43L</td>
+            <td><span class="rider-chip rc-r">Rodrigo</span></td>
+            <td>43L</td>
+            <td>Referência</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td>Brain Child 5'8"</td>
+            <td><span class="rider-chip rc-r">Rodrigo</span></td>
+            <td>38L</td>
+            <td>A testar</td>
+            <td>Outono 2025</td>
+          </tr>
+          <tr>
+            <td>Joselito Rosario 6'6"</td>
+            <td><span class="rider-chip rc-r">Rodrigo</span></td>
+            <td>29L</td>
+            <td>A testar</td>
+            <td>25 Abr 26</td>
+          </tr>
+          <tr>
+            <td>Softech Roller 6'0"</td>
+            <td><span class="rider-chip rc-t">Tomás</span></td>
+            <td>54L</td>
+            <td>Principal</td>
+            <td>13 Jun 26</td>
+          </tr>
+          <tr>
+            <td>Flowt 6'0" 38L</td>
+            <td><span class="rider-chip rc-t">Tomás</span></td>
+            <td>38L</td>
+            <td>Cedida</td>
+            <td>23 Mai 26</td>
+          </tr>
+          <tr>
+            <td>Ocean Storm 6'0"</td>
+            <td><span class="rider-chip rc-t">Tomás</span></td>
+            <td>~35–40L est.</td>
+            <td>Referência</td>
+            <td>10 Mai 26</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="font-size:0.68rem;color:var(--grey);margin-top:10px;line-height:1.5">
+        Volumes "est." são estimativas — sem ficha técnica confirmada. Rodrigo já surfa em pranchas duras (epoxy/fibra) há vários meses; Tomás manteve-se em soft tops até à sessão de aluguer em El Palmar (26 Jul 2026), onde o material rígido foi um salto notado.
+      </p>
+    </div>
+
     <div class="sec-label">Em uso</div>
 
     <div class="board-card">
@@ -4118,7 +4195,7 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
           <div class="bc-item"><div class="bc-lbl">Condições ideais</div><div class="bc-val">Wave power 5–15 kW/m</div></div>
           <div class="bc-item"><div class="bc-lbl">Swell ideal</div><div class="bc-val">S, SW, W · período 8–14s</div></div>
           <div class="bc-item"><div class="bc-lbl">Maré</div><div class="bc-val">Baixa a meia</div></div>
-          <div class="bc-item"><div class="bc-lbl">Última sessão</div><div class="bc-val">26 Julho 2026 · El Palmar Outside</div></div>
+          <div class="bc-item"><div class="bc-lbl">Última sessão</div><div class="bc-val">16 Junho 2026 · Monteverde Outside</div></div>
         </div>
         <a href="https://www.channelislands.com/collections/og-flyer" target="_blank" class="board-link">🔗 channelislands.com · OG Flyer</a>
       </div>
@@ -4151,15 +4228,34 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
           <div class="board-spec">Dimensões a confirmar · Volume ~35–40L estimado · Soft top</div>
           <div class="board-riders"><span class="rider-chip rc-t">Tomás</span></div>
         </div>
-        <span class="board-badge bb-principal">Principal</span>
+        <span class="board-badge bb-ref">Referência</span>
       </div>
       <div class="board-detail">
-        <div class="board-note">Prancha actual de aprendizagem do Tomás. Volume generoso para 35 kg — adequado para o nível iniciado e suporta bem a progressão durante os próximos 1–2 anos. Boas condições de estabilidade para desenvolver autonomia no take-off.</div>
+        <div class="board-note">Prancha de aprendizagem inicial do Tomás. Volume generoso para 35 kg — adequado para o nível iniciado. Entretanto ultrapassada em uso pela Softech Roller, que passou a ser a prancha principal na progressão mais recente.</div>
         <div class="board-cond">
           <div class="bc-item"><div class="bc-lbl">Rácio vol/peso</div><div class="bc-val">~1,1 kg/L (generoso)</div></div>
           <div class="bc-item"><div class="bc-lbl">Adequado até</div><div class="bc-val">~45–50 kg estimado</div></div>
         </div>
         <a href="https://oceanstormsurfboards.eu" target="_blank" class="board-link">🔗 oceanstormsurfboards.eu</a>
+      </div>
+    </div>
+
+    <div class="board-card">
+      <div class="board-top">
+        <div>
+          <div class="board-name">Softech Roller 6'0"</div>
+          <div class="board-spec">6'0" × 21¼" × 2¾" · 54L · Soft top EPS · Futures thruster</div>
+          <div class="board-riders"><span class="rider-chip rc-t">Tomás</span></div>
+        </div>
+        <span class="board-badge bb-principal">Principal</span>
+      </div>
+      <div class="board-detail">
+        <div class="board-note">Prancha principal actual do Tomás — volume alto (54L) transmite mais energia que a Ocean Storm ou a Flowt, o que acelerou a progressão para o outside mas exige mais disciplina no timing do take-off (posições 1→2→3 em espuma antes de avançar). 1.ª saída autónoma para o outside em Monteverde foi feita com esta prancha.</div>
+        <div class="board-cond">
+          <div class="bc-item"><div class="bc-lbl">Vantagem vs Ocean Storm/Flowt</div><div class="bc-val">Mais volume, plana mais cedo</div></div>
+          <div class="bc-item"><div class="bc-lbl">Exigência</div><div class="bc-val">Mais energia — timing de take-off mais crítico</div></div>
+          <div class="bc-item"><div class="bc-lbl">Última sessão</div><div class="bc-val">13 Junho 2026 · Monteverde Outside esq.</div></div>
+        </div>
       </div>
     </div>
 
@@ -4225,6 +4321,28 @@ body { font-family: 'Barlow', sans-serif; background: var(--sand); color: var(--
           <div class="bc-item"><div class="bc-lbl">Material</div><div class="bc-val">Fibra (hard) — resposta diferente da Flowt soft top</div></div>
         </div>
         <div class="board-note" style="margin-top:8px;font-size:0.75rem;color:var(--grey)">Shaper artesanal · cabo-verdiano</div>
+      </div>
+    </div>
+
+    <div class="sec-label">Testadas em viagem</div>
+
+    <div class="board-card">
+      <div class="board-top">
+        <div>
+          <div class="board-name">Torq 6'6" (aluguer)</div>
+          <div class="board-spec">6'6" × 21" × 2⅝" · volume não fornecido (~38–42L estimado) · Hard epoxy/fibra · aluguer local</div>
+          <div class="board-riders"><span class="rider-chip rc-r">Rodrigo</span><span class="rider-chip rc-t">Tomás</span></div>
+        </div>
+        <span class="board-badge bb-aluguer">Aluguer</span>
+      </div>
+      <div class="board-detail">
+        <div class="board-note">Prancha de aluguer em El Palmar (Cádiz), 26 Jul 2026 — primeira vez que ambos surfaram a mesma prancha na mesma sessão. Rodrigo, já habituado a pranchas duras (CI OG Flyer), adaptou-se bem e apanhou 9–15 ondas em 3h15. Para o Tomás, habituado a soft tops (Ocean Storm, Flowt, Softech), o material rígido revelou-se um salto grande — apanhou 4 ondas com ajuda mas parou cedo por receio de se magoar. Bom ponto de comparação: a transição de soft top para hard board pode precisar de ser mais gradual para o Tomás do que foi para o Rodrigo.</div>
+        <div class="board-cond">
+          <div class="bc-item"><div class="bc-lbl">Sessão</div><div class="bc-val">26 Julho 2026 · El Palmar Outside</div></div>
+          <div class="bc-item"><div class="bc-lbl">Rodrigo</div><div class="bc-val">3h15 · 9–15 ondas · confortável</div></div>
+          <div class="bc-item"><div class="bc-lbl">Tomás</div><div class="bc-val">45min · 4 ondas · parou por receio (fibra dura)</div></div>
+          <div class="bc-item"><div class="bc-lbl">Material vs quiver habitual</div><div class="bc-val">Hard epoxy — Rodrigo já habituado; Tomás só surfou soft tops até aqui</div></div>
+        </div>
       </div>
     </div>
 
