@@ -140,21 +140,30 @@ A escala de recência foi clarificada de `s-0=1, s-1=0.6, s-2=0.4, s-3+=0.25` (p
 ## update_session.py — referência técnica
 
 ### O que actualiza (por ordem de execução)
-1. **Card de sessão** — gera HTML completo, insere antes de `html.insert_before_id`
+1. **Card de sessão** — gera HTML completo, insere antes de `html.insert_before_id`; se a sessão muda de mês face à âncora, gera também o separador `month-sep` correspondente (G.2, 22 Ago 2026)
 2. **KPIs** — regex por label dentro da região do surfista
-3. **Prog-card** — substitui bloco completo entre âncoras "Progressão" e "Objetivos"
-4. **SVG line chart** — reconstrói SVG inteiro com todos os pontos (viewBox dinâmico)
-5. **Evo-trend** — recalcula histórico e setas ↑↓→ por skill
-6. **Evo-sessions-label** — "N sessões · Mmm AAAA"
-7. **Scatter** — insere novo ponto; actualiza "N pontos" e "N sessões"
-8. **Footer** — actualiza data
-9. **Quiver** — actualiza "Última sessão"
+3. **Evolução** (`gerar_evo_card`) — substitui o bloco completo `<div class="evo-card">…</div>` (âncora `class="evo-card"`, balanceada por contagem de `<div>`/`</div>` via `find_block_end`): radar hexagonal (6 eixos) + 6 sparklines + `evo-nivel-row`. Metade "próximo nível" e os 6 textos "próx. nível" por skill são **preservados** do HTML anterior (não deriváveis dos dados — G.5/G.1, 22 Ago 2026, substitui os antigos `gerar_svg_line`/`gerar_evo_trend`/marcadores "Progressão"/"Objetivos", obsoletos desde V.2 · 17 Mai 2026)
+4. **Evo-sessions-label** — "N sessões · Mmm AAAA"
+5. **Scatter** — insere novo ponto; actualiza "N pontos" e "N sessões"
+6. **Footer** — actualiza data
+7. **Quiver** — actualiza "Última sessão"
+
+A secção "Condições preferidas" / Swell×Performance é escrita à mão; o scatter é actualizado inline no passo 5. `gerar_prog_card`, `gerar_svg_line` e `gerar_evo_trend` — que geravam o antigo bloco "Nível geral ponderado" e o line chart, removidos em V.2 (17 Mai 2026) — foram removidas do código em G.8 (22 Ago 2026): ficaram ~3 meses como código morto sem nenhum passo as chamar, o que ajudou a mascarar o bug de G.1.
 
 ### Fórmulas SVG
 ```python
-# Line chart
-y = 160 - (nivel - 1) * 35          # nível 1–5 → pixel (1→160, 5→20)
-x = round(50 + i * 325 / (n - 1))   # sessão i de n → pixel (distribuição uniforme)
+# Radar (evo-card) — hexágono, centro (110,110), 6 eixos a 60° (0=Leitura, sentido horário)
+r = valor * 18                                  # valor 1–5 → raio (18–90 px)
+x = round(cx + r * sin(idx * 60°)); y = round(cy - r * cos(idx * 60°))
+# Banda "esperada" (polígono tracejado): midpoint = 2.5 + 0.5*índice_autonomia
+# (assistido=0…performer=3); banda = [midpoint-0.5, midpoint+0.5]. Confirmado com
+# 2 níveis reais (tecnico 3.0–4.0, autonomo 2.5–3.5); assistido/performer extrapolados.
+
+# Sparkline (evo-card, viewBox 0 0 100 44)
+x = round(2 + i * 96 / (n - 1))                 # sessão i de n (cronológico) → pixel
+y = 48 - valor * 8                              # valor 1–5 → pixel (1→40, 5→8)
+# Sessões com skills_hist[i] = null são omitidas do desenho (não desenhadas como
+# zero — G.6, 22 Ago 2026); o traço liga o ponto não-nulo anterior ao seguinte.
 
 # Scatter
 # Eixo X: piecewise linear entre âncoras [(0,45),(2,56),(4,66),(18,140),(35,231),(50,310)]
@@ -162,7 +171,7 @@ y = round(155 - (perf_media - 1) * 35)  # perf 1–5 → pixel (5→15, 1→155)
 ```
 
 ### Dependências (stdlib apenas — sem pip install)
-`sys · json · re · shutil · pathlib · datetime`
+`sys · json · re · shutil · pathlib · math · datetime`
 
 ---
 

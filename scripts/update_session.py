@@ -22,7 +22,7 @@ Após correr o script, Claude deve:
   • git add surf_log.html && git commit && git push
 """
 
-import sys, json, re, shutil, pathlib
+import sys, json, re, shutil, pathlib, math
 from datetime import datetime
 
 BASE      = pathlib.Path(__file__).resolve().parent.parent
@@ -33,8 +33,6 @@ HTML_PATH = BASE / "surf_log.html"
 SKILL_ORDER  = ['leitura', 'takeoff', 'paddle', 'manobras', 'equilibrio', 'posicionamento']
 SKILL_NAMES  = ['🌊 Leitura de onda', '🏄 Take-off', '🚣 Paddle',
                 '↩️ Manobras', '⚖️ Equilíbrio', '🧭 Posicionamento']
-SKILL_TREND  = ['🌊 Leitura', '🏄 Take-off', '🚣 Paddle',
-                '↩️ Manobras', '⚖️ Equilíb.', '🧭 Posic.']
 SKILL_COLORS = ['#2e86c1', '#e67e22', '#1e8449', '#c0392b', '#8e44ad', '#d4a017']
 SKILL_DASHED = [False, False, True, False, False, False]  # paddle tem dash
 
@@ -43,6 +41,21 @@ SCATTER_X = [(0,45), (2,56), (4,66), (18,140), (35,231), (50,310)]
 
 # Mapeamento skill_order → chave no JSON progressao
 PROG_KEYS = ['leitura_onda', 'takeoff', 'paddle', 'manobras', 'equilibrio', 'posicionamento']
+
+# Nomes de exibição — Sistema de Níveis (CLAUDE.md)
+AUTONOMIA_NOMES = {'assistido': 'Assistido', 'autonomo': 'Autónomo', 'tecnico': 'Técnico', 'performer': 'Performer'}
+ZONA_NOMES      = {'espuma': 'Espuma', 'inside': 'Inside', 'outside': 'Outside', 'largo': 'Largo'}
+AUTONOMIA_ORDEM = ['assistido', 'autonomo', 'tecnico', 'performer']
+
+# Títulos curtos por skill no card "Evolução" (spark-card)
+SPARK_TITLES = ['🌊 Leitura', '🏄 Take-off', '🚣 Paddle', '↩️ Manobras', '⚖️ Equilíbrio', '🧭 Posicion.']
+
+# Cores da banda "esperada" por veredicto (fundo, linha threshold) — G.1
+BAND_COLORS = {
+    'verde':    ('#edf8f1', '#60c080'),
+    'laranja':  ('#fef9ec', '#e0c060'),
+    'vermelha': ('#fdf0f0', '#e07060'),
+}
 
 # Direcções de swell marcadas como Desfavorável na rosa das Milícias (costa sul)
 _DESFAV_DIRS_MILICIA = {'E', 'ENE', 'NE', 'NNE', 'S', 'SE', 'SSE', 'SSW'}
@@ -67,16 +80,6 @@ MESES_FULL = {1:'Janeiro',2:'Fevereiro',3:'Março',4:'Abril',5:'Maio',6:'Junho',
               7:'Julho',8:'Agosto',9:'Setembro',10:'Outubro',11:'Novembro',12:'Dezembro'}
 
 # ── Funções matemáticas ───────────────────────────────────────────────────────
-
-def nivel_to_y(n):
-    """Nível 1–5 → coordenada Y no line chart (1→160, 5→20)."""
-    return 160 - (int(n) - 1) * 35
-
-def sessao_to_x(i, n_total):
-    """Sessão i (0=mais antiga) de n_total → coordenada X no line chart."""
-    if n_total <= 1:
-        return 50
-    return round(50 + i * 325 / (n_total - 1))
 
 def wp_to_cx(wp):
     """Wave power kW/m → coordenada X no scatter chart."""
@@ -103,16 +106,13 @@ def get_skills_hist(sessao):
     return []
 
 def perf_media(sessao):
+    """Média dos skills não-nulos, ou None se nenhum skill for avaliável (G.7) —
+    uma sessão sem avaliação não tem performance média; 0 seria inventar o pior resultado."""
     h = get_skills_hist(sessao)
     vals = [v for v in h if v is not None]
-    return sum(vals) / len(vals) if vals else 0
+    return sum(vals) / len(vals) if vals else None
 
 # ── Helpers de formatação ─────────────────────────────────────────────────────
-
-def fmt_abrev(iso):
-    """'2026-04-18' → '18 Abr 26'"""
-    d = datetime.fromisoformat(iso)
-    return f"{d.day:02d} {MESES_ABR[d.month]} {str(d.year)[2:]}"
 
 def fmt_full(iso):
     """'2026-04-18' → '18 Abril 2026'"""
@@ -142,13 +142,6 @@ def stars_interativas(n, sid, idx):
     for i in range(1, 6):
         cls = 'star filled' if i <= n else 'star '
         parts.append(f'<span class="{cls}" onclick="setStar(this,{i},\'{sid}\',{idx})">★</span>')
-    return ''.join(parts)
-
-def stars_locked(n):
-    parts = []
-    for i in range(1, 6):
-        cls = 'star filled locked' if i <= n else 'star  locked'
-        parts.append(f'<span class="{cls}">★</span>')
     return ''.join(parts)
 
 def gerar_card(sd, s):
@@ -251,110 +244,182 @@ def gerar_card(sd, s):
         f'    </div>\n'
     )
 
-def gerar_prog_card(prog, n_sessoes, data_iso):
-    """Gera o bloco prog-card 'Nível geral ponderado' completo."""
-    skill_items = []
-    for i, sk_key in enumerate(PROG_KEYS):
-        sk = prog[sk_key]
-        skill_items.append(
-            f'      <div class="skill-item">\n'
-            f'        <div class="skill-name">{SKILL_NAMES[i]}</div>\n'
-            f'        <div class="stars">{stars_locked(sk["estrelas"])}</div>\n'
-            f'        <div class="skill-note">Média ponderada: {sk["media"]:.2f} / 5</div>\n'
-            f'      </div>')
-    return (
-        f'  <div class="prog-card">\n'
-        f'    <div class="prog-header">\n'
-        f'      <span class="prog-header-title">Nível geral ponderado</span>\n'
-        f'      <span class="prog-date">{fmt_abrev(data_iso)}</span>\n'
-        f'    </div>\n'
-        f'    <div class="prog-body">\n'
-        f'      <div class="prog-comment empty">— Comentário geral do treinador a preencher —</div>\n'
-        f'      <div class="prog-formula">Peso = Recência × Condições &nbsp;|&nbsp; {n_sessoes} sessões'
-        f' &nbsp;|&nbsp; Peso total: {prog["peso_total"]:.2f}<br>'
-        f'<small>Escala: Fracas 0,35 · Aceitáveis 0,65 · Boas 0,85 · Ideais 1,0 · Exigentes 0,70 · Muito exig. 0,55</small></div>\n'
-        f'      <div class="skill-grid">' + ''.join(skill_items) + '\n'
-        f'      </div>\n'
-        f'    </div>\n'
-        f'  </div>'
-    )
+def find_block_end(text, start):
+    """A partir do índice de um '<div' de abertura em `start`, devolve o índice
+    logo após o '</div>' de fecho correspondente (contagem balanceada). -1 se não fechar."""
+    depth = 0
+    for m in re.finditer(r'<div\b|</div>', text[start:]):
+        if m.group() == '</div>':
+            depth -= 1
+            if depth == 0:
+                return start + m.end()
+        else:
+            depth += 1
+    return -1
 
-def gerar_svg_line(sessoes_crono):
-    """Gera o SVG do line chart a partir das sessões em ordem cronológica."""
-    n    = len(sessoes_crono)
-    xs   = [sessao_to_x(i, n) for i in range(n)]
-    xmax = xs[-1]
-    vb_w = xmax + 50
+def autonomia_banda(autonomia):
+    """(low, mid, threshold) da banda 'esperada' para este nível de autonomia.
+    Reverse-engineered a partir dos 2 níveis com dados reais no HTML (tecnico 3.0–4.0,
+    autonomo 2.5–3.5): mid = 2.5 + 0.5*índice, banda = mid±0.5. Extrapolado para
+    assistido/performer (mid=2.5 e mid=4.0) — sem dados reais desses 2 níveis para confirmar."""
+    idx = AUTONOMIA_ORDEM.index(autonomia)
+    mid = 2.5 + 0.5 * idx
+    return mid - 0.5, mid, mid + 0.5
 
-    L = []
-    L.append(f'<svg viewBox="0 0 {vb_w} 190" xmlns="http://www.w3.org/2000/svg" font-family="Barlow,sans-serif">')
-    L.append(f'  <!-- SVG line chart')
-    L.append(f'       Área útil: x 50–{xmax}, y 20–160  (largura {xmax-50}, altura 140)')
-    L.append(f'       Escala Y: 1→160, 2→125, 3→90, 4→55, 5→20  (passo 35px por nível)')
-    L.append(f'       Escala X: {n} sessões → x={",".join(str(x) for x in xs)}')
-    L.append(f'  -->')
-    L.append(f'  <rect x="50" y="20" width="{xmax-50}" height="140" fill="#fafaf8" rx="4"/>')
-    L.append('  <!-- Grelha horizontal Y (níveis 1–5) -->')
-    L.append('  <g stroke="#e8e4dc" stroke-width="0.7">')
-    for y, lbl in [(160,'1'),(125,'2'),(90,'3'),(55,'4'),(20,'5')]:
-        L.append(f'    <line x1="50" y1="{y}" x2="{xmax}" y2="{y}"/> <!-- y={lbl} -->')
-    L.append('  </g>')
-    L.append('  <!-- Labels Y -->')
-    L.append('  <g font-size="9" fill="#b0bec5" text-anchor="end">')
-    for y_lbl, y in [(1,163),(2,128),(3,93),(4,58),(5,23)]:
-        L.append(f'    <text x="44" y="{y}">{y_lbl}</text>')
-    L.append('  </g>')
-    L.append(f'  <!-- Linhas verticais por sessão — {n} sessões x={",".join(str(x) for x in xs)} -->')
-    L.append('  <g stroke="#e8e4dc" stroke-width="0.7" stroke-dasharray="2,3">')
-    for x in xs:
-        L.append(f'    <line x1="{x}" y1="20" x2="{x}" y2="160"/>')
-    L.append('  </g>')
-    L.append('  <!-- Labels X — datas das sessões -->')
-    L.append('  <g font-size="8" fill="#7f8c8d" text-anchor="middle">')
-    for x, s in zip(xs, sessoes_crono):
-        d = datetime.fromisoformat(s['data'])
-        L.append(f'    <text x="{x}" y="178">{d.day:02d} {MESES_ABR[d.month]}</text>')
-    L.append('  </g>')
+def spark_y(val):
+    """Valor 1–5 → coordenada Y no sparkline (viewBox 0 0 100 44). Y = 48 - val*8."""
+    return round(48 - val * 8)
 
-    for sk_idx, (sk_key, color, dashed) in enumerate(zip(SKILL_ORDER, SKILL_COLORS, SKILL_DASHED)):
-        hist = [get_skills_hist(s)[sk_idx] for s in sessoes_crono]
-        ys   = [nivel_to_y(h) for h in hist]
-        pts  = ' '.join(f'{x},{y}' for x, y in zip(xs, ys))
-        vals = ','.join(str(h) for h in hist)
-        ystr = ','.join(str(y) for y in ys)
-        dash = ' stroke-dasharray="5,2"' if dashed else ''
-        L.append(f'\n  <!-- {sk_key.capitalize()}: {vals} → y: {ystr} -->')
-        L.append(f'  <polyline points="{pts}"')
-        L.append(f'    fill="none" stroke="{color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"{dash}/>')
-        for i, (x, y) in enumerate(zip(xs, ys)):
-            is_last = (i == n - 1)
-            r     = '3.5' if is_last else '3'
-            extra = ' stroke="white" stroke-width="1.5"' if is_last else ''
-            L.append(f'  <circle cx="{x}"  cy="{y}"  r="{r}" fill="{color}"{extra}/>')
+def radar_point(valor, idx, cx=110, cy=110, escala=18):
+    """Valor 1–5 no eixo `idx` (0=Leitura topo, sentido horário, 60° por eixo) →
+    coordenada (x,y) no radar hexagonal (viewBox 0 0 220 220, centro 110,110, r=valor*18)."""
+    ang = math.radians(idx * 60)
+    r = valor * escala
+    return round(cx + r * math.sin(ang)), round(cy - r * math.cos(ang))
 
-    L.append('\n  <text x="12" y="95" font-size="8" fill="#b0bec5" transform="rotate(-90,12,95)" text-anchor="middle">Nível (1–5)</text>')
-    L.append('</svg>')
-    return '\n          '.join(L)
+_RADAR_STATIC = '''<svg viewBox="0 0 220 220" width="220" height="220" xmlns="http://www.w3.org/2000/svg" font-family="Barlow,sans-serif">
+            <!-- Rings L1–L5 -->
+            <polygon points="110,92 126,101 126,119 110,128 94,119 94,101" fill="none" stroke="#e8e4dc" stroke-width="0.7"/>
+            <polygon points="110,74 141,92 141,128 110,146 79,128 79,92" fill="none" stroke="#e8e4dc" stroke-width="0.7"/>
+            <polygon points="110,56 157,83 157,137 110,164 63,137 63,83" fill="none" stroke="#e8e4dc" stroke-width="0.7"/>
+            <polygon points="110,38 172,74 172,146 110,182 48,146 48,74" fill="none" stroke="#e0dbd2" stroke-width="0.8"/>
+            <polygon points="110,20 188,65 188,155 110,200 32,155 32,65" fill="none" stroke="#d5d0c8" stroke-width="1"/>
+            <!-- Axis lines -->
+            <g stroke="#e0ddd6" stroke-width="0.5">
+              <line x1="110" y1="110" x2="110" y2="20"/>
+              <line x1="110" y1="110" x2="188" y2="65"/>
+              <line x1="110" y1="110" x2="188" y2="155"/>
+              <line x1="110" y1="110" x2="110" y2="200"/>
+              <line x1="110" y1="110" x2="32" y2="155"/>
+              <line x1="110" y1="110" x2="32" y2="65"/>
+            </g>
+            <!-- Expected polygon — {nivel_label} midpoint r={mid_r} (tracejado) -->
+            <polygon points="{esperado}" fill="none" stroke="#bbb" stroke-width="1.2" stroke-dasharray="4,3"/>
+            <!-- Athlete polygon — {surfer} (leitura,takeoff,paddle,manobras,equilibrio,posic.) -->
+            <polygon points="{atleta}" fill="rgba(41,128,185,0.15)" stroke="#2980b9" stroke-width="2" stroke-linejoin="round"/>
+            <!-- Axis labels -->
+            <text x="110" y="10" text-anchor="middle" font-size="9" fill="#555">Leitura</text>
+            <text x="193" y="63" text-anchor="start" font-size="9" fill="#555">Take-off</text>
+            <text x="193" y="158" text-anchor="start" font-size="9" fill="#555">Paddle</text>
+            <text x="110" y="213" text-anchor="middle" font-size="9" fill="#555">Manobras</text>
+            <text x="27" y="158" text-anchor="end" font-size="9" fill="#555">Equilíbrio</text>
+            <text x="27" y="63" text-anchor="end" font-size="9" fill="#555">Posic.</text>
+            <!-- Level labels on leitura axis -->
+            <text x="114" y="128" font-size="7" fill="#ccc">1</text>
+            <text x="114" y="110" font-size="7" fill="#ccc">2</text>
+            <text x="114" y="92" font-size="7" fill="#ccc">3</text>
+            <text x="114" y="74" font-size="7" fill="#ccc">4</text>
+            <text x="114" y="56" font-size="7" fill="#ccc">5</text>
+          </svg>'''
 
-def gerar_evo_trend(sessoes_crono, prog):
-    """Gera o bloco evo-trend com histórico de cada skill."""
-    items = []
-    for idx, (sk_key, prog_key, color, sk_short) in enumerate(
-            zip(SKILL_ORDER, PROG_KEYS, SKILL_COLORS, SKILL_TREND)):
-        hist    = [get_skills_hist(s)[idx] for s in sessoes_crono]
-        current = hist[-1]
-        prev    = hist[-2] if len(hist) >= 2 else current
-        if   current > prev: dcls, dsym = 'up',   '↑'
-        elif current < prev: dcls, dsym = 'down',  '↓'
-        else:                dcls, dsym = 'same',  '→'
-        hist_str = '→'.join(str(v) for v in hist)
-        items.append(
-            f'          <div class="evo-trend-item">\n'
-            f'            <div class="evo-trend-skill" style="color:{color}">{sk_short}</div>\n'
-            f'            <div class="evo-trend-val">{prog[prog_key]["estrelas"]}/5</div>\n'
-            f'            <div class="evo-trend-delta {dcls}">{dsym} {hist_str}</div>\n'
+def gerar_evo_card(sd, nivel_prox_preservado, spark_next_preservados):
+    """Gera o card 'Evolução' completo (evo-nivel-row + radar + 6 sparklines) — G.1/G.5/G.6.
+
+    nivel_prox_preservado: texto a usar em evo-nivel-prox quando 'nivel_proximo' não
+      existe no JSON — preservado do HTML anterior, nunca inventado (G.5).
+    spark_next_preservados: lista de 6 textos 'próx. nível' (ordem SKILL_ORDER),
+      preservados do HTML anterior — são copy curada, não deriváveis dos dados.
+    """
+    sessoes       = sd['sessoes']
+    sessoes_crono = list(reversed(sessoes))
+    prog          = sd['progressao']
+    nivel_atual   = sd['nivel_atual']
+    n             = len(sessoes)
+
+    nivel_atual_txt = f"{AUTONOMIA_NOMES[nivel_atual['autonomia']]} · {ZONA_NOMES[nivel_atual['zona']]}"
+    nivel_prox_json = sd.get('nivel_proximo')
+    if nivel_prox_json:
+        nivel_prox_txt = f"{AUTONOMIA_NOMES[nivel_prox_json['autonomia']]} · {ZONA_NOMES[nivel_prox_json['zona']]}"
+    else:
+        nivel_prox_txt = nivel_prox_preservado
+        print(f"  ⚠ [{sd['surfer']}] nivel_proximo ausente — preservado do HTML ('{nivel_prox_txt}')")
+
+    low, mid, threshold = autonomia_banda(nivel_atual['autonomia'])
+    esperado_pts = ' '.join(f'{x},{y}' for x, y in (radar_point(mid, i) for i in range(6)))
+    atleta_pts   = ' '.join(f'{x},{y}' for x, y in (radar_point(prog[PROG_KEYS[i]]['media'], i) for i in range(6)))
+
+    radar_svg = _RADAR_STATIC.format(
+        nivel_label=AUTONOMIA_NOMES[nivel_atual['autonomia']].lower(), mid_r=round(mid * 18),
+        esperado=esperado_pts, surfer=sd['surfer'], atleta=atleta_pts)
+
+    y_thresh = spark_y(threshold)
+    spark_blocks = []
+    for i, sk_key in enumerate(SKILL_ORDER):
+        hist = [get_skills_hist(s)[i] for s in sessoes_crono]
+        nh   = len(hist)
+        xs   = [round(2 + j * 96 / (nh - 1)) if nh > 1 else 50 for j in range(nh)]
+        pts_render = [(xs[j], spark_y(hist[j])) for j in range(nh) if hist[j] is not None]
+
+        media    = prog[PROG_KEYS[i]]['media']
+        estrelas = prog[PROG_KEYS[i]]['estrelas']
+        color    = SKILL_COLORS[i]
+
+        if   media >= threshold: verdict = 'verde'
+        elif media >= low:       verdict = 'laranja'
+        else:                    verdict = 'vermelha'
+        fill, stroke = BAND_COLORS[verdict]
+
+        nao_nulos = [v for v in hist if v is not None]
+        if len(nao_nulos) >= 2:
+            ultimo, penultimo = nao_nulos[-1], nao_nulos[-2]
+            if   ultimo > penultimo: tcls, tsym = 'up',   '↑'
+            elif ultimo < penultimo: tcls, tsym = 'down', '↓'
+            else:                    tcls, tsym = 'flat', '→'
+        else:
+            tcls, tsym = 'flat', '→'
+
+        if pts_render:
+            poly = ' '.join(f'{x},{y}' for x, y in pts_render)
+            cx_last, cy_last = pts_render[-1]
+            circle = f'<circle cx="{cx_last}" cy="{cy_last}" r="2.5" fill="{color}" stroke="white" stroke-width="1"/>'
+        else:
+            poly, circle = '', ''
+
+        estrelas_txt = '★' * estrelas + '☆' * (5 - estrelas)
+
+        spark_blocks.append(
+            f'          <div class="spark-card">\n'
+            f'            <div class="spark-header">\n'
+            f'              <span class="spark-title">{SPARK_TITLES[i]}</span>\n'
+            f'              <span class="spark-trend-{tcls}">{tsym}</span>\n'
+            f'            </div>\n'
+            f'            <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px">\n'
+            f'              <span class="spark-val" style="color:{color}">{media:.1f}</span>\n'
+            f'              <span class="spark-stars" style="color:{color}">{estrelas_txt}</span>\n'
+            f'            </div>\n'
+            f'            <svg viewBox="0 0 100 44" width="100%" height="44" xmlns="http://www.w3.org/2000/svg">\n'
+            f'              <rect x="2" y="{y_thresh}" width="96" height="8" fill="{fill}"/>\n'
+            f'              <line x1="2" y1="{y_thresh}" x2="98" y2="{y_thresh}" stroke="{stroke}" stroke-width="0.7" stroke-dasharray="2,2"/>\n'
+            f'              <polyline points="{poly}" fill="none" stroke="{color}" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>\n'
+            f'              {circle}\n'
+            f'            </svg>\n'
+            f'            <div class="spark-next">{spark_next_preservados[i]}</div>\n'
             f'          </div>')
-    return '\n'.join(items)
+
+    d_ultima = datetime.fromisoformat(sessoes[0]['data'])
+    sessions_label = f'{n} sessões · {MESES_ABR[d_ultima.month]} {d_ultima.year}'
+
+    return (
+        f'    <div class="evo-card">\n'
+        f'      <div class="evo-header">\n'
+        f'        <span class="evo-header-title">📈 Evolução por competência</span>\n'
+        f'        <span class="evo-sessions-label">{sessions_label}</span>\n'
+        f'      </div>\n'
+        f'      <div class="evo-body">\n'
+        f'        <div class="evo-nivel-row">\n'
+        f'          <span class="evo-nivel-atual">{nivel_atual_txt}</span>\n'
+        f'          <span class="evo-nivel-seta">→</span>\n'
+        f'          <span class="evo-nivel-prox">{nivel_prox_txt}</span>\n'
+        f'        </div>\n'
+        f'        <div class="radar-wrap">\n'
+        f'          {radar_svg}\n'
+        f'        </div>\n'
+        f'        <div class="spark-grid">\n'
+        + '\n'.join(spark_blocks) + '\n'
+        f'        </div>\n'
+        f'      </div>\n'
+        f'    </div>'
+    )
 
 # ── Função principal de actualização por surfista ─────────────────────────────
 
@@ -381,8 +446,22 @@ def update_surfer(html, surfer_id, sd):
         print(f"  ⚠ insert_before_id '{insert_id}' não encontrado — card NÃO inserido")
     else:
         div_start = page.rfind('<', 0, idx)
-        page = page[:div_start] + gerar_card(sd, nova) + page[div_start:]
-        print(f"  ✓ Card {nova['html_id']} inserido antes de {insert_id}")
+
+        d_nova = datetime.fromisoformat(nova['data'])
+        ancora = next((s for s in sessoes[1:] if s.get('html_id') == insert_id), None)
+        mes_ancora = datetime.fromisoformat(ancora['data']) if ancora else None
+
+        if mes_ancora is not None and (d_nova.year, d_nova.month) != (mes_ancora.year, mes_ancora.month):
+            # recuar o ponto de inserção para antes de um month-sep colado à âncora
+            m_sep = re.search(r'<div class="month-sep">[^<]*</div>\s*$', page[:div_start])
+            if m_sep:
+                div_start = m_sep.start()
+            sep_html = f'    <div class="month-sep">{MESES_FULL[d_nova.month]} {d_nova.year}</div>\n'
+            page = page[:div_start] + sep_html + gerar_card(sd, nova) + page[div_start:]
+            print(f"  ✓ Card {nova['html_id']} inserido antes de {insert_id} · novo separador '{MESES_FULL[d_nova.month]} {d_nova.year}'")
+        else:
+            page = page[:div_start] + gerar_card(sd, nova) + page[div_start:]
+            print(f"  ✓ Card {nova['html_id']} inserido antes de {insert_id}")
 
     # ── 2. KPIs ─────────────────────────────────────────────────────────────
     kpis = sd['kpis']
@@ -396,40 +475,22 @@ def update_surfer(html, surfer_id, sd):
                   rf'\g<1>{kpis["pranchas"]}\g<2>', page, count=1)
     print(f"  ✓ KPIs: {kpis['sessoes']} sessões · {kpis['no_agua']} · {kpis['spots']} spots · {kpis['pranchas']} pranchas")
 
-    # ── 3. Progressão — substituir prog-card "Nível geral ponderado" ─────────
-    prog_start_marker = '<div class="sec-label">Progressão</div>'
-    prog_end_marker   = '    <div class="sec-label">Objetivos</div>'
-    ps = page.find(prog_start_marker)
-    pe = page.find(prog_end_marker, ps)
-    if ps == -1 or pe == -1:
-        print(f"  ⚠ Secção Progressão não encontrada")
+    # ── 3-5. Card "Evolução" (radar + sparklines + evo-nivel-row) — G.1/G.5/G.6 ──
+    evo_marker = '<div class="evo-card">'
+    evo_start = page.find(evo_marker)
+    evo_end = find_block_end(page, evo_start) if evo_start != -1 else -1
+    if evo_start == -1 or evo_end == -1:
+        print(f"  ⚠ evo-card não encontrado ou malformado — Evolução NÃO actualizada")
     else:
-        new_prog = f'{prog_start_marker}\n{gerar_prog_card(prog, n, nova["data"])}\n'
-        page = page[:ps] + new_prog + page[pe:]
-        print(f"  ✓ Progressão: peso_total={prog['peso_total']:.2f} · {n} sessões")
-
-    # ── 4. SVG line chart — substituir por versão reconstruída ───────────────
-    svg_line_pat = re.compile(r'<svg viewBox="0 0 \d+ 190"[^>]*>.*?</svg>', re.DOTALL)
-    m = svg_line_pat.search(page)
-    if m:
-        page = page[:m.start()] + gerar_svg_line(sessoes_crono) + page[m.end():]
-        print(f"  ✓ SVG line chart: {n} sessões · x={','.join(str(sessao_to_x(i,n)) for i in range(n))}")
-    else:
-        print(f"  ⚠ SVG line chart não encontrado")
-
-    # ── 5. Evo-trend — substituir bloco ─────────────────────────────────────
-    trend_start_marker = '<div class="evo-trend">'
-    trend_end_marker   = '    <div class="sec-label">Condições preferidas</div>'
-    ts = page.find(trend_start_marker)
-    te = page.find(trend_end_marker, ts)
-    if ts == -1 or te == -1:
-        print(f"  ⚠ evo-trend não encontrado")
-    else:
-        new_trend = (f'{trend_start_marker}\n'
-                     + gerar_evo_trend(sessoes_crono, prog)
-                     + '\n        </div>\n      </div>\n    </div>\n')
-        page = page[:ts] + new_trend + page[te:]
-        print(f"  ✓ Evo-trend actualizado")
+        evo_old = page[evo_start:evo_end]
+        m_prox = re.search(r'<span class="evo-nivel-prox">([^<]*)</span>', evo_old)
+        nivel_prox_preservado = m_prox.group(1) if m_prox else ''
+        spark_next_preservados = re.findall(r'<div class="spark-next">([^<]*)</div>', evo_old)
+        if len(spark_next_preservados) != 6:
+            print(f"  ⚠ evo-card: {len(spark_next_preservados)} spark-next encontrados (esperado 6) — Evolução NÃO actualizada")
+        else:
+            page = page[:evo_start] + gerar_evo_card(sd, nivel_prox_preservado, spark_next_preservados) + page[evo_end:]
+            print(f"  ✓ Evolução: radar + 6 sparklines regenerados · {n} sessões")
 
     # ── 6. Evo-sessions-label ────────────────────────────────────────────────
     d_nova = datetime.fromisoformat(nova['data'])
@@ -442,24 +503,33 @@ def update_surfer(html, surfer_id, sd):
     scatter_pat = re.compile(r'(<svg viewBox="0 0 320 185"[^>]*>)(.*?)(</svg>)', re.DOTALL)
     sm = scatter_pat.search(page)
     if sm:
-        cx  = wp_to_cx(nova['wp_ef'])
-        pm  = perf_media(nova)
-        cy  = perf_to_cy(pm)
-        lbl = fmt_dd_m(nova['data'])
-        new_pt = (
-            f'            <circle cx="{cx}" cy="{cy}" r="5" fill="#1e8449" opacity="0.9"/>\n'
-            f'            <text x="{cx}" y="{cy-8}" text-anchor="middle" '
-            f'font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">{lbl}</text>\n            ')
-        page = (page[:sm.start()] + sm.group(1) + sm.group(2)
-                + new_pt + sm.group(3) + page[sm.end():])
-        print(f"  ✓ Scatter: {lbl} · cx={cx} cy={cy} (perf={pm:.2f})")
+        pm = perf_media(nova)
+        if pm is None:
+            print(f"  ⚠ Scatter: {nova['html_id']} sem skills avaliáveis — ponto não adicionado")
+        else:
+            cx  = wp_to_cx(nova['wp_ef'])
+            cy  = perf_to_cy(pm)
+            lbl = fmt_dd_m(nova['data'])
+            new_pt = (
+                f'            <circle cx="{cx}" cy="{cy}" r="5" fill="#1e8449" opacity="0.9"/>\n'
+                f'            <text x="{cx}" y="{cy-8}" text-anchor="middle" '
+                f'font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">{lbl}</text>\n            ')
+            page = (page[:sm.start()] + sm.group(1) + sm.group(2)
+                    + new_pt + sm.group(3) + page[sm.end():])
+            print(f"  ✓ Scatter: {lbl} · cx={cx} cy={cy} (perf={pm:.2f})")
+
+        # Contar pontos efectivamente desenhados (G.7) — não len(sessoes), para não
+        # divergir do rótulo quando uma sessão fica sem ponto (skills todos null)
+        sm2 = scatter_pat.search(page)
+        n_pontos = len(re.findall(r'<circle\b', sm2.group(2))) if sm2 else n
     else:
         print(f"  ⚠ Scatter SVG não encontrado")
+        n_pontos = n
 
     # Actualizar "N pontos" e "N sessões" no scatter
-    page = re.sub(r'(Milícias · )\d+( pontos)', rf'\g<1>{n}\g<2>', page, count=1)
+    page = re.sub(r'(Milícias · )\d+( pontos)', rf'\g<1>{n_pontos}\g<2>', page, count=1)
     page = re.sub(r'(Performance média \(6 competências\) vs\. wave power · )\d+( sessões)',
-                  rf'\g<1>{n}\g<2>', page, count=1)
+                  rf'\g<1>{n_pontos}\g<2>', page, count=1)
 
     # ── 8. Footer ────────────────────────────────────────────────────────────
     data_full = fmt_full(nova['data'])
@@ -614,7 +684,10 @@ def detect_spot_override(nova):
     cardinal = parts[1] if len(parts) >= 2 else parts[0] if parts else ''
     if cardinal not in _DESFAV_DIRS_MILICIA:
         return
-    pm = sum(nova['skills_hist']) / len(nova['skills_hist'])
+    vals = [v for v in nova['skills_hist'] if v is not None]
+    if not vals:
+        return
+    pm = sum(vals) / len(vals)
     if pm >= 2.5:
         print(f"\n  ⚠  SPOT OVERRIDE DETECTADO: swell {dir_raw} (marcado Desfavorável) · perf média {pm:.1f}")
         print(f"     Considera adicionar spot_override a esta sessão no JSON.")
@@ -754,6 +827,15 @@ def validate_session_data(sd, surfer):
     if insert_id and insert_id not in ids_json:
         print(f"  ✗ [{nome}] insert_before_id '{insert_id}' não existe em sessoes[]")
         ok = False
+
+    # Validar frescura do insert_before_id (G.2): tem de ser a sessão imediatamente
+    # anterior à nova, senão o card entra na posição errada (ex: sob separador de mês antigo)
+    if insert_id and len(sd['sessoes']) >= 2:
+        sid_anterior = sd['sessoes'][1].get('html_id')
+        sid_nova = sd['sessoes'][0].get('html_id')
+        if insert_id != sid_nova and insert_id != sid_anterior:
+            print(f"  ✗ [{nome}] insert_before_id '{insert_id}' desactualizado — devia ser '{sid_anterior}' (sessão imediatamente anterior)")
+            ok = False
 
     # Validar nivel na nova sessão (P2.1)
     nova_nivel = nova.get('nivel')
