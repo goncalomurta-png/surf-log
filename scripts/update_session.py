@@ -57,6 +57,39 @@ BAND_COLORS = {
     'vermelha': ('#fdf0f0', '#e07060'),
 }
 
+# Mapa explícito spot (string exacta no JSON) → costa — G.4. Nunca inferir por
+# prefixo: há sessões "Monte Verde ..." e "Monteverde ..." que rebentariam isso.
+SPOT_COSTA = {
+    'Milícias':                             'sul',
+    'Milícias Inside':                      'sul',
+    'Milícias Inside esq.':                 'sul',
+    'Milícias Outside':                     'sul',
+    'Milícias Outside central + Inside':    'sul',
+    'Milícias Outside dir. (Igreja)':       'sul',
+    'Milícias Outside esq.':                'sul',
+    'Milícias Outside esq. + Inside':       'sul',
+    'Milícias Outside esq. e centro':       'sul',
+    'Monte Verde Outside central':          'norte',
+    'Monteverde Centro Outside':            'norte',
+    'Monteverde Outside':                   'norte',
+    'Monteverde Outside dir.':              'norte',
+    'Monteverde Outside esq.':              'norte',
+    'Sta. Bárbara Espuma':                  'norte',
+    'Sta. Bárbara Inside':                  'norte',
+    'Sta. Bárbara Outside':                 'norte',
+    'El Palmar Outside':                    'fora',
+}
+COSTA_COLORS = {'sul': '#1e8449', 'norte': '#2980b9', 'fora': '#8e44ad'}
+COSTA_NOMES  = {'sul': 'Sul', 'norte': 'Norte', 'fora': 'Fora dos Açores'}
+
+def get_costa(spot):
+    """Costa do spot — falha alto (não silenciosamente) se o spot não estiver no mapa."""
+    if spot not in SPOT_COSTA:
+        raise ValueError(
+            f"Spot '{spot}' sem costa definida em SPOT_COSTA — acrescentar a entrada "
+            f"antes de correr o script (não inferir por prefixo).")
+    return SPOT_COSTA[spot]
+
 # Direcções de swell marcadas como Desfavorável na rosa das Milícias (costa sul)
 _DESFAV_DIRS_MILICIA = {'E', 'ENE', 'NE', 'NNE', 'S', 'SE', 'SSE', 'SSW'}
 
@@ -421,6 +454,21 @@ def gerar_evo_card(sd, nivel_prox_preservado, spark_next_preservados):
         f'    </div>'
     )
 
+def gerar_scatter_legend(sd):
+    """Gera a linha de legenda do scatter (contagem por costa) — G.4.
+    Regenerada a partir de sd['sessoes'] a cada execução (não incrementada),
+    para não voltar a divergir da fonte de verdade como o card 'Evolução' (G.1)."""
+    counts = {'sul': 0, 'norte': 0, 'fora': 0}
+    for s in sd['sessoes']:
+        if perf_media(s) is None:
+            continue
+        counts[get_costa(s['spot'])] += 1
+    partes = ' &nbsp;·&nbsp; '.join(
+        f'<span style="color:{COSTA_COLORS[c]}">●</span> {COSTA_NOMES[c]} {counts[c]}'
+        for c in ('sul', 'norte', 'fora'))
+    return (f'● {sd["surfer"]} &nbsp;·&nbsp; {partes} &nbsp;·&nbsp; calibração em curso',
+            sum(counts.values()))
+
 # ── Função principal de actualização por surfista ─────────────────────────────
 
 def update_surfer(html, surfer_id, sd):
@@ -499,7 +547,7 @@ def update_surfer(html, surfer_id, sd):
                     rf'\g<1>{label}\g<2>', page, count=1)
     print(f"  ✓ Evo-sessions-label: {label}")
 
-    # ── 7. Scatter — adicionar novo ponto ────────────────────────────────────
+    # ── 7. Scatter — adicionar novo ponto (cor por costa — G.4) ──────────────
     scatter_pat = re.compile(r'(<svg viewBox="0 0 320 185"[^>]*>)(.*?)(</svg>)', re.DOTALL)
     sm = scatter_pat.search(page)
     if sm:
@@ -507,29 +555,36 @@ def update_surfer(html, surfer_id, sd):
         if pm is None:
             print(f"  ⚠ Scatter: {nova['html_id']} sem skills avaliáveis — ponto não adicionado")
         else:
+            costa = get_costa(nova['spot'])
+            color = COSTA_COLORS[costa]
             cx  = wp_to_cx(nova['wp_ef'])
             cy  = perf_to_cy(pm)
             lbl = fmt_dd_m(nova['data'])
             new_pt = (
-                f'            <circle cx="{cx}" cy="{cy}" r="5" fill="#1e8449" opacity="0.9"/>\n'
+                f'            <circle cx="{cx}" cy="{cy}" r="5" fill="{color}" opacity="0.9"/>\n'
                 f'            <text x="{cx}" y="{cy-8}" text-anchor="middle" '
-                f'font-family="Barlow,sans-serif" font-size="7" fill="#1e8449">{lbl}</text>\n            ')
+                f'font-family="Barlow,sans-serif" font-size="7" fill="{color}">{lbl}</text>\n            ')
             page = (page[:sm.start()] + sm.group(1) + sm.group(2)
                     + new_pt + sm.group(3) + page[sm.end():])
-            print(f"  ✓ Scatter: {lbl} · cx={cx} cy={cy} (perf={pm:.2f})")
-
-        # Contar pontos efectivamente desenhados (G.7) — não len(sessoes), para não
-        # divergir do rótulo quando uma sessão fica sem ponto (skills todos null)
-        sm2 = scatter_pat.search(page)
-        n_pontos = len(re.findall(r'<circle\b', sm2.group(2))) if sm2 else n
+            print(f"  ✓ Scatter: {lbl} · cx={cx} cy={cy} (perf={pm:.2f}) · costa={costa}")
     else:
         print(f"  ⚠ Scatter SVG não encontrado")
-        n_pontos = n
 
-    # Actualizar "N pontos" e "N sessões" no scatter
-    page = re.sub(r'(Milícias · )\d+( pontos)', rf'\g<1>{n_pontos}\g<2>', page, count=1)
-    page = re.sub(r'(Performance média \(6 competências\) vs\. wave power · )\d+( sessões)',
-                  rf'\g<1>{n_pontos}\g<2>', page, count=1)
+    # Legenda por costa — regenerada a partir de sd['sessoes'] a cada execução (G.4)
+    legend_pat = re.compile(
+        r'<div style="font-size:0\.62rem;color:var\(--grey\);padding:2px 0 0;line-height:1\.6">.*?</div>')
+    lm = legend_pat.search(page)
+    legend_txt, n_pontos = gerar_scatter_legend(sd)
+    if lm:
+        page = page[:lm.start()] + f'<div style="font-size:0.62rem;color:var(--grey);padding:2px 0 0;line-height:1.6">{legend_txt}</div>' + page[lm.end():]
+        print(f"  ✓ Legenda scatter: {n_pontos} pontos")
+    else:
+        print(f"  ⚠ Legenda do scatter não encontrada")
+
+    # Rótulo do gráfico — perde "· Milícias", conta pontos (não sessões) — G.4/G.7
+    page = re.sub(
+        r'Performance média \(6 competências\) vs\. wave power · \d+ sessões · Milícias',
+        f'Performance média (6 competências) vs. wave power · {n_pontos} pontos', page, count=1)
 
     # ── 8. Footer ────────────────────────────────────────────────────────────
     data_full = fmt_full(nova['data'])

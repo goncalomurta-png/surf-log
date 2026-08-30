@@ -62,11 +62,29 @@
 
 ### G.3 / G.4 — decisões do owner · 22 Ago 2026
 
-**G.3** — Gonçalo: o Tomás **ainda não está autónomo**; evolução segue o caminho do Rodrigo. `tomas.nivel_atual` → `assistido/outside`; `nivel_proximo` → `autonomo/outside`. As 20 sessões ficam intactas (decisão explícita: não reescrever histórico). Rodrigo recebe `nivel_proximo: performer/outside` — proposta do Auditor, sujeita a veto. Estado: `planned`.
+**G.3** — `auditor_accepted` (23 Ago 2026). Gonçalo: o Tomás **ainda não está autónomo**; evolução segue o caminho do Rodrigo. `tomas.nivel_atual` → `assistido/outside`; `nivel_proximo` → `autonomo/outside`. As 20 sessões ficam intactas (decisão explícita: não reescrever histórico). Rodrigo recebe `nivel_proximo: performer/outside` — proposta do Auditor, sujeita a veto. Estado: `evidence_pending`.
 
-**G.4** — scatter fica com **todos os spots**, distinguidos por costa. Razão: o eixo X é `wp_ef` (já normalizado por costa), logo o gráfico é a ferramenta que valida esses factores; filtrar para Milícias deitaria fora os dados da costa norte, que ainda está por calibrar. Absorve a nota do rótulo "N sessões" que são pontos (de G.7). Estado: `planned`.
+**Evidência G.3 (Builder, 23 Ago 2026):**
+1. `data/tomas.json`: `nivel_atual`→`assistido/outside`, `nivel_proximo`→`autonomo/outside` acrescentado. `s7`–`s19` intocadas (confirmado: só as 2 chaves de topo mudaram). `data/rodrigo.json`: confirmado sem diff (`data/` fora do git, edição local — sem alteração nenhuma feita).
+2. `evo-card` regenerado nas 2 páginas (mesmo mecanismo de G.1). Resultado: `evo-nivel-atual`/`prox` = Rodrigo `Técnico · Outside → Técnico · Performer` (inalterado, aviso `⚠ nivel_proximo ausente` disparado — esperado); Tomás `Assistido · Outside → Autónomo · Outside`.
+3. Radar do Tomás: comentário gerado confirma `Expected polygon — assistido midpoint r=45` (era `autonomo r=54`).
+4. Cores dos 6 sparklines do Tomás recalculadas contra o novo threshold (3.0, antes 3.5): 5 laranja + 1 vermelha (manobras, media=1.48) — mudou face ao estado anterior, confirmando que deriva do JSON e não ficou preso ao valor antigo.
+5. `python3 scripts/update_session.py ambos` sobre disco real: sem regressão, `sys.exit(1)` esperado (sem sessão nova).
 
-**G.9** — commit **e push** autorizados pelo owner dos 6 packages fechados (G.1, G.2, G.5, G.6, G.7, G.8). Só os 4 ficheiros modificados. Estado: `planned`.
+**G.4** — `auditor_accepted` (23 Ago 2026). Scatter fica com **todos os spots**, distinguidos por costa. Razão: o eixo X é `wp_ef` (já normalizado por costa), logo o gráfico é a ferramenta que valida esses factores; filtrar para Milícias deitaria fora os dados da costa norte, que ainda está por calibrar. Absorve a nota do rótulo "N sessões" que são pontos (de G.7). Estado: `evidence_pending`.
+
+**Evidência G.4 (Builder, 23 Ago 2026):**
+1. `SPOT_COSTA` — mapa explícito das 18 strings exactas → `sul`/`norte`/`fora`; `get_costa()` levanta `ValueError` para spot desconhecido (testado com spot inventado — confirmado que aborta, não infere por prefixo).
+2. `update_surfer()` passo 7: ponto novo usa `COSTA_COLORS[get_costa(nova['spot'])]`. Testado com sessão sintética Monteverde (norte) — círculo saiu `#2980b9`, legenda subiu para 10 norte.
+3. `gerar_scatter_legend(sd)` — nova função, conta por costa a partir de **todas** as sessões com performance calculável em `sd['sessoes']` a cada execução (não incrementa) — mesmo padrão do card Evolução. Legenda `● Nome · ● Sul N · ● Norte N · ● Fora dos Açores N · calibração em curso` substitui a linha estática anterior.
+4. Rótulo `Performance média (6 competências) vs. wave power · N sessões · Milícias` → `... · N pontos` (perde `· Milícias`, `sessões`→`pontos`).
+5. **Recoloração dos pontos já existentes nas 2 páginas** (script auxiliar, apagado depois de aplicado): correspondência círculo↔sessão por rótulo dia/mês; nos 2 casos de rótulo repetido no Rodrigo (`16/6`=s20+s21, `25/4`=s6+s7) as sessões candidatas tinham a mesma costa em ambos os pares — sem ambiguidade, sem precisar do desempate por `cx`. Nenhum caso real exigiu o desempate por costa-divergente, mas o código implementa-o (aborta se `cx` não desempatar).
+6. Contagem final por cor: Rodrigo 15 sul/9 norte/1 fora=25; Tomás 14 sul/4 norte/1 fora=19 — bate com a recontagem que motivou a correcção da divergência (14/4/1, não 14/5/1).
+7. `cx`/`cy`/`r` de todos os círculos confirmados **bit-a-bit inalterados** (diff mostra só `fill` a mudar, nas 2 páginas).
+8. Verificação independente: recalculei a costa esperada de cada um dos 44 pontos (25+19) directamente do JSON e comparei com a cor gravada no HTML — **0 mismatches**.
+9. `python3 scripts/update_session.py ambos` sobre disco real: sem regressão.
+
+**G.9** — commit **e push** autorizados pelo owner dos 6 packages fechados (G.1, G.2, G.5, G.6, G.7, G.8). Só os 4 ficheiros modificados. Estado: `completed` — commit `583c574`, push `a7f92e1..583c574 main`, gitleaks 0 leaks · 23 Ago 2026.
 
 **G.10** — os 4 ficheiros não rastreados ficam **suspensos**: o owner autorizou o commit deles sem saber que o repositório é público (`visibility: PUBLIC`). `premortem/continuidade_humana.md` discute os miúdos; `.gitignore` já exclui `data/`, `CLAUDE.md` e `comments*.md`, o que sugere que este material cai do mesmo lado. Devolvido `[HUMAN]`. **Resolvido 22 Ago:** o owner decidiu "apenas commit do habitual" — os 4 ficheiros não são commitados, nem agora nem depois, sem pedido explícito. Estado: `auditor_accepted` (decisão registada).
 
@@ -229,6 +247,60 @@ Stormglass SW2 (budget 8 calls/run)                → actualizar fetch_conditio
 
 ---
 
+## HANDOFF — fecho da sessão de auditoria · 30 Ago 2026
+
+**Estado:** backlog técnico fechado. Dez packages concluídos e auditados (G.1–G.8, G.3, G.4).
+Nada em `comments.md` → ⚡ PENDENTES excepto **G.11**.
+
+**A única coisa por fazer é G.11: commit + push de G.3 e G.4.** O owner autorizou a 23 Ago;
+a instrução foi entregue ao Builder mas **nunca foi executada** — a sessão dele ficou em
+`waiting` e não drenou a fila. Verificado a 30 Ago: último commit continua `583c574`,
+`main...origin/main` sem divergência.
+
+**Trabalho em disco, correcto e verificado, mas não commitado:**
+`surf_log.html` · `scripts/update_session.py` · `plan.md`
+(`data/tomas.json` também mudou, mas `data/` é gitignored e assim fica.)
+
+**Ao retomar:** ler `comments.md` → G.11, que tem os caminhos explícitos e a mensagem de commit.
+Regra de G.10 mantém-se: `AGENTS.md`, `docs/condicoes_manuais.md`,
+`docs/opus_briefing_calibracao.md` e `premortem/**` **nunca** entram em commit; nunca `git add -A`.
+
+**Decisões do owner a não relitigar:** Tomás é `assistido/outside` e as sessões passadas não se
+reescrevem; Rodrigo não leva `nivel_proximo` (o aviso de campo ausente é ruído esperado);
+scatter fica com todos os spots distinguidos por costa; os não-rastreados não se commitam.
+
+**Dívida conhecida, sem package:** `SKILL_DASHED` e `_RANK_EMOJI` órfãs; desequilíbrio de
+`<div>` de +2 anterior a tudo isto; desempate por `cx` no recolor escrito mas nunca exercitado.
+
+---
+
+## Understanding restatement — G.3 + G.4 (Builder) · 23 Ago 2026 · estado: `auditor_accepted`
+
+> **[Claude Auditor] AUDIT_COMPLETE G.3+G.4 — ACCEPTED · 23 Ago 2026 09:02** — 44 pontos com `cx`/`cy`/`r` idênticos ao commit `583c574`, só `fill` mudou; cor do rótulo emparelhada com a do ponto em 44/44; radar do Tomás recalculado para `mid=2.5`/`r=45` (match exacto) e bandas de `y=20` para `y=24`; JSONs conformes à decisão do owner. Backlog fechado. Ver `comments.md`.
+
+> **[Claude Auditor] UNDERSTANDING_CONFIRMED G.3+G.4 · 23 Ago 2026** — restatement conforme. A divergência levantada pelo Builder está **correcta e eu estava errado**: 14/5/1 eram sessões, os pontos plotados são 14/4/1=19 (confirmado contra os 19 `<circle>` do SVG). Legenda reflecte pontos plotados — regra de G.7. Troca de "sessões" por "pontos" aprovada. Uma correcção ao plano de recoloração: parar só quando as sessões candidatas a um rótulo divergirem na costa, não quando o rótulo se repetir — o Rodrigo tem `16/6` e `25/4` duplicados, ambos com as duas sessões da mesma costa. Ver `comments.md`.
+
+**Âmbito desta sessão:** G.3 primeiro (edição de JSON, rápida), depois G.4 (mexe em SVG gravado nas 2 páginas). G.9 já feito (commit `583c574` + push). G.10 resolvido, sem acção.
+
+**G.3:**
+- `data/tomas.json`: `nivel_atual` → `{"autonomia":"assistido","zona":"outside"}`; acrescentar `nivel_proximo: {"autonomia":"autonomo","zona":"outside"}`. Sessões `s7`–`s19` intocadas (histórico não se reescreve).
+- `data/rodrigo.json`: **não tocar** — vetado pelo owner. `nivel_proximo` continua ausente; o aviso `⚠ nivel_proximo ausente — preservado do HTML` do Rodrigo é ruído esperado a partir de agora, não uma falha a corrigir.
+- Sem alterações a `scripts/update_session.py` — `gerar_evo_card()` já lê `nivel_proximo` (G.5).
+- Depois de editar o JSON, corro o script sobre o disco real (via `update_surfer()` isolado, sem sessão nova) e confirmo: Tomás HTML mostra `Assistido · Outside → Autónomo · Outside`; radar do Tomás usa `autonomia_banda('assistido')` → mid=2.5, r=45 (não mais 54); as 6 cores de veredicto dos sparklines do Tomás são recalculadas contra threshold=3.0 (baixa em relação ao anterior 3.5, pelo menos uma deve mudar de cor); Rodrigo continua `Técnico · Outside → Técnico · Performer` com o aviso a aparecer.
+
+**G.4:**
+- Mapa explícito `SPOT_COSTA` (string exacta → costa), as 18 strings distintas hoje nos 2 JSONs — 9 variantes de "Milícias..."→`sul`, 5 variantes de "Monte(verde)..." + 3 de "Sta. Bárbara..."→`norte`, "El Palmar Outside"→`fora`. Um spot novo que não esteja no mapa **falha alto** (erro claro), nunca cai por inferência de prefixo — é a razão de ser desta task (nota "Monte Verde" vs "Monteverde" no fim do `comments.md`).
+- Cores: sul `#1e8449` (a actual), norte `#2980b9`, fora `#8e44ad` (sugestão do Auditor).
+- **Código (`update_surfer()`, passo 7):** ponto novo usa `SPOT_COSTA[nova['spot']]` para escolher a cor em vez do `#1e8449` fixo.
+- **Recolorir os pontos já no HTML** (as 2 páginas): para cada par `<circle>`+`<text>` existente no scatter, faço a correspondência à sessão por data (dia/mês do rótulo `fmt_dd_m` vs `sessoes[*].data`) e confirmo com um cross-check: `cx`/`cy` recalculado a partir da sessão (`wp_to_cx`/`perf_to_cy`) tem de bater com o `cx`/`cy` do círculo existente — se não bater ou o rótulo não for único, **paro e reporto** em vez de adivinhar. Só o atributo `fill` muda; `cx`/`cy`/`r` ficam bit-a-bit iguais.
+- **Legenda por atleta** (hoje `● Rodrigo · Milícias · N pontos · calibração em curso`, linha estática, não gerada por script): passa a listar as 3 cores com contagem por costa, e o `update_surfer()` passa a **regenerar esta linha a cada execução** a partir de `sd['sessoes']` (não incrementar um contador) — mesmo padrão do card "Evolução", para não voltar a divergir da fonte de verdade.
+- Rótulo do gráfico (`Performance média (6 competências) vs. wave power · N sessões · Milícias`): perde o `· Milícias`; **proposta minha** — trocar `sessões` por `pontos` nos dois sítios (legenda + rótulo), em vez da alternativa "19 de 20 sessões" que o Auditor também aceitava — mais simples de manter coerente com a contagem já existente de `<circle>` (G.7).
+- **Divergência a confirmar antes de codar:** o Auditor escreveu "Tomás 14 Sul / 5 Norte / 1 Espanha" (=20). Recontei a partir do JSON só sobre as 19 sessões com performance calculável (excluindo `tomas-s19`, que G.7 já deixa de plotar): **14 sul / 4 norte / 1 fora = 19**, não 20/5. O Rodrigo bate certo (15/9/1=25). Preciso de confirmação: a legenda deve reflectir os 19 pontos plotados (o meu número) ou as 20 sessões nominais do Tomás?
+
+**Verificação:** contar `<circle>` por cor em cada página, bate com a distribuição acima; os 2 números do rótulo iguais ao total de círculos; `cx`/`cy` de cada círculo idêntico ao estado actual (só `fill` muda); `python3 scripts/update_session.py ambos` sem regressão.
+
+---
+
 ## Understanding restatement — G.2 + G.1 (Builder) · 22 Ago 2026 · estado: `understanding_confirmed`
 
 > **[Claude Auditor] UNDERSTANDING_CONFIRMED G.2+G.1 · 22 Ago 2026 14:45** — restatement corresponde ao intent. Divergência da ordem dos cards (Agosto acima de Julho) e os 3 casos da guarda do anchor verificados no ficheiro. Builder libertado para `in_progress` em G.2 e depois G.1. G.3/G.4 permanecem `planned` — bloqueados `[HUMAN]`. Ressalva registada em `comments.md` → G.5.
@@ -277,3 +349,4 @@ Stormglass SW2 (budget 8 calls/run)                → actualizar fetch_conditio
 | F.1 · Fix calc_matrix() — mín 2 sessões + recência | `auditor_accepted` | _REC_W + calc_matrix() ponderada + _apply_monotonicity(); HTML regenerado (commit 6721027); R:⚠️✅✅✅❌; T:⚠️✅✅⚠️❌❌ · 25 Mai 2026 |
 | S20+S21 · Rodrigo · Monteverde · 16 Jun 2026 | `completed` | S20 09:30 Ideais 11.9kW/m mar grande ~2.2m (hs_obs/modelo ratio 1.8×); S21 13:30 Ideais 10.3kW/m 2 ondas + trimming; progressão peso_total=3.283; sparklines+radar actualizados (22s); validate OK · 16 Jun 2026 |
 | O.1 · Fix next_sessao após S13/S11 | `evidence_pending` | rodrigo: html_id=s14 n=15 s-0=s13; tomas: html_id=s12 n=13 s-0=s11; data/ no .gitignore — edição local · 25 Mai 2026 |
+| G.9 · Commit + push G.1/G.2/G.5–G.8 | `completed` | gitleaks 0 leaks; commit `583c574` (4 ficheiros: surf_log.html, scripts/update_session.py, docs/ARCHITECTURE.md, plan.md); push `a7f92e1..583c574 main`; não-rastreados (AGENTS.md, docs/condicoes_manuais.md, docs/opus_briefing_calibracao.md, premortem/) deixados de fora por decisão do owner (G.10) · 23 Ago 2026 |
